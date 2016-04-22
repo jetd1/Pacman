@@ -869,7 +869,7 @@ namespace Helpers
             }
 
         // 恢复游戏状态到最初（就是本回合）
-        gameField.RollBack();
+        gameField.RollBack(count);
     }
 }
 
@@ -877,6 +877,7 @@ namespace AI
 {
     int eval(Pacman::GameField &gamefield, int myID)
     {
+        
         return 0;
     }
 }
