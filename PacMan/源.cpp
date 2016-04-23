@@ -1,4 +1,10 @@
 /*
+* Edited By Jet, Moriarty
+* 2016/4/23 07:46
+* Stupid Ramdom AI Guzuta
+*/
+
+/*
 * Pacman 样例程序
 * 作者：zhouhy
 * 时间：2016/3/22 15:32:51
