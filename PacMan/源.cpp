@@ -1,6 +1,6 @@
 /*
 * Edited By Jet, Moriarty
-* 2016/4/24 1:02
+* 2016/4/24 19:14
 * Stupid Ramdom AI Guzuta
 */
 
@@ -59,7 +59,7 @@
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
 #define TIME_LIMIT 0.99
-#define QUEUE_MAX 30
+#define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -75,43 +75,43 @@ using std::runtime_error;
 //把枚举扩展收起来
 namespace EnumExt
 {
-    // 让枚举也可以用这些运算了（不加会编译错误）
-    template<typename T>
-    inline T operator |=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator |(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator ++(T &a)
-    {
-        return a = static_cast<T>(static_cast<int>(a) + 1);
-    }
-    template<typename T>
-    inline T operator ~(const T &a)
-    {
-        return static_cast<T>(~static_cast<int>(a));
-    }
+	// 让枚举也可以用这些运算了（不加会编译错误）
+	template<typename T>
+	inline T operator |=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator |(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator ++(T &a)
+	{
+		return a = static_cast<T>(static_cast<int>(a) + 1);
+	}
+	template<typename T>
+	inline T operator ~(const T &a)
+	{
+		return static_cast<T>(~static_cast<int>(a));
+	}
 }
 
 // 平台提供的吃豆人相关逻辑处理程序
 namespace Pacman
 {
-    using namespace EnumExt;
+	using namespace EnumExt;
 
 	const time_t seed = time(0);
 	const int dx[] = { 0, 1, 0, -1, 1, 1, -1, -1 }, dy[] = { -1, 0, 1, 0, -1, 1, 1, -1 };
@@ -330,19 +330,19 @@ namespace Pacman
 			return true;
 		}
 
-        // Jet:把PopState包装了一下 方便一些
-        void RollBack(int turnCount = -1)
-        {
-            if (turnCount < 0)
-            {
-                while (PopState());
-                return;
-            }
+		// Jet:把PopState包装了一下 方便一些
+		void RollBack(int turnCount = -1)
+		{
+			if (turnCount < 0)
+			{
+				while (PopState());
+				return;
+			}
 
-            for (int i = 0; i < turnCount; i++)
-                if (!PopState())
-                    break;
-        }
+			for (int i = 0; i < turnCount; i++)
+				if (!PopState())
+					break;
+		}
 
 		// 判断指定玩家向指定方向移动是不是合法的（没有撞墙且没有踩到豆子产生器）
 		inline bool ActionValid(int playerID, Direction &dir) const
@@ -351,7 +351,7 @@ namespace Pacman
 				return true;
 			const Player &p = players[playerID];
 			const GridStaticType &s = fieldStatic[p.row][p.col];
-			return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]) && !(s & generator);
+			return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
 		}
 
 		// 在向actions写入玩家动作后，演算下一回合局面，并记录之前所有的场地状态，可供日后恢复。
@@ -664,10 +664,10 @@ namespace Pacman
 		// tauntText 表示想要叫嚣的言语，可以是任意字符串，除了显示在屏幕上不会有任何作用，留空表示不叫嚣
 		// data 表示自己想存储供下一回合使用的数据，留空表示删除
 		// globalData 表示自己想存储供以后使用的数据（替换），这个数据可以跨对局使用，会一直绑定在这个 Bot 上，留空表示删除
-        void WriteOutput(Direction action, string tauntText = "", string data = "",
-                         string globalData = "", string debugData = "") const
+		void WriteOutput(Direction action, string tauntText = "", string data = "",
+			string globalData = "", string debugData = "") const
 		{
-            debugData += ' ' + to_string(seed);
+			debugData += ' ' + to_string(seed);
 
 			Json::Value ret;
 			ret["response"]["action"] = action;
@@ -768,8 +768,8 @@ namespace Pacman
 		// 初始化游戏管理器
 		GameField()
 		{
-            if (constructed)
-                throw runtime_error("请不要再创建 GameField 对象了，整个程序中只应该有一个对象");
+			if (constructed)
+				throw runtime_error("请不要再创建 GameField 对象了，整个程序中只应该有一个对象");
 			constructed = true;
 
 			turnID = 0;
@@ -784,13 +784,13 @@ namespace Pacman
 // 一些辅助程序
 namespace Helpers
 {
-    using namespace EnumExt;
+	using namespace EnumExt;
 
 	int randomPlayCount = 0;
 	int actionScore[5] = {};
 	clock_t startTime = clock();
 	std::vector<string> jiangXuan = {
-	/*	u8"赶紧续一秒 +1s",
+		/*	u8"赶紧续一秒 +1s",
 		u8"人吶就都不知道",
 		u8"自己不可以预料",
 		u8"一个人的命运啊",
@@ -857,7 +857,7 @@ namespace Helpers
 		u8"就把我批判一番",
 		u8"你们啊，naive",
 		u8"我今天算是得罪了你们",
-		u8"I'm angry!", 暂时不可用*/ 
+		u8"I'm angry!", 暂时不可用*/
 		"Congratulations! +1s",
 		"Congratulations! +2s",
 		"Congratulations! +5s",
@@ -922,63 +922,71 @@ namespace Helpers
 		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
-    // Jet:还有未知Bug 快Fix!!!
+	// Moriartycc: 数值是否正确待验证
 	int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
 	{
 		Pacman::FieldProp startPos = gameField.players[alphaID], endPos = gameField.players[betaID];
+		if (startPos == endPos) return 0;
+
 		//初始化广搜数组
-		int** step = new int*[gameField.height]; 
+		int** step = new int*[gameField.height];
 		for (int i = 0; i < gameField.height; i++)
 		{
 			step[i] = new int[gameField.width];
-			for (int j = 0; j < gameField.width; j++) step[i][j] = MAX_INT;
+			for (int j = 0; j < gameField.width; j++)
+			{
+				step[i][j] = MAX_INT;
+			}
 		}
 		step[startPos.row][startPos.col] = 0;
 
 		//初始化广搜队列
-		std::vector<Pacman::FieldProp> queue(QUEUE_MAX);
-		queue.clear(); 
-		queue.push_back(startPos);
-		std::vector<Pacman::FieldProp>::iterator flag = queue.begin();
-		
-		while (flag != queue.end())
+		Pacman::FieldProp queue[QUEUE_MAX];
+		queue[0] = startPos;
+		int nowFlag = 0, endFlag = 0;
+		bool hasFound = false;
+
+		while (nowFlag <= endFlag && !hasFound)
 		{
-			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[flag->row][flag->col];
+			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
 			for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
 			{
 				if (!curGrid & Pacman::direction2OpposingWall[dir])
 				{
-					Pacman::FieldProp newPos = *flag;
+					Pacman::FieldProp newPos = queue[nowFlag];
 					switch (dir)
 					{
-						case Pacman::Direction::up:
-							newPos.row = (newPos.row + gameField.height - 1) % gameField.height;
-							break;
-						case Pacman::Direction::down:
-							newPos.row = (newPos.row + 1) % gameField.height;
-							break;
-						case Pacman::Direction::left:
-							newPos.col = (newPos.col + gameField.width - 1) % gameField.width;
-							break;
-						case Pacman::Direction::right:
-							newPos.col = (newPos.col + 1) % gameField.height;
-							break;
+					case Pacman::Direction::up:
+						newPos.row = (newPos.row + gameField.height - 1) % gameField.height;
+						break;
+					case Pacman::Direction::down:
+						newPos.row = (newPos.row + 1) % gameField.height;
+						break;
+					case Pacman::Direction::left:
+						newPos.col = (newPos.col + gameField.width - 1) % gameField.width;
+						break;
+					case Pacman::Direction::right:
+						newPos.col = (newPos.col + 1) % gameField.height;
+						break;
 					}
-					if (step[newPos.row][newPos.col] > step[flag->row][flag->col] + 1 
-                        && find(flag, queue.end(), newPos) == queue.end()) //新的点是好的且不在队列里（讲道理是不是要用个bool
+					if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1) //新的点是好的
 					{
-						step[newPos.row][newPos.col] = step[flag->row][flag->col] + 1;
-						queue.push_back(newPos);
+						step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
+						queue[++endFlag] = newPos;
+						if (newPos == endPos)
+						{
+							hasFound = true;
+							break;
+						}
 					}
 				}
 			}
-			++flag;
+			++nowFlag;
 		}
-		
-        int ret = step[endPos.row][endPos.col];
 
-		for (int i = 0; i < gameField.height; i++) 
-            delete[]step[i];
+		int ret = step[endPos.row][endPos.col];
+		for (int i = 0; i < gameField.height; i++)
+			delete[]step[i];
 		delete[]step;
 
 		return ret;
@@ -987,7 +995,7 @@ namespace Helpers
 	void RandomPlay(Pacman::GameField &gameField, int myID)
 	{
 		randomPlayCount++;
-		int count = 0, myAct = -1;
+		int count = 0, myAct = -1, test;
 		while (true)
 		{
 			// 对每个玩家生成随机的合法动作
@@ -1003,6 +1011,7 @@ namespace Helpers
 				gameField.actions[i] = valid[RandBetween(0, vCount)];
 			}
 
+			test = Distance(gameField, 1, 2);
 			if (count == 0)
 				myAct = gameField.actions[myID];
 
@@ -1038,7 +1047,7 @@ namespace Helpers
 			}
 
 		// 恢复游戏状态到本回合初
-        gameField.RollBack(count);
+		gameField.RollBack(count);
 	}
 }
 
@@ -1060,8 +1069,8 @@ int main()
 	srand(unsigned(Pacman::seed + myID));
 
 	// 简单随机，看哪个动作随机赢得最多
-    while (Helpers::TimeThrough() <= TIME_LIMIT)
-        Helpers::RandomPlay(mainGameField, myID);
+	while (Helpers::TimeThrough() <= TIME_LIMIT)
+		Helpers::RandomPlay(mainGameField, myID);
 
 	int maxD = 0, d;
 	for (d = 0; d < 5; d++)
@@ -1069,18 +1078,14 @@ int main()
 			maxD = d;
 
 	// 输出当前游戏局面状态以供本地调试。注意提交到平台上会自动优化掉，不必担心。
-    mainGameField.DebugPrint();
+	mainGameField.DebugPrint();
 
 	// 中央决定一定要叫嚣
-    mainGameField.WriteOutput((Pacman::Direction)(maxD - 1), Helpers::MoHa(), data, globalData,
-                          to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
-
-    // 调试用，目前Distance还有Bug
-    cout << Helpers::Distance(mainGameField, 1, 3);
+	mainGameField.WriteOutput((Pacman::Direction)(maxD - 1), Helpers::MoHa(), data, globalData,
+		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
 #ifndef _BOTZONE_ONLINE
-    system("pause");
+	system("pause");
 #endif
 	return 0;
 }
-
