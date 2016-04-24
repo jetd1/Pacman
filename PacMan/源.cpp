@@ -1072,8 +1072,13 @@ int main()
 	mainGameField.WriteOutput((Pacman::Direction)(maxD - 1), Helpers::MoHa(), data, globalData,
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
+<<<<<<< HEAD
 	/*这次真的没问题了 信我
 	cout << Helpers::Distance(mainGameField, 0, 2) << endl;*/
+=======
+    // 调试用，目前Distance还有Bug
+    cout << Helpers::Distance(mainGameField, 1, 3);
+>>>>>>> bf9440ebf00b8f2fa0a41ef0c1eae4bd7963456a
 
 #ifndef _BOTZONE_ONLINE
 	system("pause");
