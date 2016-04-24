@@ -1076,7 +1076,7 @@ int main()
                           to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
     // 调试用，目前Distance还有Bug
-    cout << Helpers::Distance(mainGameField, 1, 3);
+    //cout << Helpers::Distance(mainGameField, 1, 3);
 
 #ifndef _BOTZONE_ONLINE
     system("pause");
