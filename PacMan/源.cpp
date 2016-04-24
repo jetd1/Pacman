@@ -1,6 +1,6 @@
 /*
 * Edited By Jet, Moriarty
-* 2016/4/24 19:14
+* 2016/4/25 0：00
 * Stupid Ramdom AI Guzuta
 */
 
@@ -807,6 +807,7 @@ namespace Helpers
 		u8"岂因祸福避趋之",
 		u8"我主要的就是三件事情",
 		u8"军队一律不得经商",
+		u8"这对军队的命运很重要",
 		u8"就做了一点微小的工作",
 		u8"很惭愧，但是Excited",
 		u8"吼啊",
@@ -922,7 +923,7 @@ namespace Helpers
 		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
-	// Moriartycc: 数值是否正确待验证
+	// Moriartycc: 牢记位运算优先级
 	int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
 	{
 		Pacman::FieldProp startPos = gameField.players[alphaID], endPos = gameField.players[betaID];
@@ -951,24 +952,11 @@ namespace Helpers
 			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
 			for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
 			{
-				if (!curGrid & Pacman::direction2OpposingWall[dir])
+				if (!(curGrid & Pacman::direction2OpposingWall[dir]))
 				{
 					Pacman::FieldProp newPos = queue[nowFlag];
-					switch (dir)
-					{
-					case Pacman::Direction::up:
-						newPos.row = (newPos.row + gameField.height - 1) % gameField.height;
-						break;
-					case Pacman::Direction::down:
-						newPos.row = (newPos.row + 1) % gameField.height;
-						break;
-					case Pacman::Direction::left:
-						newPos.col = (newPos.col + gameField.width - 1) % gameField.width;
-						break;
-					case Pacman::Direction::right:
-						newPos.col = (newPos.col + 1) % gameField.height;
-						break;
-					}
+					newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
+					newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
 					if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1) //新的点是好的
 					{
 						step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
@@ -1083,6 +1071,9 @@ int main()
 	// 中央决定一定要叫嚣
 	mainGameField.WriteOutput((Pacman::Direction)(maxD - 1), Helpers::MoHa(), data, globalData,
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
+
+	/*这次真的没问题了 信我
+	cout << Helpers::Distance(mainGameField, 0, 2) << endl;*/
 
 #ifndef _BOTZONE_ONLINE
 	system("pause");
