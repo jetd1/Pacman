@@ -63,11 +63,11 @@
 #define MAX_INT 0x3fffffff
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
-using std::string;
-using std::swap;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::swap;
+using std::string;
 using std::getline;
 using std::to_string;
 using std::runtime_error;
@@ -1085,7 +1085,7 @@ int main()
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
     // 调试用，目前Distance还有Bug
-    cout << Helpers::Distance(mainGameField, 1, 3);
+    cout << Helpers::Distance(mainGameField, 0, 3) << endl;
 
 #ifndef _BOTZONE_ONLINE
 	system("pause");
