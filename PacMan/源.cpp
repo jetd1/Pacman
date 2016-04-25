@@ -787,7 +787,6 @@ namespace Helpers
 	using namespace EnumExt;
 
 	int randomPlayCount = 0;
-	int actionScore[5] = {};
 	clock_t startTime = clock();
 	std::vector<string> jiangXuan = {
 		/*	u8"赶紧续一秒 +1s",
@@ -923,6 +922,11 @@ namespace Helpers
 		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
+
+    // Jet:可以试试哪个效率比较高
+    typedef std::vector<Pacman::FieldProp> Path;
+    //typedef std::vector<Pacman::Direction> Path;
+
 	// Moriartycc: 牢记位运算优先级
 	int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
 	{
@@ -935,9 +939,7 @@ namespace Helpers
 		{
 			step[i] = new int[gameField.width];
 			for (int j = 0; j < gameField.width; j++)
-			{
 				step[i][j] = MAX_INT;
-			}
 		}
 		step[startPos.row][startPos.col] = 0;
 
@@ -980,10 +982,10 @@ namespace Helpers
 		return ret;
 	}
 
-	void RandomPlay(Pacman::GameField &gameField, int myID)
+	char RandomPlay(Pacman::GameField &gameField, int myID)
 	{
 		randomPlayCount++;
-		int count = 0, myAct = -1, test;
+        int count = 0, myAct = -1;
 		while (true)
 		{
 			// 对每个玩家生成随机的合法动作
@@ -999,7 +1001,6 @@ namespace Helpers
 				gameField.actions[i] = valid[RandBetween(0, vCount)];
 			}
 
-			test = Distance(gameField, 1, 2);
 			if (count == 0)
 				myAct = gameField.actions[myID];
 
@@ -1019,9 +1020,10 @@ namespace Helpers
 				if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
 					swap(rank2player[k], rank2player[k + 1]);
 
-		int scorebase = 1;
+        int actionScore;
+		int scorebase = 0;
 		if (rank2player[0] == myID)
-			actionScore[myAct + 1]++;
+			actionScore = 0;
 		else
 			for (int j = 1; j < MAX_PLAYER_COUNT; j++)
 			{
@@ -1029,22 +1031,54 @@ namespace Helpers
 					scorebase = j + 1;
 				if (rank2player[j] == myID)
 				{
-					actionScore[myAct + 1] += scorebase;
+					actionScore = scorebase;
 					break;
 				}
 			}
 
 		// 恢复游戏状态到本回合初
 		gameField.RollBack(count);
+
+        return ((myAct + 1) << 2) + actionScore;
 	}
 }
 
 namespace AI
 {
-	int eval(Pacman::GameField &gamefield, int myID)
-	{
-		return 0;
-	}
+    inline int deltaATK(Pacman::GameField &gamefield, int id1, int id2)
+    {
+        return gamefield.players[id1].strength - gamefield.players[id2].strength;
+    }
+
+    Pacman::Direction RandomAI(Pacman::GameField &gameField, int myID)
+    {
+        int actionScore[5] {};
+        char tmp;
+        while (Helpers::TimeThrough() <= TIME_LIMIT)
+        {
+            tmp = Helpers::RandomPlay(gameField, myID);
+            actionScore[tmp >> 2] += (tmp & 3);
+        }
+
+        int maxD = 0, d;
+        for (d = 0; d < 5; d++)
+            if (actionScore[d] > actionScore[maxD])
+                maxD = d;
+
+        return Pacman::Direction(maxD - 1);
+    }
+
+    int eval(Pacman::GameField &gamefield, int myID)
+    {
+        int e = 0;
+        for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+        {
+            if (i == myID)
+                continue;
+            e += Helpers::Distance(gamefield, myID, i) * deltaATK(gamefield, myID, i);
+        }
+        return e;
+    }
 }
 
 int main()
@@ -1056,29 +1090,18 @@ int main()
 	int myID = mainGameField.ReadInput("input.txt", data, globalData); // 输入，并获得自己ID
 	srand(unsigned(Pacman::seed + myID));
 
-	// 简单随机，看哪个动作随机赢得最多
-	while (Helpers::TimeThrough() <= TIME_LIMIT)
-		Helpers::RandomPlay(mainGameField, myID);
-
-	int maxD = 0, d;
-	for (d = 0; d < 5; d++)
-		if (Helpers::actionScore[d] > Helpers::actionScore[maxD])
-			maxD = d;
-
 	// 输出当前游戏局面状态以供本地调试。注意提交到平台上会自动优化掉，不必担心。
 	mainGameField.DebugPrint();
 
+#ifndef _BOTZONE_ONLINE
+    Helpers::startTime = clock();
+#endif
+
 	// 中央决定一定要叫嚣
-	mainGameField.WriteOutput((Pacman::Direction)(maxD - 1), Helpers::MoHa(), data, globalData,
+	mainGameField.WriteOutput(AI::RandomAI(mainGameField, myID), Helpers::MoHa(), data, globalData,
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
-<<<<<<< HEAD
-	/*这次真的没问题了 信我
-	cout << Helpers::Distance(mainGameField, 0, 2) << endl;*/
-=======
-    // 调试用，目前Distance还有Bug
-    cout << Helpers::Distance(mainGameField, 1, 3);
->>>>>>> bf9440ebf00b8f2fa0a41ef0c1eae4bd7963456a
+    //cout << Helpers::Distance(mainGameField, 1, 1);
 
 #ifndef _BOTZONE_ONLINE
 	system("pause");
