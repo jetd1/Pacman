@@ -1246,7 +1246,8 @@ namespace AI
             return dir;
         if (dir == Pacman::Direction::ul)
             return Helpers::GetToNearbyGenerator(gameField, myID);
-        return MCTS_AI(gameField, myID, true);
+        return MCTS_AI(gameField, myID);
+        //return MCTS_AI(gameField, myID, true);
     }
 
     int Eval(Pacman::GameField &gamefield, int myID)
