@@ -792,6 +792,7 @@ namespace Helpers
 {
     using namespace EnumExt;
 
+    int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
     int randomPlayCount = 0;
     clock_t startTime = clock();
     std::vector<string> jiangXuan = {
@@ -934,15 +935,18 @@ namespace Helpers
     }
 
 
+
     // Jet:可以试试哪个效率比较高
     typedef std::vector<Pacman::FieldProp> Path;
     //typedef std::vector<Pacman::Direction> Path;
 
-    // Moriartycc: 牢记位运算优先级
-    int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
+    // Jet: 用cc的改的
+    int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
-        Pacman::FieldProp startPos = gameField.players[alphaID], endPos = gameField.players[betaID];
-        if (startPos == endPos) return 0;
+        if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
+            return distance[startPos.row][startPos.col][endPos.row][endPos.col];
+        if (startPos == endPos) 
+            return 0;
 
         //初始化广搜数组
         int** step = new int*[gameField.height];
@@ -990,7 +994,13 @@ namespace Helpers
             delete[]step[i];
         delete[]step;
 
-        return ret;
+        return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
+    }
+
+    // Moriartycc: 牢记位运算优先级
+    int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
+    {
+        return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
     }
 
     // Jet: 改写了个模版
@@ -999,7 +1009,7 @@ namespace Helpers
     {
         Pacman::FieldProp startPos = gameField.players[myID];
         if (pr(gameField, startPos))
-            return AI::MCTS_AI(gameField, myID);
+            return Pacman::Direction::stay;
 
         //初始化广搜数组
         Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
@@ -1041,7 +1051,7 @@ namespace Helpers
             ++nowFlag;
         }
         if (!hasEaten)
-            return GetToNearbyGenerator(gameField, myID);
+            return Pacman::Direction::ul;
 
         //cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
 
@@ -1069,6 +1079,7 @@ namespace Helpers
         { return gameField.fieldContent[pos.row][pos.col] & target; });
     }
 
+    // Jet: 没豆子吃的时候去生成器旁边等着
     Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
     {
         return GetTo(gameField, myID,
@@ -1077,7 +1088,6 @@ namespace Helpers
             for (int i = 0; i < gameField.generatorCount; i++)
                 for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
                 {
-                    // 取余，穿过场地边界
                     int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
                         c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
                     if (pos.row == r && pos.col == c)
@@ -1120,25 +1130,25 @@ namespace Helpers
         return false;
     }
 
-    // weaZen:随便找个不被吃的方向(如果可以)
-    // Jet:需要返回随机值的情况大多可以返回AI::RandomAI()代替
-    //	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
-    //	{
-    //		Pacman::Direction dir;
-    //		int vCount = 0;
-    //		Pacman::Direction valid[5];
-    //		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
-    //			if (gameField.ActionValid(myID, d) && !dangerJudge(gameField, myID, d))
-    //				valid[vCount++] = d;
-    //#ifdef DEBUG
-    //		cout << '*' << vCount << endl;
-    //#endif // DEBUG
-    //		if (vCount == 0) return Pacman::Direction::stay;
-    //		dir = valid[RandBetween(0, vCount)];
-    //		return dir;
-    //	}
+     //weaZen:随便找个不被吃的方向(如果可以)
+     //Jet:需要返回随机值的情况大多可以返回AI::RandomAI()代替
+    Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
+    {
+        Pacman::Direction dir;
+        int vCount = 0;
+        Pacman::Direction valid[5];
+        for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
+            if (gameField.ActionValid(myID, d) && !DangerJudge(gameField, myID, d))
+                valid[vCount++] = d;
+#ifdef DEBUG
+        cout << '*' << vCount << endl;
+#endif // DEBUG
+        if (vCount == 0) return Pacman::Direction::stay;
+        dir = valid[RandBetween(0, vCount)];
+        return dir;
+    }
 
-    char RandomPlay(Pacman::GameField &gameField, int myID)
+    char RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
     {
         randomPlayCount++;
         int count = 0, myAct = -1;
@@ -1151,7 +1161,7 @@ namespace Helpers
                     continue;
                 Pacman::Direction valid[5];
                 int vCount = 0;
-                for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
+                for (Pacman::Direction d = Pacman::Direction(-1 + noStay); d < 4; ++d)
                     if (gameField.ActionValid(i, d))
                         valid[vCount++] = d;
                 gameField.actions[i] = valid[RandBetween(0, vCount)];
@@ -1201,13 +1211,13 @@ namespace Helpers
 
 namespace AI
 {
-    Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID)
+    Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
     {
         int actionScore[5]{};
         char tmp;
         while (Helpers::TimeThrough() <= TIME_LIMIT)
         {
-            tmp = Helpers::RandomPlay(gameField, myID);
+            tmp = Helpers::RandomPlay(gameField, myID, noStay);
             actionScore[tmp >> 2] += (tmp & 3);
         }
 
@@ -1232,9 +1242,11 @@ namespace AI
                 target |= Pacman::playerID2Mask[_];
         }
         dir = Helpers::GetToTarget(gameField, myID, target);
-        if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
+        if (dir <= Pacman::Direction::left && dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
             return dir;
-        return MCTS_AI(gameField, myID);
+        if (dir == Pacman::Direction::ul)
+            return Helpers::GetToNearbyGenerator(gameField, myID);
+        return MCTS_AI(gameField, myID, true);
     }
 
     int Eval(Pacman::GameField &gamefield, int myID)
