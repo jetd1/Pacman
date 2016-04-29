@@ -1,7 +1,7 @@
 /*
-* Edited By Jet, Moriarty
-* 2016/4/25 0£º00
-* Stupid Ramdom AI Guzuta
+* Edited By Jet, Moriarty, weaZen
+* 2016/4/29 13:43
+* Naive AI Guzuta
 */
 
 /*
