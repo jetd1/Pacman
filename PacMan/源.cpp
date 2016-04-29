@@ -992,7 +992,8 @@ namespace Helpers
 	Pacman::Direction Greedy(Pacman::GameField &gameField, int myID, int target)
 	{
 		Pacman::FieldProp startPos = gameField.players[myID];
-		if (gameField.fieldContent[startPos.row][startPos.col] & target) return Pacman::Direction::stay;
+		if (gameField.fieldContent[startPos.row][startPos.col] & target) 
+            return Pacman::Direction::stay;
 
 		//初始化广搜数组
 		Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
@@ -1002,7 +1003,6 @@ namespace Helpers
 			for (int j = 0; j < gameField.width; j++)
 				dirInfo[i][j] = Pacman::Direction::stay;
 		}
-		
 		
 		//初始化广搜队列
 		Pacman::FieldProp queue[QUEUE_MAX];
@@ -1054,7 +1054,6 @@ namespace Helpers
 	
 	}
 
-
 	// weaZen:简单的危险判断
 	bool dangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir) {
 		Pacman::Player & me = gameField.players[myID];
@@ -1085,21 +1084,22 @@ namespace Helpers
 	}
 
 	// weaZen:随便找个不被吃的方向(如果可以)
-	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
-	{
-		Pacman::Direction dir;
-		int vCount = 0;
-		Pacman::Direction valid[5];
-		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
-			if (gameField.ActionValid(myID, d) && !dangerJudge(gameField, myID, d))
-				valid[vCount++] = d;
-#ifdef DEBUG
-		cout << '*' << vCount << endl;
-#endif // DEBUG
-		if (vCount == 0) return Pacman::Direction::stay;
-		dir = valid[RandBetween(0, vCount)];
-		return dir;
-	}
+    // Jet:需要返回随机值的情况大多可以返回AI::RandomAI()代替
+//	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
+//	{
+//		Pacman::Direction dir;
+//		int vCount = 0;
+//		Pacman::Direction valid[5];
+//		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
+//			if (gameField.ActionValid(myID, d) && !dangerJudge(gameField, myID, d))
+//				valid[vCount++] = d;
+//#ifdef DEBUG
+//		cout << '*' << vCount << endl;
+//#endif // DEBUG
+//		if (vCount == 0) return Pacman::Direction::stay;
+//		dir = valid[RandBetween(0, vCount)];
+//		return dir;
+//	}
 
 	char RandomPlay(Pacman::GameField &gameField, int myID)
 	{
@@ -1192,8 +1192,9 @@ namespace AI
 	{
 		Pacman::Direction dir;
 		dir = Helpers::Greedy(gameField, myID, Pacman::GridContentType::smallFruit|Pacman::GridContentType::largeFruit);
-		if (dir != Pacman::Direction::stay && !Helpers::dangerJudge(gameField, myID, dir)) return dir;
-		return Helpers::SimpleRandom(gameField, myID);
+		if (dir != Pacman::Direction::stay && !Helpers::dangerJudge(gameField, myID, dir)) 
+            return dir;
+		return RandomAI(gameField, myID);
 	}
 
     int Eval(Pacman::GameField &gamefield, int myID)
@@ -1211,6 +1212,9 @@ namespace AI
 
 int main()
 {
+    auto AI = AI::NaiveAI;
+    auto TAUNT = Helpers::MoHa;
+
 	Pacman::GameField mainGameField;
 	string data, globalData; // 这是回合之间可以传递的信息
 							 // 如果在本地调试，有input.txt则会读取文件内容作为输入
@@ -1226,7 +1230,7 @@ int main()
 #endif
 
 	// 中央决定一定要叫嚣
-	mainGameField.WriteOutput(AI::NaiveAI(mainGameField, myID), Helpers::MoHa(), data, globalData,
+	mainGameField.WriteOutput(AI(mainGameField, myID), TAUNT(), data, globalData,
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
     //cout << Helpers::Distance(mainGameField, 1, 1);
