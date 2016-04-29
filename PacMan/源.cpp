@@ -62,6 +62,8 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 
+//#define DEBUG
+
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
 using std::cout;
@@ -171,6 +173,10 @@ namespace Pacman
 		inline bool operator==(const FieldProp &a)
 		{
 			return (row == a.row && col == a.col);
+		}
+		inline bool operator!=(const FieldProp &a)
+		{
+			return (row != a.row || col != a.col);
 		}
 	};
 
@@ -982,6 +988,119 @@ namespace Helpers
 		return ret;
 	}
 
+	//weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
+	Pacman::Direction Greedy(Pacman::GameField &gameField, int myID, int target)
+	{
+		Pacman::FieldProp startPos = gameField.players[myID];
+		if (gameField.fieldContent[startPos.row][startPos.col] & target) return Pacman::Direction::stay;
+
+		//初始化广搜数组
+		Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
+		for (int i = 0; i < gameField.height; i++)
+		{
+			dirInfo[i] = new Pacman::Direction[gameField.width];
+			for (int j = 0; j < gameField.width; j++)
+				dirInfo[i][j] = Pacman::Direction::stay;
+		}
+		
+		
+		//初始化广搜队列
+		Pacman::FieldProp queue[QUEUE_MAX];
+		queue[0] = startPos;
+		int nowFlag = 0, endFlag = 0;
+		bool hasEaten = false;
+
+		while (nowFlag <= endFlag && !hasEaten)
+		{
+			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+			for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+			{
+				if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+				{
+					Pacman::FieldProp newPos = queue[nowFlag];
+					newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
+					newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
+					if (dirInfo[newPos.row][newPos.col] == -1 && newPos != startPos) 
+					{
+						dirInfo[newPos.row][newPos.col] = dir;
+						queue[++endFlag] = newPos;
+						if (gameField.fieldContent[newPos.row][newPos.col] & target)
+						{
+							hasEaten = true;
+							break;
+						}
+					}
+				}
+			}
+			++nowFlag;
+		}
+		if (!hasEaten) return Pacman::Direction::stay;
+
+		//cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
+
+		//回溯
+		Pacman::Direction dir;
+		Pacman::FieldProp curPos = queue[endFlag];
+		while (curPos != startPos) {
+			dir = dirInfo[curPos.row][curPos.col];
+			curPos.row = (curPos.row - Pacman::dy[dir] + gameField.height) % gameField.height;
+			curPos.col = (curPos.col - Pacman::dx[dir] + gameField.width) % gameField.width;
+		}
+		for (int i = 0; i < gameField.height; i++)
+			delete[]dirInfo[i];
+		delete[]dirInfo;
+
+		return dir;
+	
+	}
+
+
+	// weaZen:简单的危险判断
+	bool dangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir) {
+		Pacman::Player & me = gameField.players[myID];
+		for (int _ = 0; _ < 4; ++_) {
+			Pacman::Player & rival = gameField.players[_];
+			if (rival.strength > me.strength)
+			{
+				int xdis = 0, ydis = 0, dis;
+				if (myDir != Pacman::Direction::stay) {
+					xdis = (rival.row - me.row - Pacman::dy[myDir] + gameField.height) % gameField.height;
+					ydis = (rival.col - me.col - Pacman::dx[myDir] + gameField.width) % gameField.width;
+				}
+				else
+				{
+					xdis = (rival.row - me.row  + gameField.height) % gameField.height;
+					ydis = (rival.col - me.col  + gameField.width) % gameField.width;
+				}
+				xdis = 2 * xdis < gameField.height ? xdis : gameField.height - xdis;
+				ydis = 2 * ydis < gameField.width  ? ydis : gameField.width   - xdis;
+				dis = xdis + ydis;
+#ifdef DEBUG
+				cout << myDir << '@' << xdis << ' ' << ydis << endl;
+#endif // DEBUG
+				if (dis <= 1) return true;
+			}
+		}
+		return false;
+	}
+
+	// weaZen:随便找个不被吃的方向(如果可以)
+	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
+	{
+		Pacman::Direction dir;
+		int vCount = 0;
+		Pacman::Direction valid[5];
+		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
+			if (gameField.ActionValid(myID, d) && !dangerJudge(gameField, myID, d))
+				valid[vCount++] = d;
+#ifdef DEBUG
+		cout << '*' << vCount << endl;
+#endif // DEBUG
+		if (vCount == 0) return Pacman::Direction::stay;
+		dir = valid[RandBetween(0, vCount)];
+		return dir;
+	}
+
 	char RandomPlay(Pacman::GameField &gameField, int myID)
 	{
 		randomPlayCount++;
@@ -1045,6 +1164,7 @@ namespace Helpers
 
 namespace AI
 {
+	
     inline int deltaATK(Pacman::GameField &gamefield, int id1, int id2)
     {
         return gamefield.players[id1].strength - gamefield.players[id2].strength;
@@ -1067,6 +1187,14 @@ namespace AI
 
         return Pacman::Direction(maxD - 1);
     }
+	//weaZen：先吃到豆再说，尽量避免被人吃掉
+	Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
+	{
+		Pacman::Direction dir;
+		dir = Helpers::Greedy(gameField, myID, Pacman::GridContentType::smallFruit|Pacman::GridContentType::largeFruit);
+		if (dir != Pacman::Direction::stay && !Helpers::dangerJudge(gameField, myID, dir)) return dir;
+		return Helpers::SimpleRandom(gameField, myID);
+	}
 
     int eval(Pacman::GameField &gamefield, int myID)
     {
@@ -1098,7 +1226,7 @@ int main()
 #endif
 
 	// 中央决定一定要叫嚣
-	mainGameField.WriteOutput(AI::RandomAI(mainGameField, myID), Helpers::MoHa(), data, globalData,
+	mainGameField.WriteOutput(AI::NaiveAI(mainGameField, myID), Helpers::MoHa(), data, globalData,
 		to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
 
     //cout << Helpers::Distance(mainGameField, 1, 1);
