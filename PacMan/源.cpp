@@ -170,6 +170,7 @@ namespace Pacman
     struct FieldProp
     {
         int row, col;
+        FieldProp(int i = 0, int j = 0): row(i), col(j) {}
         inline bool operator==(const FieldProp &a)
         {
             return (row == a.row && col == a.col);
@@ -568,6 +569,16 @@ namespace Pacman
             return true;
         }
 
+        // 获取row, col位置的水果估值
+        char GetFruitValue(int row, int col)const
+        {
+            char v = 0;
+            if (fieldContent[row][col] & smallFruit)
+                v += 1;
+            if (fieldContent[row][col] & largeFruit)
+                v += 6;
+            return v;
+        }
         // 读取并解析程序输入，本地调试或提交平台使用都可以。
         // 如果在本地调试，程序会先试着读取参数中指定的文件作为输入文件，失败后再选择等待用户直接输入。
         // 本地调试时可以接受多行以便操作，Windows下可以用 Ctrl-Z 或一个【空行+回车】表示输入结束，但是在线评测只需接受单行即可。
@@ -924,7 +935,7 @@ namespace Helpers
         return rand() % (b - a) + a;
     }
 
-    inline int DeltaATK(Pacman::GameField &gamefield, int id1, int id2)
+    inline int DeltaATK(const Pacman::GameField &gamefield, int id1, int id2)
     {
         return gamefield.players[id1].strength - gamefield.players[id2].strength;
     }
@@ -933,7 +944,6 @@ namespace Helpers
     {
         return jiangXuan[RandBetween(0, jiangXuan.size())];
     }
-
 
 
     // Jet:可以试试哪个效率比较高
@@ -1211,6 +1221,7 @@ namespace Helpers
 
 namespace AI
 {
+    using namespace EnumExt;
     Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
     {
         int actionScore[5]{};
@@ -1250,27 +1261,58 @@ namespace AI
         //return MCTS_AI(gameField, myID, true);
     }
 
-    Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
-    {
-
-    }
-
-    int Eval(Pacman::GameField &gamefield, int myID)
+    // Jet :这是一个考虑豆子分布情况进行估计的估值函数
+    int GreedyEval(const Pacman::GameField &gameField, int myID)
     {
         int e = 0;
-        for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+        for (int i = 0; i < gameField.generatorCount; i++)
+            e -= Helpers::Distance(gameField, gameField.generators[i], gameField.players[myID]);
+        for (int i = 0; i < MAX_PLAYER_COUNT; i++)
         {
             if (i == myID)
                 continue;
-            e += Helpers::Distance(gamefield, myID, i) * Helpers::DeltaATK(gamefield, myID, i);
+            e += Helpers::Distance(gameField, myID, i) * ((Helpers::DeltaATK(gameField, myID, i) - 1) / 2);
         }
+
+        char tmp;
+        for (int i = 0; i < gameField.height; i++)
+            for (int j = 0; j < gameField.width; j++)
+                if ((tmp = gameField.GetFruitValue(i, j)) != 0)
+                    e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
         return e;
+    }
+
+    // Jet :这是一个考虑豆子分布情况进行估计的AI
+    Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
+    {
+        int *evals = new int[5];
+        for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
+        {
+            for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+                gameField.actions[i] = Pacman::stay;
+            gameField.actions[myID] = dir;
+            gameField.NextTurn();
+            evals[dir + 1] = GreedyEval(gameField, myID);
+            gameField.RollBack(1);
+        }
+
+        int maxD = - (1 << 10), d;
+        for (d = 0; d < 5; d++)
+            if (evals[d] > evals[maxD])
+                maxD = d;
+
+        return Pacman::Direction(maxD - 1);
+    }
+
+    Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
+    {
+        throw new std::exception("Not Implemented");
     }
 }
 
 int main()
 {
-    auto AI = AI::NaiveAI;
+    auto AI = AI::GreedyEvalAI;
     auto TAUNT = Helpers::MoHa;
 
     Pacman::GameField mainGameField;
