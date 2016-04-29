@@ -1296,7 +1296,7 @@ namespace AI
             gameField.RollBack(1);
         }
 
-        int maxD = - (1 << 10), d;
+        int maxD = - (1 << 30), d;
         for (d = 0; d < 5; d++)
             if (evals[d] > evals[maxD])
                 maxD = d;
@@ -1304,10 +1304,10 @@ namespace AI
         return Pacman::Direction(maxD - 1);
     }
 
-    Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
-    {
-        throw new std::exception("Not Implemented");
-    }
+    //Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
+    //{
+    //    throw new std::exception("Not Implemented");
+    //}
 }
 
 int main()
