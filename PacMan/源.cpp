@@ -1068,7 +1068,7 @@ namespace AI
         return Pacman::Direction(maxD - 1);
     }
 
-    int eval(Pacman::GameField &gamefield, int myID)
+    int Eval(Pacman::GameField &gamefield, int myID)
     {
         int e = 0;
         for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
