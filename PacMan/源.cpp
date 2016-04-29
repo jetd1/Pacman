@@ -992,7 +992,7 @@ namespace Helpers
 	Pacman::Direction Greedy(Pacman::GameField &gameField, int myID, int target)
 	{
 		Pacman::FieldProp startPos = gameField.players[myID];
-		if (gameField.fieldContent[startPos.row][startPos.col] & target) 
+		if (gameField.fieldContent[startPos.row][startPos.col] & target ) 
             return Pacman::Direction::stay;
 
 		//初始化广搜数组
@@ -1191,7 +1191,15 @@ namespace AI
 	Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
 	{
 		Pacman::Direction dir;
-		dir = Helpers::Greedy(gameField, myID, Pacman::GridContentType::smallFruit|Pacman::GridContentType::largeFruit);
+        int target = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
+        for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+        {
+            if (_ == myID)
+                continue;
+            if (deltaATK(gameField, myID, _) > 0)
+                target |= Pacman::playerID2Mask[_];
+        }
+		dir = Helpers::Greedy(gameField, myID, target);
 		if (dir != Pacman::Direction::stay && !Helpers::dangerJudge(gameField, myID, dir)) 
             return dir;
 		return RandomAI(gameField, myID);
