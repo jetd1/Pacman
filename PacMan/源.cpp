@@ -74,6 +74,9 @@ using std::getline;
 using std::to_string;
 using std::runtime_error;
 
+//string presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,1,0,16,16,0,2,0,0],[16,0,16,0,32,32,0,16,0,16],[0,16,0,0,0,0,0,0,16,0],[0,16,0,0,0,0,0,0,16,0],[16,0,16,0,32,32,0,16,0,16],[0,0,4,0,16,16,0,8,0,0]],"height":6,"id":0,"seed":1461944154,"static":[[8,7,10,31,9,3,31,10,13,2],[4,5,4,3,8,2,9,4,5,4],[9,5,5,4,0,0,4,5,5,3],[12,5,5,1,0,0,1,5,5,6],[1,5,1,6,8,2,12,1,5,1],[8,7,10,31,12,6,31,10,13,2]],"width":10},{"0":{"action":2,"tauntText":"Never heard of"},"1":{"action":2,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"Never heard of"},"1":{"action":3,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":2,"tauntText":"Never heard of"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"Never heard of"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"Never heard of"},"1":{"action":3,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"I Drive Red Ferrari"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"Judge By Yourself!"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":0,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"Level of Knowledge"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":3,"tauntText":"No Future For U"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"No Future For U"},"1":{"action":0,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"No Future For U"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"Judge By Yourself!"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":-1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":2,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":3,"tauntText":"I'll sing BJ opera"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":2,"tauntText":"U Young People"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"U Young People"},"1":{"action":1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"U Young People"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"You too have ZEREN!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"No Any This Meaning"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":3,"tauntText":"Two Ju Cantonese"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"U ask other GAO MING"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":3,"tauntText":"I ZHAOJI FOR U!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"Congratulations! +5s"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"Army No Bussiness!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"Two Ju Cantonese"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"YoYo! YoYo!"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"No Feng Is Rain"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"HO BU HO AH?"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"HO BU HO AH?"},"1":{"action":1,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":2,"tauntText":"HO BU HO AH?"},"1":{"action":1,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"HO BU HO AH?"},"1":{"action":-1,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":3,"tauntText":""}}],"responses":[{"action":2,"tauntText":"Never heard of"},{"action":1,"tauntText":"Never heard of"},{"action":2,"tauntText":"Never heard of"},{"action":1,"tauntText":"Never heard of"},{"action":0,"tauntText":"Never heard of"},{"action":0,"tauntText":"I Drive Red Ferrari"},{"action":2,"tauntText":"Judge By Yourself!"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"Judge By Yourself!"},{"action":0,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Level of Knowledge"},{"action":3,"tauntText":"No Future For U"},{"action":1,"tauntText":"No Future For U"},{"action":3,"tauntText":"No Future For U"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"Judge By Yourself!"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":2,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"I'll sing BJ opera"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"U Young People"},{"action":2,"tauntText":"U Young People"},{"action":0,"tauntText":"U Young People"},{"action":3,"tauntText":"You too have ZEREN!"},{"action":0,"tauntText":"No Any This Meaning"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":0,"tauntText":"U ask other GAO MING"},{"action":3,"tauntText":"I ZHAOJI FOR U!"},{"action":0,"tauntText":"Congratulations! +5s"},{"action":0,"tauntText":"Army No Bussiness!"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"YoYo! YoYo!"},{"action":2,"tauntText":"No Feng Is Rain"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"HO BU HO AH?"},{"action":0,"tauntText":"HO BU HO AH?"},{"action":2,"tauntText":"HO BU HO AH?"},{"action":2,"tauntText":"HO BU HO AH?"}]})*";
+string presetString;
+
 //把枚举扩展收起来
 namespace EnumExt
 {
@@ -589,24 +592,29 @@ namespace Pacman
         int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
         {
             string str, chunk;
-#ifdef _BOTZONE_ONLINE
-            std::ios::sync_with_stdio(false); //ω\\)
-            getline(cin, str);
-#else
-            if (localFileName)
+            if (!presetString.empty())
+                str = presetString;
+            else
             {
-                std::ifstream fin(localFileName);
-                if (fin)
-                    while (getline(fin, chunk) && chunk != "")
-                        str += chunk;
+#ifdef _BOTZONE_ONLINE
+                std::ios::sync_with_stdio(false); //ω\\)
+                getline(cin, str);
+#else
+                if (localFileName)
+                {
+                    std::ifstream fin(localFileName);
+                    if (fin)
+                        while (getline(fin, chunk) && chunk != "")
+                            str += chunk;
+                    else
+                        while (getline(cin, chunk) && chunk != "")
+                            str += chunk;
+                }
                 else
                     while (getline(cin, chunk) && chunk != "")
                         str += chunk;
-            }
-            else
-                while (getline(cin, chunk) && chunk != "")
-                    str += chunk;
 #endif
+            }
             Json::Reader reader;
             Json::Value input;
             reader.parse(str, input);
@@ -806,6 +814,7 @@ namespace Helpers
     int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
     int randomPlayCount = 0;
     clock_t startTime = clock();
+    string debugData;
     std::vector<string> jiangXuan = {
         /*	u8"赶紧续一秒 +1s",
         u8"人吶就都不知道",
@@ -923,6 +932,7 @@ namespace Helpers
         "No Future For U"
     };
 
+    
     inline double TimeThrough()
     {
         return double(clock() - Helpers::startTime) / CLOCKS_PER_SEC;
@@ -1107,15 +1117,21 @@ namespace Helpers
         });
     }
 
-    // weaZen:简单的危险判断
-    bool DangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir)
+    // Jet: 算直线距离
+    double DirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
-        Pacman::Player & me = gameField.players[myID];
+        return sqrt((startPos.row - endPos.row) * (startPos.row - endPos.row) + (startPos.col - endPos.col) * (startPos.col - endPos.col));
+    }
+
+    // weaZen:简单的危险判断
+    bool DangerJudge(const Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
+    {
+        const Pacman::Player & me = gameField.players[myID];
         for (int _ = 0; _ < 4; ++_)
         {
             if (DeltaATK(gameField, myID, _) < 0)
             {
-                Pacman::Player & rival = gameField.players[_];
+                const Pacman::Player & rival = gameField.players[_];
                 int xdis = 0, ydis = 0, dis;
                 if (myDir != Pacman::Direction::stay)
                 {
@@ -1262,45 +1278,72 @@ namespace AI
     }
 
     // Jet :这是一个考虑豆子分布情况进行估计的估值函数
-    int GreedyEval(const Pacman::GameField &gameField, int myID)
+    float GreedyEval(const Pacman::GameField &gameField, int myID)
     {
-        int e = 0;
-        for (int i = 0; i < gameField.generatorCount; i++)
-            e -= Helpers::Distance(gameField, gameField.generators[i], gameField.players[myID]);
+        if (gameField.players[myID].dead)
+            return -1000000.0f;
+        float e = 0.0f;
+        //for (int i = 0; i < gameField.generatorCount; i++)
+        //    e -= 1.4 * Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
         for (int i = 0; i < MAX_PLAYER_COUNT; i++)
         {
             if (i == myID)
                 continue;
-            e += Helpers::Distance(gameField, myID, i) * ((Helpers::DeltaATK(gameField, myID, i) - 1) / 2);
+
+            int dD = Helpers::Distance(gameField, myID, i);
+            if (dD >= 5)
+                continue;
+
+            int dA = Helpers::DeltaATK(gameField, myID, i);
+            if (dA >= 3)
+                e += float(dA) / dD;
+            else if (dA >= 1)
+                e += 1.0f / dD;
+            else if (dA <= -1)
+                e -= 1.0f * dA * dA / dD;
         }
 
-        char tmp;
+        float tmp;
         for (int i = 0; i < gameField.height; i++)
             for (int j = 0; j < gameField.width; j++)
                 if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
+                    e -= tmp / Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
+
+        e -= 2.0f * Helpers::DangerJudge(gameField, myID);
+
         return e;
     }
 
     // Jet :这是一个考虑豆子分布情况进行估计的AI
     Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
     {
-        int *evals = new int[5];
+        float *evals = new float[5];
         for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
         {
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-                gameField.actions[i] = Pacman::stay;
+            {
+                if (i == myID)
+                    continue;
+                gameField.actions[i] = NaiveAI(gameField, i);
+            }
             gameField.actions[myID] = dir;
             gameField.NextTurn();
             evals[dir + 1] = GreedyEval(gameField, myID);
             gameField.RollBack(1);
         }
 
-        int maxD = - (1 << 30), d;
-        for (d = 0; d < 5; d++)
-            if (evals[d] > evals[maxD])
+        int maxD = 0;
+        for (int d = 0; d < 5; d++)
+        {
+            Helpers::debugData += ' ' + to_string(evals[d]) + ' ';
+            if (evals[d] >= evals[maxD])
                 maxD = d;
+        }
 
+        std::sort(evals, evals + 5);
+        if (evals[0] == evals[4])
+            return Helpers::GetToNearbyGenerator(gameField, myID);
+        delete[] evals;
         return Pacman::Direction(maxD - 1);
     }
 
@@ -1329,9 +1372,11 @@ int main()
     Helpers::startTime = clock();
 #endif
 
+    Helpers::debugData += to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT);
+
     // 中央决定一定要叫嚣
-    mainGameField.WriteOutput(AI(mainGameField, myID), TAUNT(), data, globalData,
-                              to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT));
+    Pacman::Direction choice = AI(mainGameField, myID);
+    mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Helpers::debugData);
 
     //cout << Helpers::Distance(mainGameField, 1, 1);
 
