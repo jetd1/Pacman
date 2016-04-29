@@ -245,10 +245,10 @@ namespace Pacman
         int generatorTurnLeft; // 多少回合后产生豆子
         int aliveCount; // 有多少玩家存活
         int smallFruitCount;
-        int turnID;
         FieldProp generators[MAX_GENERATOR_COUNT]; // 有哪些豆子产生器
         Player players[MAX_PLAYER_COUNT]; // 有哪些玩家
 
+        int turnID;
                                           // 玩家选定的动作
         Direction actions[MAX_PLAYER_COUNT];
 
@@ -993,12 +993,13 @@ namespace Helpers
         return ret;
     }
 
-    //weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
-    Pacman::Direction Greedy(Pacman::GameField &gameField, int myID, int target)
+    // Jet: 改写了个模版
+    template <typename __Pred>
+    Pacman::Direction GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
     {
         Pacman::FieldProp startPos = gameField.players[myID];
-        if (gameField.fieldContent[startPos.row][startPos.col] & target)
-            return Pacman::Direction::stay;
+        if (pr(gameField, startPos))
+            return AI::MCTS_AI(gameField, myID);
 
         //初始化广搜数组
         Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
@@ -1029,7 +1030,7 @@ namespace Helpers
                     {
                         dirInfo[newPos.row][newPos.col] = dir;
                         queue[++endFlag] = newPos;
-                        if (gameField.fieldContent[newPos.row][newPos.col] & target)
+                        if (pr(gameField, newPos))
                         {
                             hasEaten = true;
                             break;
@@ -1039,7 +1040,8 @@ namespace Helpers
             }
             ++nowFlag;
         }
-        if (!hasEaten) return Pacman::Direction::stay;
+        if (!hasEaten)
+            return GetToNearbyGenerator(gameField, myID);
 
         //cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
 
@@ -1057,7 +1059,32 @@ namespace Helpers
         delete[]dirInfo;
 
         return dir;
+    }
 
+    //weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
+    Pacman::Direction GetToTarget(Pacman::GameField &gameField, int myID, int target)
+    {
+        return GetTo(gameField, myID, 
+                     [target] (const Pacman::GameField& gameField, const Pacman::FieldProp& pos) 
+        { return gameField.fieldContent[pos.row][pos.col] & target; });
+    }
+
+    Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
+    {
+        return GetTo(gameField, myID,
+                     [](const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
+        {
+            for (int i = 0; i < gameField.generatorCount; i++)
+                for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
+                {
+                    // 取余，穿过场地边界
+                    int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
+                        c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
+                    if (pos.row == r && pos.col == c)
+                        return true;
+                }
+            return false;
+        });
     }
 
     // weaZen:简单的危险判断
@@ -1174,7 +1201,7 @@ namespace Helpers
 
 namespace AI
 {
-    Pacman::Direction RandomAI(Pacman::GameField &gameField, int myID)
+    Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID)
     {
         int actionScore[5]{};
         char tmp;
@@ -1191,6 +1218,7 @@ namespace AI
 
         return Pacman::Direction(maxD - 1);
     }
+
     //weaZen：先吃到豆再说，尽量避免被人吃掉
     Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
     {
@@ -1203,10 +1231,10 @@ namespace AI
             if (Helpers::DeltaATK(gameField, myID, _) > 0)
                 target |= Pacman::playerID2Mask[_];
         }
-        dir = Helpers::Greedy(gameField, myID, target);
+        dir = Helpers::GetToTarget(gameField, myID, target);
         if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
             return dir;
-        return RandomAI(gameField, myID);
+        return MCTS_AI(gameField, myID);
     }
 
     int Eval(Pacman::GameField &gamefield, int myID)
