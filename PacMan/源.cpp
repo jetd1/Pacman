@@ -1250,6 +1250,11 @@ namespace AI
         //return MCTS_AI(gameField, myID, true);
     }
 
+    Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
+    {
+
+    }
+
     int Eval(Pacman::GameField &gamefield, int myID)
     {
         int e = 0;
