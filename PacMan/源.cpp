@@ -1372,8 +1372,10 @@ namespace AI
                 gameField.actions[i] = NaiveAI(gameField, i);
             }
             gameField.actions[myID] = dir;
+			cout << gameField.turnID << endl;
+			if (gameField.turnID == MAX_TURN - 1) return NaiveAI(gameField, myID);
             gameField.NextTurn();
-            evals[dir + 1] = AI::SimpleSearch(gameField, myID, 1);
+            evals[dir + 1] = AI::SimpleSearch(gameField, myID, true);
             gameField.RollBack(1);
         }
 
