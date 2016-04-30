@@ -187,6 +187,13 @@ namespace Pacman
         }
     };
 
+	struct PathInfoType: FieldProp
+	{
+		int degree;
+		bool isImpasse;
+		PathInfoType(int y = 0, int x = 0, int d = 0, bool i = false): FieldProp(y, x), degree(d), isImpasse(i){}
+	};
+
     // 场地上的玩家
     struct Player: FieldProp
     {
@@ -243,6 +250,9 @@ namespace Pacman
         int height, width;
         int generatorCount;
         int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
+
+		//道路信息
+		PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
         // 场地格子固定的内容
         GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
@@ -589,6 +599,57 @@ namespace Pacman
                 v += 6;
             return v;
         }
+
+		//weaZen: 地图分析
+		void MapAnalyze()
+		{
+			FieldProp deadSpot[20];
+			int dCount = 0;
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					int degreeCount = 0;
+					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+						if (!(fieldStatic[y][x] & Pacman::direction2OpposingWall[dir]))
+							++degreeCount;
+					pathInfo[y][x].degree = degreeCount;
+					if (degreeCount == 1)
+					{
+						//pathInfo[y][x].isImpasse = true;
+						deadSpot[dCount].row = y;
+						deadSpot[dCount++].col = x;
+					}
+				}
+			}
+			for (int i = 0; i < dCount; ++i)
+			{
+				FieldProp startPos = deadSpot[i];
+				FieldProp queue[QUEUE_MAX];
+				queue[0] = startPos;
+				int nowFlag = 0, endFlag = 0;
+				while (nowFlag <= endFlag)
+				{
+					const Pacman::GridStaticType &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+					{
+						if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+						{
+							Pacman::FieldProp newPos = queue[nowFlag];
+							newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
+							newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
+							if (pathInfo[newPos.row][newPos.col].degree <= 2 && !pathInfo[newPos.row][newPos.col].isImpasse)
+							{
+								pathInfo[newPos.row][newPos.col].isImpasse = true;
+								queue[++endFlag] = newPos;			
+							}
+						}
+					}
+					++nowFlag;
+				}
+			}
+		}
+
         // 读取并解析程序输入，本地调试或提交平台使用都可以。
         // 如果在本地调试，程序会先试着读取参数中指定的文件作为输入文件，失败后再选择等待用户直接输入。
         // 本地调试时可以接受多行以便操作，Windows下可以用 Ctrl-Z 或一个【空行+回车】表示输入结束，但是在线评测只需接受单行即可。
@@ -639,6 +700,8 @@ namespace Pacman
             generatorTurnLeft = GENERATOR_INTERVAL = field["GENERATOR_INTERVAL"].asInt();
 
             PrepareInitialField(staticField, contentField);
+
+			MapAnalyze();
 
             // 根据历史恢复局面
             for (int i = 1; i < len; i++)
@@ -1116,6 +1179,7 @@ namespace Helpers
     }
 
 	//weaZen: 把判断是不是在生成器旁边的函数单独拿出来 搜索有用
+	// Jet: 没豆子吃的时候去生成器旁边等着
 	bool isBesideGenerator(const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
 	{
 		for (int i = 0; i < gameField.generatorCount; i++)
@@ -1129,7 +1193,6 @@ namespace Helpers
 		return false;
 	}
 
-    // Jet: 没豆子吃的时候去生成器旁边等着
     Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
     {
         return GetTo(gameField, myID,isBesideGenerator);
@@ -1283,7 +1346,7 @@ namespace AI
         {
             if (gameField.players[_].dead || _ == myID)
                 continue;
-            if (Helpers::DeltaATK(gameField, myID, _) > 0 && Helpers::Distance(gameField, myID, _) <= 2)
+            if (Helpers::DeltaATK(gameField, myID, _) > 0 && gameField.pathInfo[gameField.players[_].row][gameField.players[_].col].isImpasse)
                 target |= Pacman::playerID2Mask[_];
         }
         dir = Helpers::GetToTarget(gameField, myID, target);
@@ -1423,7 +1486,10 @@ namespace AI
             if (gameField.turnID == MAX_TURN - 1)
                 return NaiveAI(gameField, myID);
             gameField.NextTurn();
-            evals[dir + 1] = AI::SimpleSearch(gameField, myID, true);
+            evals[dir + 1] = AI::SimpleSearch(gameField, myID, 1);
+			//不知道为什么特别容易不动 只好先这样了
+			if (dir == Pacman::Direction::stay && !Helpers::isBesideGenerator(gameField, gameField.players[myID]))
+				evals[dir + 1] /= 2;
             max = std::max(max, evals[dir + 1]);
             gameField.RollBack(1);
         }
