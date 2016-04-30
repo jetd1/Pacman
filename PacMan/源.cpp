@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define MAX_DEPTH 8
+#define MAX_DEPTH 10
 
 //#define DEBUG
 
@@ -1115,22 +1115,24 @@ namespace Helpers
         { return gameField.fieldContent[pos.row][pos.col] & target; });
     }
 
+	//weaZen: 把判断是不是在生成器旁边的函数单独拿出来 搜索有用
+	bool isBesideGenerator(const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
+	{
+		for (int i = 0; i < gameField.generatorCount; i++)
+			for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
+			{
+				int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
+					c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
+				if (pos.row == r && pos.col == c)
+					return true;
+			}
+		return false;
+	}
+
     // Jet: 没豆子吃的时候去生成器旁边等着
     Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
     {
-        return GetTo(gameField, myID,
-                     [](const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
-        {
-            for (int i = 0; i < gameField.generatorCount; i++)
-                for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
-                {
-                    int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
-                        c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
-                    if (pos.row == r && pos.col == c)
-                        return true;
-                }
-            return false;
-        });
+        return GetTo(gameField, myID,isBesideGenerator);
     }
 
     // Jet: 算直线距离
@@ -1162,9 +1164,6 @@ namespace Helpers
                 xdis = 2 * xdis < gameField.height ? xdis : gameField.height - xdis;
                 ydis = 2 * ydis < gameField.width ? ydis : gameField.width - ydis;
                 dis = xdis + ydis;
-#ifdef DEBUG
-                cout << myDir << '@' << xdis << ' ' << ydis << endl;
-#endif // DEBUG
                 if (dis <= 1)
                     return true;
             }
@@ -1343,15 +1342,15 @@ namespace AI
                 if ((tmp = gameField.GetFruitValue(i, j)) != 0)
                     e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 1000;
 
-        e -= 2.0f * Helpers::DangerJudge(gameField, myID);
+        //e -= 2.0f * Helpers::DangerJudge(gameField, myID);
         e += gameField.players[myID].strength;
         return e;
     }
 
-    // weaZen:简单的搜索，调用返回最高估值 若上一步造成力量变化则不给出lastDir 否则禁止返回
+    // weaZen:简单的搜索，调用返回最高估值 若上一步造成力量变化则不给出lastDir
     float SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction lastDir = Pacman::Direction::stay)
     {
-        float max = -10000000.0f;
+        float max = -1000000.0f;
         float tmp;
 		int strength = gameField.players[myID].strength;
         //cout << depth << ' ';
@@ -1361,13 +1360,22 @@ namespace AI
         {
             if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir)) 
                 continue;
+			//基于以下两点猜测减少搜索量
+			//1.没有力量增加却往反方向跑是无意义的
+			//2.不在生成器周围却不动是无意义的
 			if (lastDir != Pacman::Direction::stay && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0)
 				continue;
+			if (dir == Pacman::Direction::stay && !Helpers::isBesideGenerator(gameField, gameField.players[myID]))
+				continue;
+
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
             {
                 if (i == myID)
                     continue;
+				if (gameField.players[i].dead)
+					continue;
                 gameField.actions[i] = NaiveAI(gameField, i);
+				//cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
             }
             gameField.actions[myID] = dir;
 			gameField.NextTurn();
@@ -1396,7 +1404,7 @@ namespace AI
         {
             if (!gameField.ActionValid(myID, dir))
             {
-                evals[dir + 1] = -1999999.0f;
+                evals[dir + 1] = -9999999.0f;
                 continue;
             }
             if (Helpers::DangerJudge(gameField, myID, dir))
@@ -1409,6 +1417,7 @@ namespace AI
                 if (i == myID || gameField.players[i].dead)
                     continue;
                 gameField.actions[i] = NaiveAI(gameField, i);
+				//cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 			}
             gameField.actions[myID] = dir;
             if (gameField.turnID == MAX_TURN - 1)
@@ -1461,10 +1470,11 @@ int main()
     Helpers::startTime = clock();
 #endif
 
-    Helpers::debugData += to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT);
-
+    
     // 中央决定一定要叫嚣
     Pacman::Direction choice = AI(mainGameField, myID);
+
+	Helpers::debugData += "Time used " + to_string(Helpers::TimeThrough());
     mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Helpers::debugData);
 
     //cout << Helpers::Distance(mainGameField, 1, 1);
