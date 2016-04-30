@@ -61,6 +61,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
+#define MAX_DEPTH 8
 
 //#define DEBUG
 
@@ -120,6 +121,7 @@ namespace Pacman
 
     const time_t seed = time(0);
     const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
+	const string dirStr[] = { "stay" ,"up","right","down","left","ur","dr","dl","ul" };
 
     // 枚举定义；使用枚举虽然会浪费空间（sizeof(GridContentType) == 4），但是计算机处理32位的数字效率更高
 
@@ -1174,6 +1176,8 @@ namespace Helpers
         return dir;
     }
 
+	
+
     char RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
     {
         randomPlayCount++;
@@ -1238,6 +1242,9 @@ namespace Helpers
 namespace AI
 {
     using namespace EnumExt;
+
+	
+
     Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
     {
         int actionScore[5]{};
@@ -1265,15 +1272,17 @@ namespace AI
         {
             if (_ == myID)
                 continue;
-            if (Helpers::DeltaATK(gameField, myID, _) > 0)
+            if (Helpers::DeltaATK(gameField, myID, _) > 0 && Helpers::Distance(gameField, myID, _) <= 2)
                 target |= Pacman::playerID2Mask[_];
         }
         dir = Helpers::GetToTarget(gameField, myID, target);
-        if (dir <= Pacman::Direction::left && dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
+		if (dir == Pacman::Direction::ul)
+			dir = Helpers::GetToNearbyGenerator(gameField, myID);
+		if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
             return dir;
-        if (dir == Pacman::Direction::ul)
-            return Helpers::GetToNearbyGenerator(gameField, myID);
-        return MCTS_AI(gameField, myID);
+		//为了能够搜索减少耗时直接随机
+		return Helpers::SimpleRandom(gameField, myID);
+        //return MCTS_AI(gameField, myID);
         //return MCTS_AI(gameField, myID, true);
     }
 
@@ -1314,12 +1323,48 @@ namespace AI
         return e;
     }
 
+	// weaZen:简单的搜索，调用返回最高估值
+	float SimpleSearch(Pacman::GameField &gameField, int myID, int depth, bool hasNext = true)
+	{
+		float max = -1000000.0f;
+		float tmp;
+		//cout << depth << ' ';
+		if (depth == MAX_DEPTH || gameField.players[myID].dead || !hasNext) return GreedyEval(gameField, myID);
+		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
+		{
+			if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir)) continue;
+			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+			{
+				if (i == myID)
+					continue;
+				gameField.actions[i] = NaiveAI(gameField, i);
+			}
+			gameField.actions[myID] = dir;
+			hasNext = gameField.NextTurn();
+			tmp = SimpleSearch(gameField, myID, depth + 1, hasNext);
+			max = tmp > max ? tmp : max;
+			gameField.RollBack(1);
+		}
+
+		return max;
+	}
+
     // Jet :这是一个考虑豆子分布情况进行估计的AI
     Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
     {
         float *evals = new float[5];
         for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
         {
+			if (!gameField.ActionValid(myID, dir))
+			{
+				evals[dir + 1] = -1999999.0f;
+				continue;
+			}
+			if (Helpers::DangerJudge(gameField, myID, dir))
+			{
+				evals[dir + 1] = -1000000.0f;
+				continue;
+			}
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
             {
                 if (i == myID)
@@ -1328,24 +1373,26 @@ namespace AI
             }
             gameField.actions[myID] = dir;
             gameField.NextTurn();
-            evals[dir + 1] = GreedyEval(gameField, myID);
+            evals[dir + 1] = AI::SimpleSearch(gameField, myID, 1);
             gameField.RollBack(1);
         }
 
         int maxD = 0;
         for (int d = 0; d < 5; d++)
         {
-            Helpers::debugData += ' ' + to_string(evals[d]) + ' ';
+            Helpers::debugData += '*' + Pacman::dirStr[d] + ' ' + to_string(evals[d]) + ' ';
             if (evals[d] >= evals[maxD])
                 maxD = d;
         }
 
         std::sort(evals, evals + 5);
         if (evals[0] == evals[4])
-            return Helpers::GetToNearbyGenerator(gameField, myID);
+            return NaiveAI(gameField, myID);
         delete[] evals;
         return Pacman::Direction(maxD - 1);
     }
+
+
 
     //Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
     //{
