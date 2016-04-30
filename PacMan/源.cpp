@@ -1,25 +1,25 @@
-/*
+ï»¿/*
 * Edited By Jet, Moriarty, weaZen
 * 2016/4/29 13:43
 * Naive AI Guzuta
 */
 
 /*
-* Pacman ÑùÀı³ÌĞò
-* ×÷Õß£ºzhouhy
-* Ê±¼ä£º2016/3/22 15:32:51
-* ×îºó¸üĞÂ£º2016/4/22 16:18
-* ¡¾¸üĞÂÄÚÈİ¡¿
-* ĞŞ¸´ÁËÎÄ¼ş²»´æÔÚÊ±²»ÄÜÍ¨¹ı¿ØÖÆÌ¨ÊäÈëµÄBug¡­¡­
-* ĞŞ¸ÄµÄ²¿Î»£º°üº¬ÁËfstream¿â¡¢ReadInputµÄº¯ÊıÌåÖĞÇ°¼¸ĞĞ·¢ÉúÁË±ä»¯£¬²»Ê¹ÓÃfreopenÁË¡£
+* Pacman æ ·ä¾‹ç¨‹åº
+* ä½œè€…ï¼šzhouhy
+* æ—¶é—´ï¼š2016/3/22 15:32:51
+* æœ€åæ›´æ–°ï¼š2016/4/22 16:18
+* ã€æ›´æ–°å†…å®¹ã€‘
+* ä¿®å¤äº†æ–‡ä»¶ä¸å­˜åœ¨æ—¶ä¸èƒ½é€šè¿‡æ§åˆ¶å°è¾“å…¥çš„Bugâ€¦â€¦
+* ä¿®æ”¹çš„éƒ¨ä½ï¼šåŒ…å«äº†fstreamåº“ã€ReadInputçš„å‡½æ•°ä½“ä¸­å‰å‡ è¡Œå‘ç”Ÿäº†å˜åŒ–ï¼Œä¸ä½¿ç”¨freopenäº†ã€‚
 *
-* ¡¾ÃüÃû¹ßÀı¡¿
-*  r/R/y/Y£ºRow£¬ĞĞ£¬×İ×ø±ê
-*  c/C/x/X£ºColumn£¬ÁĞ£¬ºá×ø±ê
-*  Êı×éµÄÏÂ±ê¶¼ÊÇ[y][x]»ò[r][c]µÄË³Ğò
-*  Íæ¼Ò±àºÅ0123
+* ã€å‘½åæƒ¯ä¾‹ã€‘
+*  r/R/y/Yï¼šRowï¼Œè¡Œï¼Œçºµåæ ‡
+*  c/C/x/Xï¼šColumnï¼Œåˆ—ï¼Œæ¨ªåæ ‡
+*  æ•°ç»„çš„ä¸‹æ ‡éƒ½æ˜¯[y][x]æˆ–[r][c]çš„é¡ºåº
+*  ç©å®¶ç¼–å·0123
 *
-* ¡¾×ø±êÏµ¡¿
+* ã€åæ ‡ç³»ã€‘
 *   0 1 2 3 4 5 6 7 8
 * 0 +----------------> x
 * 1 |
@@ -32,12 +32,12 @@
 * 8 |
 *   v y
 *
-* ¡¾ÌáÊ¾¡¿Äã¿ÉÒÔÊ¹ÓÃ
+* ã€æç¤ºã€‘ä½ å¯ä»¥ä½¿ç”¨
 * #ifndef _BOTZONE_ONLINE
-* ÕâÑùµÄÔ¤±àÒëÖ¸ÁîÀ´Çø·ÖÔÚÏßÆÀ²âºÍ±¾µØÆÀ²â
+* è¿™æ ·çš„é¢„ç¼–è¯‘æŒ‡ä»¤æ¥åŒºåˆ†åœ¨çº¿è¯„æµ‹å’Œæœ¬åœ°è¯„æµ‹
 *
-* ¡¾ÌáÊ¾¡¿Ò»°ãµÄÎÄ±¾±à¼­Æ÷¶¼»áÖ§³Ö½«´úÂë¿éÕÛµşÆğÀ´
-* Èç¹ûÄã¾õµÃ×Ô´ø´úÂëÌ«¹ıÈß³¤£¬¿ÉÒÔ¿¼ÂÇ½«Õû¸önamespaceÕÛµş
+* ã€æç¤ºã€‘ä¸€èˆ¬çš„æ–‡æœ¬ç¼–è¾‘å™¨éƒ½ä¼šæ”¯æŒå°†ä»£ç å—æŠ˜å èµ·æ¥
+* å¦‚æœä½ è§‰å¾—è‡ªå¸¦ä»£ç å¤ªè¿‡å†—é•¿ï¼Œå¯ä»¥è€ƒè™‘å°†æ•´ä¸ªnamespaceæŠ˜å 
 */
 
 #include <fstream>
@@ -55,7 +55,7 @@
 
 #define FIELD_MAX_HEIGHT 20
 #define FIELD_MAX_WIDTH 20
-#define MAX_GENERATOR_COUNT 4 // Ã¿¸öÏóÏŞ1
+#define MAX_GENERATOR_COUNT 4 // æ¯ä¸ªè±¡é™1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
 #define TIME_LIMIT 0.99
@@ -64,7 +64,7 @@
 
 //#define DEBUG
 
-// ÄãÒ²¿ÉÒÔÑ¡ÓÃ using namespace std; µ«ÊÇ»áÎÛÈ¾ÃüÃû¿Õ¼ä
+// ä½ ä¹Ÿå¯ä»¥é€‰ç”¨ using namespace std; ä½†æ˜¯ä¼šæ±¡æŸ“å‘½åç©ºé—´
 using std::cin;
 using std::cout;
 using std::endl;
@@ -74,13 +74,12 @@ using std::getline;
 using std::to_string;
 using std::runtime_error;
 
-//string presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,1,0,16,16,0,2,0,0],[16,0,16,0,32,32,0,16,0,16],[0,16,0,0,0,0,0,0,16,0],[0,16,0,0,0,0,0,0,16,0],[16,0,16,0,32,32,0,16,0,16],[0,0,4,0,16,16,0,8,0,0]],"height":6,"id":0,"seed":1461944154,"static":[[8,7,10,31,9,3,31,10,13,2],[4,5,4,3,8,2,9,4,5,4],[9,5,5,4,0,0,4,5,5,3],[12,5,5,1,0,0,1,5,5,6],[1,5,1,6,8,2,12,1,5,1],[8,7,10,31,12,6,31,10,13,2]],"width":10},{"0":{"action":2,"tauntText":"Never heard of"},"1":{"action":2,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"Never heard of"},"1":{"action":3,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":2,"tauntText":"Never heard of"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"Never heard of"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"Never heard of"},"1":{"action":3,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"I Drive Red Ferrari"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"Judge By Yourself!"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":0,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"Level of Knowledge"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":3,"tauntText":"No Future For U"},"1":{"action":-1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"No Future For U"},"1":{"action":0,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"No Future For U"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"Judge By Yourself!"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"Judge By Yourself!"},"1":{"action":-1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":2,"tauntText":"Judge By Yourself!"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":3,"tauntText":"I'll sing BJ opera"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":1,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":2,"tauntText":"U Young People"},"1":{"action":2,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"U Young People"},"1":{"action":1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"U Young People"},"1":{"action":3,"tauntText":""},"2":{"action":1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":3,"tauntText":"You too have ZEREN!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"No Any This Meaning"},"1":{"action":3,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":3,"tauntText":"Two Ju Cantonese"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"U ask other GAO MING"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":3,"tauntText":"I ZHAOJI FOR U!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"Congratulations! +5s"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"Army No Bussiness!"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"Level of Knowledge"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"Two Ju Cantonese"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":1,"tauntText":""}},{"0":{"action":1,"tauntText":"YoYo! YoYo!"},"1":{"action":1,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"No Feng Is Rain"},"1":{"action":0,"tauntText":""},"2":{"action":-1,"tauntText":""},"3":{"action":-1,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":1,"tauntText":""},"2":{"action":3,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":1,"tauntText":"HO BU HO AH?"},"1":{"action":0,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":0,"tauntText":""}},{"0":{"action":0,"tauntText":"HO BU HO AH?"},"1":{"action":1,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":3,"tauntText":""}},{"0":{"action":2,"tauntText":"HO BU HO AH?"},"1":{"action":1,"tauntText":""},"2":{"action":0,"tauntText":""},"3":{"action":2,"tauntText":""}},{"0":{"action":2,"tauntText":"HO BU HO AH?"},"1":{"action":-1,"tauntText":""},"2":{"action":2,"tauntText":""},"3":{"action":3,"tauntText":""}}],"responses":[{"action":2,"tauntText":"Never heard of"},{"action":1,"tauntText":"Never heard of"},{"action":2,"tauntText":"Never heard of"},{"action":1,"tauntText":"Never heard of"},{"action":0,"tauntText":"Never heard of"},{"action":0,"tauntText":"I Drive Red Ferrari"},{"action":2,"tauntText":"Judge By Yourself!"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"Judge By Yourself!"},{"action":0,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Level of Knowledge"},{"action":3,"tauntText":"No Future For U"},{"action":1,"tauntText":"No Future For U"},{"action":3,"tauntText":"No Future For U"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"Judge By Yourself!"},{"action":1,"tauntText":"Judge By Yourself!"},{"action":2,"tauntText":"Judge By Yourself!"},{"action":3,"tauntText":"I'll sing BJ opera"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"Level of Knowledge"},{"action":2,"tauntText":"U Young People"},{"action":2,"tauntText":"U Young People"},{"action":0,"tauntText":"U Young People"},{"action":3,"tauntText":"You too have ZEREN!"},{"action":0,"tauntText":"No Any This Meaning"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":0,"tauntText":"U ask other GAO MING"},{"action":3,"tauntText":"I ZHAOJI FOR U!"},{"action":0,"tauntText":"Congratulations! +5s"},{"action":0,"tauntText":"Army No Bussiness!"},{"action":0,"tauntText":"Level of Knowledge"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"YoYo! YoYo!"},{"action":2,"tauntText":"No Feng Is Rain"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":0,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"HO BU HO AH?"},{"action":0,"tauntText":"HO BU HO AH?"},{"action":2,"tauntText":"HO BU HO AH?"},{"action":2,"tauntText":"HO BU HO AH?"}]})*";
-string presetString;
+string presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,1,16,0,16,2,0],[0,0,32,0,32,0,0],[0,0,0,0,0,0,0],[0,0,16,16,16,0,0],[0,0,0,0,0,0,0],[0,0,32,0,32,0,0],[0,4,16,0,16,8,0]],"height":7,"id":3,"seed":1461989745,"static":[[0,5,6,31,12,5,0],[0,5,5,5,5,5,0],[4,3,9,1,3,9,4],[13,0,2,10,8,0,7],[1,6,12,4,6,12,1],[0,5,5,5,5,5,0],[0,5,3,31,9,5,0]],"width":7},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":3}},{"0":{"action":0},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":-1}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":1},"3":{"action":2}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":0},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":0},"2":{"action":3},"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":-1},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":-1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":-1},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}}],"responses":[{"action":1,"tauntText":"You ï¼ŒNaiveï¼I SHEN ME YE no say."},{"action":0,"tauntText":"You Need Xue One Ge"},{"action":3,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"U have One Ge good!"},{"action":3,"tauntText":"U have One Ge good!"},{"action":1,"tauntText":"ZHONGYANG decided!"},{"action":-1,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":3,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"If U Have to ask me"},{"action":2,"tauntText":"No Any This Meaning"},{"action":2,"tauntText":"WU KE FENG GAOï¼"},{"action":1,"tauntText":"WU KE FENG GAOï¼"},{"action":0,"tauntText":"I'm a Shanghai mayor"},{"action":0,"tauntText":"3 minor things"},{"action":1,"tauntText":"3 minor things"},{"action":1,"tauntText":"U have One Ge good!"},{"action":1,"tauntText":"If U Have to ask me"},{"action":-1,"tauntText":"If U Have to ask me"},{"action":1,"tauntText":"If U Have to ask me"},{"action":3,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":1,"tauntText":"WU KE FENG GAOï¼"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"No Any This Meaning"},{"action":3,"tauntText":"No Any This Meaning"},{"action":1,"tauntText":"YoYo! YoYo!"},{"action":-1,"tauntText":"Congratulations! +2s"},{"action":1,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"Army No Bussiness!"},{"action":-1,"tauntText":"I Will Biao Tai"},{"action":-1,"tauntText":"I Will Biao Tai"},{"action":-1,"tauntText":"If U Have to ask me"},{"action":-1,"tauntText":"I'm a Shanghai mayor"},{"action":-1,"tauntText":"Hum, Western Theory"},{"action":-1,"tauntText":"ZHONGYANG decided!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"NeiDing, QingDian"},{"action":-1,"tauntText":"YoYo! YoYo!"},{"action":1,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"I'll sing BJ opera"},{"action":2,"tauntText":"I'll sing BJ opera"},{"action":2,"tauntText":"I'll sing BJ opera"},{"action":3,"tauntText":"I'll sing BJ opera"},{"action":-1,"tauntText":"You too have ZEREN!"},{"action":-1,"tauntText":"Two Ju Cantonese"},{"action":-1,"tauntText":"U have One Ge good!"},{"action":-1,"tauntText":"wanna make BIG NEWS?"},{"action":-1,"tauntText":"Hum, Western Theory"},{"action":-1,"tauntText":"WU KE FENG GAOï¼"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"NeiDing, QingDian"},{"action":-1,"tauntText":"Congratulations! +2s"},{"action":-1,"tauntText":"WU KE FENG GAOï¼"},{"action":-1,"tauntText":"U have One Ge good!"}]})*";
 
-//°ÑÃ¶¾ÙÀ©Õ¹ÊÕÆğÀ´
+//æŠŠæšä¸¾æ‰©å±•æ”¶èµ·æ¥
 namespace EnumExt
 {
-    // ÈÃÃ¶¾ÙÒ²¿ÉÒÔÓÃÕâĞ©ÔËËãÁË£¨²»¼Ó»á±àÒë´íÎó£©
+    // è®©æšä¸¾ä¹Ÿå¯ä»¥ç”¨è¿™äº›è¿ç®—äº†ï¼ˆä¸åŠ ä¼šç¼–è¯‘é”™è¯¯ï¼‰
     template<typename T>
     inline T operator |=(T &a, const T &b)
     {
@@ -113,7 +112,7 @@ namespace EnumExt
     }
 }
 
-// Æ½Ì¨Ìá¹©µÄ³Ô¶¹ÈËÏà¹ØÂß¼­´¦Àí³ÌĞò
+// å¹³å°æä¾›çš„åƒè±†äººç›¸å…³é€»è¾‘å¤„ç†ç¨‹åº
 namespace Pacman
 {
     using namespace EnumExt;
@@ -121,40 +120,40 @@ namespace Pacman
     const time_t seed = time(0);
     const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
 
-    // Ã¶¾Ù¶¨Òå£»Ê¹ÓÃÃ¶¾ÙËäÈ»»áÀË·Ñ¿Õ¼ä£¨sizeof(GridContentType) == 4£©£¬µ«ÊÇ¼ÆËã»ú´¦Àí32Î»µÄÊı×ÖĞ§ÂÊ¸ü¸ß
+    // æšä¸¾å®šä¹‰ï¼›ä½¿ç”¨æšä¸¾è™½ç„¶ä¼šæµªè´¹ç©ºé—´ï¼ˆsizeof(GridContentType) == 4ï¼‰ï¼Œä½†æ˜¯è®¡ç®—æœºå¤„ç†32ä½çš„æ•°å­—æ•ˆç‡æ›´é«˜
 
-    // Ã¿¸ö¸ñ×Ó¿ÉÄÜ±ä»¯µÄÄÚÈİ£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
+    // æ¯ä¸ªæ ¼å­å¯èƒ½å˜åŒ–çš„å†…å®¹ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
     enum GridContentType
     {
-        empty = 0, // ÆäÊµ²»»áÓÃµ½
-        player1 = 1, // 1ºÅÍæ¼Ò
-        player2 = 2, // 2ºÅÍæ¼Ò
-        player3 = 4, // 3ºÅÍæ¼Ò
-        player4 = 8, // 4ºÅÍæ¼Ò
-        playerMask = 1 | 2 | 4 | 8, // ÓÃÓÚ¼ì²éÓĞÃ»ÓĞÍæ¼ÒµÈ
-        smallFruit = 16, // Ğ¡¶¹×Ó
-        largeFruit = 32 // ´ó¶¹×Ó
+        empty = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
+        player1 = 1, // 1å·ç©å®¶
+        player2 = 2, // 2å·ç©å®¶
+        player3 = 4, // 3å·ç©å®¶
+        player4 = 8, // 4å·ç©å®¶
+        playerMask = 1 | 2 | 4 | 8, // ç”¨äºæ£€æŸ¥æœ‰æ²¡æœ‰ç©å®¶ç­‰
+        smallFruit = 16, // å°è±†å­
+        largeFruit = 32 // å¤§è±†å­
     };
 
-    // ÓÃÍæ¼ÒID»»È¡¸ñ×ÓÉÏÍæ¼ÒµÄ¶ş½øÖÆÎ»
+    // ç”¨ç©å®¶IDæ¢å–æ ¼å­ä¸Šç©å®¶çš„äºŒè¿›åˆ¶ä½
     GridContentType playerID2Mask[] = {player1, player2, player3, player4};
     string playerID2str[] = {"0", "1", "2", "3"};
 
-    // Ã¿¸ö¸ñ×Ó¹Ì¶¨µÄ¶«Î÷£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
+    // æ¯ä¸ªæ ¼å­å›ºå®šçš„ä¸œè¥¿ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
     enum GridStaticType
     {
-        emptyWall = 0, // ÆäÊµ²»»áÓÃµ½
-        wallNorth = 1, // ±±Ç½£¨×İ×ø±ê¼õÉÙµÄ·½Ïò£©
-        wallEast = 2, // ¶«Ç½£¨ºá×ø±êÔö¼ÓµÄ·½Ïò£©
-        wallSouth = 4, // ÄÏÇ½£¨×İ×ø±êÔö¼ÓµÄ·½Ïò£©
-        wallWest = 8, // Î÷Ç½£¨ºá×ø±ê¼õÉÙµÄ·½Ïò£©
-        generator = 16 // ¶¹×Ó²úÉúÆ÷
+        emptyWall = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
+        wallNorth = 1, // åŒ—å¢™ï¼ˆçºµåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
+        wallEast = 2, // ä¸œå¢™ï¼ˆæ¨ªåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
+        wallSouth = 4, // å—å¢™ï¼ˆçºµåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
+        wallWest = 8, // è¥¿å¢™ï¼ˆæ¨ªåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
+        generator = 16 // è±†å­äº§ç”Ÿå™¨
     };
 
-    // ÓÃÒÆ¶¯·½Ïò»»È¡Õâ¸ö·½ÏòÉÏ×èµ²×ÅµÄÇ½µÄ¶ş½øÖÆÎ»
+    // ç”¨ç§»åŠ¨æ–¹å‘æ¢å–è¿™ä¸ªæ–¹å‘ä¸Šé˜»æŒ¡ç€çš„å¢™çš„äºŒè¿›åˆ¶ä½
     GridStaticType direction2OpposingWall[] = {wallNorth, wallEast, wallSouth, wallWest};
 
-    // ·½Ïò£¬¿ÉÒÔ´úÈëdx¡¢dyÊı×é£¬Í¬Ê±Ò²¿ÉÒÔ×÷ÎªÍæ¼ÒµÄ¶¯×÷
+    // æ–¹å‘ï¼Œå¯ä»¥ä»£å…¥dxã€dyæ•°ç»„ï¼ŒåŒæ—¶ä¹Ÿå¯ä»¥ä½œä¸ºç©å®¶çš„åŠ¨ä½œ
     enum Direction
     {
         stay = -1,
@@ -162,14 +161,14 @@ namespace Pacman
         right = 1,
         down = 2,
         left = 3,
-        // ÏÂÃæµÄÕâ¼¸¸öÖ»ÊÇÎªÁË²úÉúÆ÷³ÌĞò·½±ã£¬²»»áÊµ¼ÊÓÃµ½
-        ur = 4, // ÓÒÉÏ
-        dr = 5, // ÓÒÏÂ
-        dl = 6, // ×óÏÂ
-        ul = 7 // ×óÉÏ
+        // ä¸‹é¢çš„è¿™å‡ ä¸ªåªæ˜¯ä¸ºäº†äº§ç”Ÿå™¨ç¨‹åºæ–¹ä¾¿ï¼Œä¸ä¼šå®é™…ç”¨åˆ°
+        ur = 4, // å³ä¸Š
+        dr = 5, // å³ä¸‹
+        dl = 6, // å·¦ä¸‹
+        ul = 7 // å·¦ä¸Š
     };
 
-    // ³¡µØÉÏ´øÓĞ×ø±êµÄÎï¼ş
+    // åœºåœ°ä¸Šå¸¦æœ‰åæ ‡çš„ç‰©ä»¶
     struct FieldProp
     {
         int row, col;
@@ -184,7 +183,7 @@ namespace Pacman
         }
     };
 
-    // ³¡µØÉÏµÄÍæ¼Ò
+    // åœºåœ°ä¸Šçš„ç©å®¶
     struct Player: FieldProp
     {
         int strength;
@@ -192,7 +191,7 @@ namespace Pacman
         bool dead;
     };
 
-    // »ØºÏĞÂ²úÉúµÄ¶¹×ÓµÄ×ø±ê
+    // å›åˆæ–°äº§ç”Ÿçš„è±†å­çš„åæ ‡
     struct NewFruits
     {
         FieldProp newFruits[MAX_GENERATOR_COUNT * 8];
@@ -200,10 +199,10 @@ namespace Pacman
     } newFruits[MAX_TURN];
     int newFruitsCount = 0;
 
-    // ×´Ì¬×ªÒÆ¼ÇÂ¼½á¹¹
+    // çŠ¶æ€è½¬ç§»è®°å½•ç»“æ„
     struct TurnStateTransfer
     {
-        enum StatusChange // ¿É×éºÏ
+        enum StatusChange // å¯ç»„åˆ
         {
             none = 0,
             ateSmall = 1,
@@ -213,51 +212,51 @@ namespace Pacman
             error = 16
         };
 
-        // Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
+        // ç©å®¶é€‰å®šçš„åŠ¨ä½œ
         Direction actions[MAX_PLAYER_COUNT];
 
-        // ´Ë»ØºÏ¸ÃÍæ¼ÒµÄ×´Ì¬±ä»¯
+        // æ­¤å›åˆè¯¥ç©å®¶çš„çŠ¶æ€å˜åŒ–
         StatusChange change[MAX_PLAYER_COUNT];
 
-        // ´Ë»ØºÏ¸ÃÍæ¼ÒµÄÁ¦Á¿±ä»¯
+        // æ­¤å›åˆè¯¥ç©å®¶çš„åŠ›é‡å˜åŒ–
         int strengthDelta[MAX_PLAYER_COUNT];
     };
 
-    // ÓÎÏ·Ö÷ÒªÂß¼­´¦ÀíÀà£¬°üÀ¨ÊäÈëÊä³ö¡¢»ØºÏÑİËã¡¢×´Ì¬×ªÒÆ£¬È«¾ÖÎ¨Ò»
+    // æ¸¸æˆä¸»è¦é€»è¾‘å¤„ç†ç±»ï¼ŒåŒ…æ‹¬è¾“å…¥è¾“å‡ºã€å›åˆæ¼”ç®—ã€çŠ¶æ€è½¬ç§»ï¼Œå…¨å±€å”¯ä¸€
     class GameField
     {
     private:
-        // ÎªÁË·½±ã£¬´ó¶àÊıÊôĞÔ¶¼²»ÊÇprivateµÄ
+        // ä¸ºäº†æ–¹ä¾¿ï¼Œå¤§å¤šæ•°å±æ€§éƒ½ä¸æ˜¯privateçš„
 
-        // ¼ÇÂ¼Ã¿»ØºÏµÄ±ä»¯£¨Õ»£©
+        // è®°å½•æ¯å›åˆçš„å˜åŒ–ï¼ˆæ ˆï¼‰
         TurnStateTransfer backtrack[MAX_TURN];
 
-        // Õâ¸ö¶ÔÏóÊÇ·ñÒÑ¾­´´½¨
+        // è¿™ä¸ªå¯¹è±¡æ˜¯å¦å·²ç»åˆ›å»º
         static bool constructed;
 
     public:
-        // ³¡µØµÄ³¤ºÍ¿í
+        // åœºåœ°çš„é•¿å’Œå®½
         int height, width;
         int generatorCount;
         int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
 
-        // ³¡µØ¸ñ×Ó¹Ì¶¨µÄÄÚÈİ
+        // åœºåœ°æ ¼å­å›ºå®šçš„å†…å®¹
         GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
-        // ³¡µØ¸ñ×Ó»á±ä»¯µÄÄÚÈİ
+        // åœºåœ°æ ¼å­ä¼šå˜åŒ–çš„å†…å®¹
         GridContentType fieldContent[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
-        int generatorTurnLeft; // ¶àÉÙ»ØºÏºó²úÉú¶¹×Ó
-        int aliveCount; // ÓĞ¶àÉÙÍæ¼Ò´æ»î
+        int generatorTurnLeft; // å¤šå°‘å›åˆåäº§ç”Ÿè±†å­
+        int aliveCount; // æœ‰å¤šå°‘ç©å®¶å­˜æ´»
         int smallFruitCount;
-        FieldProp generators[MAX_GENERATOR_COUNT]; // ÓĞÄÄĞ©¶¹×Ó²úÉúÆ÷
-        Player players[MAX_PLAYER_COUNT]; // ÓĞÄÄĞ©Íæ¼Ò
+        FieldProp generators[MAX_GENERATOR_COUNT]; // æœ‰å“ªäº›è±†å­äº§ç”Ÿå™¨
+        Player players[MAX_PLAYER_COUNT]; // æœ‰å“ªäº›ç©å®¶
 
         int turnID;
-                                          // Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
+                                          // ç©å®¶é€‰å®šçš„åŠ¨ä½œ
         Direction actions[MAX_PLAYER_COUNT];
 
-        // »Ö¸´µ½ÉÏ´Î³¡µØ×´Ì¬¡£¿ÉÒÔÒ»Â·»Ö¸´µ½×î¿ªÊ¼¡£
-        // »Ö¸´Ê§°Ü£¨Ã»ÓĞ×´Ì¬¿É»Ö¸´£©·µ»Øfalse
+        // æ¢å¤åˆ°ä¸Šæ¬¡åœºåœ°çŠ¶æ€ã€‚å¯ä»¥ä¸€è·¯æ¢å¤åˆ°æœ€å¼€å§‹ã€‚
+        // æ¢å¤å¤±è´¥ï¼ˆæ²¡æœ‰çŠ¶æ€å¯æ¢å¤ï¼‰è¿”å›false
         bool PopState()
         {
             if (turnID <= 0)
@@ -266,7 +265,7 @@ namespace Pacman
             const TurnStateTransfer &bt = backtrack[--turnID];
             int i, _;
 
-            // µ¹×ÅÀ´»Ö¸´×´Ì¬
+            // å€’ç€æ¥æ¢å¤çŠ¶æ€
 
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
@@ -276,11 +275,11 @@ namespace Pacman
 
                 if (!_p.dead)
                 {
-                    // 5. ´ó¶¹»ØºÏ»Ö¸´
+                    // 5. å¤§è±†å›åˆæ¢å¤
                     if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
                         _p.powerUpLeft++;
 
-                    // 4. ÍÂ³ö¶¹×Ó
+                    // 4. åå‡ºè±†å­
                     if (change & TurnStateTransfer::ateSmall)
                     {
                         content |= smallFruit;
@@ -293,7 +292,7 @@ namespace Pacman
                     }
                 }
 
-                // 2. »êÙâ¹éÀ´
+                // 2. é­‚å…®å½’æ¥
                 if (change & TurnStateTransfer::die)
                 {
                     _p.dead = false;
@@ -301,7 +300,7 @@ namespace Pacman
                     content |= playerID2Mask[_];
                 }
 
-                // 1. ÒÆĞÎ»»Ó°
+                // 1. ç§»å½¢æ¢å½±
                 if (!_p.dead && bt.actions[_] != stay)
                 {
                     fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
@@ -310,7 +309,7 @@ namespace Pacman
                     fieldContent[_p.row][_p.col] |= playerID2Mask[_];
                 }
 
-                // 0. ¾ÈÊê²»ºÏ·¨µÄÁé»ê
+                // 0. æ•‘èµä¸åˆæ³•çš„çµé­‚
                 if (change & TurnStateTransfer::error)
                 {
                     _p.dead = false;
@@ -318,12 +317,12 @@ namespace Pacman
                     content |= playerID2Mask[_];
                 }
 
-                // *. »Ö¸´Á¦Á¿
+                // *. æ¢å¤åŠ›é‡
                 if (!_p.dead)
                     _p.strength -= bt.strengthDelta[_];
             }
 
-            // 3. ÊÕ»Ø¶¹×Ó
+            // 3. æ”¶å›è±†å­
             if (generatorTurnLeft == GENERATOR_INTERVAL)
             {
                 generatorTurnLeft = 1;
@@ -340,7 +339,7 @@ namespace Pacman
             return true;
         }
 
-        // Jet:°ÑPopState°ü×°ÁËÒ»ÏÂ ·½±ãÒ»Ğ©
+        // Jet:æŠŠPopStateåŒ…è£…äº†ä¸€ä¸‹ æ–¹ä¾¿ä¸€äº›
         void RollBack(int turnCount = -1)
         {
             if (turnCount < 0)
@@ -354,7 +353,7 @@ namespace Pacman
                     break;
         }
 
-        // ÅĞ¶ÏÖ¸¶¨Íæ¼ÒÏòÖ¸¶¨·½ÏòÒÆ¶¯ÊÇ²»ÊÇºÏ·¨µÄ£¨Ã»ÓĞ×²Ç½ÇÒÃ»ÓĞ²Èµ½¶¹×Ó²úÉúÆ÷£©
+        // åˆ¤æ–­æŒ‡å®šç©å®¶å‘æŒ‡å®šæ–¹å‘ç§»åŠ¨æ˜¯ä¸æ˜¯åˆæ³•çš„ï¼ˆæ²¡æœ‰æ’å¢™ä¸”æ²¡æœ‰è¸©åˆ°è±†å­äº§ç”Ÿå™¨ï¼‰
         inline bool ActionValid(int playerID, Direction &dir) const
         {
             if (dir == stay)
@@ -364,8 +363,8 @@ namespace Pacman
             return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
         }
 
-        // ÔÚÏòactionsĞ´ÈëÍæ¼Ò¶¯×÷ºó£¬ÑİËãÏÂÒ»»ØºÏ¾ÖÃæ£¬²¢¼ÇÂ¼Ö®Ç°ËùÓĞµÄ³¡µØ×´Ì¬£¬¿É¹©ÈÕºó»Ö¸´¡£
-        // ÊÇÖÕ¾ÖµÄ»°¾Í·µ»Øfalse
+        // åœ¨å‘actionså†™å…¥ç©å®¶åŠ¨ä½œåï¼Œæ¼”ç®—ä¸‹ä¸€å›åˆå±€é¢ï¼Œå¹¶è®°å½•ä¹‹å‰æ‰€æœ‰çš„åœºåœ°çŠ¶æ€ï¼Œå¯ä¾›æ—¥åæ¢å¤ã€‚
+        // æ˜¯ç»ˆå±€çš„è¯å°±è¿”å›false
         bool NextTurn()
         {
             int _, i, j;
@@ -373,7 +372,7 @@ namespace Pacman
             TurnStateTransfer &bt = backtrack[turnID];
             memset(&bt, 0, sizeof(bt));
 
-            // 0. É±ËÀ²»ºÏ·¨ÊäÈë
+            // 0. æ€æ­»ä¸åˆæ³•è¾“å…¥
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 Player &p = players[_];
@@ -394,7 +393,7 @@ namespace Pacman
                     }
                     else
                     {
-                        // Óöµ½±È×Ô¼ºÇ¿¡á×³µÄÍæ¼ÒÊÇ²»ÄÜÇ°½øµÄ
+                        // é‡åˆ°æ¯”è‡ªå·±å¼ºâ™‚å£®çš„ç©å®¶æ˜¯ä¸èƒ½å‰è¿›çš„
                         GridContentType target = fieldContent
                             [(p.row + dy[action] + height) % height]
                         [(p.col + dx[action] + width) % width];
@@ -406,7 +405,7 @@ namespace Pacman
                 }
             }
 
-            // 1. Î»ÖÃ±ä»¯
+            // 1. ä½ç½®å˜åŒ–
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 Player &_p = players[_];
@@ -418,21 +417,21 @@ namespace Pacman
                 if (actions[_] == stay)
                     continue;
 
-                // ÒÆ¶¯
+                // ç§»åŠ¨
                 fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
                 _p.row = (_p.row + dy[actions[_]] + height) % height;
                 _p.col = (_p.col + dx[actions[_]] + width) % width;
                 fieldContent[_p.row][_p.col] |= playerID2Mask[_];
             }
 
-            // 2. Íæ¼Ò»¥Å¹
+            // 2. ç©å®¶äº’æ®´
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 Player &_p = players[_];
                 if (_p.dead)
                     continue;
 
-                // ÅĞ¶ÏÊÇ·ñÓĞÍæ¼ÒÔÚÒ»Æğ
+                // åˆ¤æ–­æ˜¯å¦æœ‰ç©å®¶åœ¨ä¸€èµ·
                 int player, containedCount = 0;
                 int containedPlayers[MAX_PLAYER_COUNT];
                 for (player = 0; player < MAX_PLAYER_COUNT; player++)
@@ -452,14 +451,14 @@ namespace Pacman
                         if (players[containedPlayers[begin - 1]].strength > players[containedPlayers[begin]].strength)
                             break;
 
-                    // ÕâĞ©Íæ¼Ò½«»á±»É±ËÀ
+                    // è¿™äº›ç©å®¶å°†ä¼šè¢«æ€æ­»
                     int lootedStrength = 0;
                     for (i = begin; i < containedCount; i++)
                     {
                         int id = containedPlayers[i];
                         Player &p = players[id];
 
-                        // ´Ó¸ñ×ÓÉÏÒÆ×ß
+                        // ä»æ ¼å­ä¸Šç§»èµ°
                         fieldContent[p.row][p.col] &= ~playerID2Mask[id];
                         p.dead = true;
                         int drop = p.strength / 2;
@@ -470,7 +469,7 @@ namespace Pacman
                         aliveCount--;
                     }
 
-                    // ·ÖÅä¸øÆäËûÍæ¼Ò
+                    // åˆ†é…ç»™å…¶ä»–ç©å®¶
                     int inc = lootedStrength / begin;
                     for (i = 0; i < begin; i++)
                     {
@@ -482,7 +481,7 @@ namespace Pacman
                 }
             }
 
-            // 3. ²úÉú¶¹×Ó
+            // 3. äº§ç”Ÿè±†å­
             if (--generatorTurnLeft == 0)
             {
                 generatorTurnLeft = GENERATOR_INTERVAL;
@@ -491,7 +490,7 @@ namespace Pacman
                 for (i = 0; i < generatorCount; i++)
                     for (Direction d = up; d < 8; ++d)
                     {
-                        // È¡Óà£¬´©¹ı³¡µØ±ß½ç
+                        // å–ä½™ï¼Œç©¿è¿‡åœºåœ°è¾¹ç•Œ
                         int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
                         if (fieldStatic[r][c] & generator || fieldContent[r][c] & (smallFruit | largeFruit))
                             continue;
@@ -502,7 +501,7 @@ namespace Pacman
                     }
             }
 
-            // 4. ³Ôµô¶¹×Ó
+            // 4. åƒæ‰è±†å­
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 Player &_p = players[_];
@@ -511,7 +510,7 @@ namespace Pacman
 
                 GridContentType &content = fieldContent[_p.row][_p.col];
 
-                // Ö»ÓĞÔÚ¸ñ×ÓÉÏÖ»ÓĞ×Ô¼ºµÄÊ±ºò²ÅÄÜ³Ôµô¶¹×Ó
+                // åªæœ‰åœ¨æ ¼å­ä¸Šåªæœ‰è‡ªå·±çš„æ—¶å€™æ‰èƒ½åƒæ‰è±†å­
                 if (content & playerMask & ~playerID2Mask[_])
                     continue;
 
@@ -536,7 +535,7 @@ namespace Pacman
                 }
             }
 
-            // 5. ´ó¶¹»ØºÏ¼õÉÙ
+            // 5. å¤§è±†å›åˆå‡å°‘
             for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 Player &_p = players[_];
@@ -553,7 +552,7 @@ namespace Pacman
 
             ++turnID;
 
-            // ÊÇ·ñÖ»Ê£Ò»ÈË£¿
+            // æ˜¯å¦åªå‰©ä¸€äººï¼Ÿ
             if (aliveCount <= 1)
             {
                 for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -565,14 +564,14 @@ namespace Pacman
                 return false;
             }
 
-            // ÊÇ·ñ»ØºÏ³¬ÏŞ£¿
+            // æ˜¯å¦å›åˆè¶…é™ï¼Ÿ
             if (turnID >= 100)
                 return false;
 
             return true;
         }
 
-        // »ñÈ¡row, colÎ»ÖÃµÄË®¹û¹ÀÖµ
+        // è·å–row, colä½ç½®çš„æ°´æœä¼°å€¼
         char GetFruitValue(int row, int col)const
         {
             char v = 0;
@@ -582,13 +581,13 @@ namespace Pacman
                 v += 6;
             return v;
         }
-        // ¶ÁÈ¡²¢½âÎö³ÌĞòÊäÈë£¬±¾µØµ÷ÊÔ»òÌá½»Æ½Ì¨Ê¹ÓÃ¶¼¿ÉÒÔ¡£
-        // Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬³ÌĞò»áÏÈÊÔ×Å¶ÁÈ¡²ÎÊıÖĞÖ¸¶¨µÄÎÄ¼ş×÷ÎªÊäÈëÎÄ¼ş£¬Ê§°ÜºóÔÙÑ¡ÔñµÈ´ıÓÃ»§Ö±½ÓÊäÈë¡£
-        // ±¾µØµ÷ÊÔÊ±¿ÉÒÔ½ÓÊÜ¶àĞĞÒÔ±ã²Ù×÷£¬WindowsÏÂ¿ÉÒÔÓÃ Ctrl-Z »òÒ»¸ö¡¾¿ÕĞĞ+»Ø³µ¡¿±íÊ¾ÊäÈë½áÊø£¬µ«ÊÇÔÚÏßÆÀ²âÖ»Ğè½ÓÊÜµ¥ĞĞ¼´¿É¡£
-        // localFileName ¿ÉÒÔÎªNULL
-        // obtainedData »áÊä³ö×Ô¼ºÉÏ»ØºÏ´æ´¢¹©±¾»ØºÏÊ¹ÓÃµÄÊı¾İ
-        // obtainedGlobalData »áÊä³ö×Ô¼ºµÄ Bot ÉÏÒÔÇ°´æ´¢µÄÊı¾İ
-        // ·µ»ØÖµÊÇ×Ô¼ºµÄ playerID
+        // è¯»å–å¹¶è§£æç¨‹åºè¾“å…¥ï¼Œæœ¬åœ°è°ƒè¯•æˆ–æäº¤å¹³å°ä½¿ç”¨éƒ½å¯ä»¥ã€‚
+        // å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œç¨‹åºä¼šå…ˆè¯•ç€è¯»å–å‚æ•°ä¸­æŒ‡å®šçš„æ–‡ä»¶ä½œä¸ºè¾“å…¥æ–‡ä»¶ï¼Œå¤±è´¥åå†é€‰æ‹©ç­‰å¾…ç”¨æˆ·ç›´æ¥è¾“å…¥ã€‚
+        // æœ¬åœ°è°ƒè¯•æ—¶å¯ä»¥æ¥å—å¤šè¡Œä»¥ä¾¿æ“ä½œï¼ŒWindowsä¸‹å¯ä»¥ç”¨ Ctrl-Z æˆ–ä¸€ä¸ªã€ç©ºè¡Œ+å›è½¦ã€‘è¡¨ç¤ºè¾“å…¥ç»“æŸï¼Œä½†æ˜¯åœ¨çº¿è¯„æµ‹åªéœ€æ¥å—å•è¡Œå³å¯ã€‚
+        // localFileName å¯ä»¥ä¸ºNULL
+        // obtainedData ä¼šè¾“å‡ºè‡ªå·±ä¸Šå›åˆå­˜å‚¨ä¾›æœ¬å›åˆä½¿ç”¨çš„æ•°æ®
+        // obtainedGlobalData ä¼šè¾“å‡ºè‡ªå·±çš„ Bot ä¸Šä»¥å‰å­˜å‚¨çš„æ•°æ®
+        // è¿”å›å€¼æ˜¯è‡ªå·±çš„ playerID
         int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
         {
             string str, chunk;
@@ -597,7 +596,7 @@ namespace Pacman
             else
             {
 #ifdef _BOTZONE_ONLINE
-                std::ios::sync_with_stdio(false); //¦Ø\\)
+                std::ios::sync_with_stdio(false); //Ï‰\\)
                 getline(cin, str);
 #else
                 if (localFileName)
@@ -621,10 +620,10 @@ namespace Pacman
 
             int len = input["requests"].size();
 
-            // ¶ÁÈ¡³¡µØ¾²Ì¬×´¿ö
+            // è¯»å–åœºåœ°é™æ€çŠ¶å†µ
             Json::Value field = input["requests"][(Json::Value::UInt) 0],
-                staticField = field["static"], // Ç½ÃæºÍ²úÉúÆ÷
-                contentField = field["content"]; // ¶¹×ÓºÍÍæ¼Ò
+                staticField = field["static"], // å¢™é¢å’Œäº§ç”Ÿå™¨
+                contentField = field["content"]; // è±†å­å’Œç©å®¶
             height = field["height"].asInt();
             width = field["width"].asInt();
             LARGE_FRUIT_DURATION = field["LARGE_FRUIT_DURATION"].asInt();
@@ -633,7 +632,7 @@ namespace Pacman
 
             PrepareInitialField(staticField, contentField);
 
-            // ¸ù¾İÀúÊ·»Ö¸´¾ÖÃæ
+            // æ ¹æ®å†å²æ¢å¤å±€é¢
             for (int i = 1; i < len; i++)
             {
                 Json::Value req = input["requests"][i];
@@ -649,7 +648,7 @@ namespace Pacman
             return field["id"].asInt();
         }
 
-        // ¸ù¾İ static ºÍ content Êı×é×¼±¸³¡µØµÄ³õÊ¼×´¿ö
+        // æ ¹æ® static å’Œ content æ•°ç»„å‡†å¤‡åœºåœ°çš„åˆå§‹çŠ¶å†µ
         void PrepareInitialField(const Json::Value &staticField, const Json::Value &contentField)
         {
             int r, c, gid = 0;
@@ -684,11 +683,11 @@ namespace Pacman
                 }
         }
 
-        // Íê³É¾ö²ß£¬Êä³ö½á¹û¡£
-        // action ±íÊ¾±¾»ØºÏµÄÒÆ¶¯·½Ïò£¬stay Îª²»ÒÆ¶¯
-        // tauntText ±íÊ¾ÏëÒª½ĞÏùµÄÑÔÓï£¬¿ÉÒÔÊÇÈÎÒâ×Ö·û´®£¬³ıÁËÏÔÊ¾ÔÚÆÁÄ»ÉÏ²»»áÓĞÈÎºÎ×÷ÓÃ£¬Áô¿Õ±íÊ¾²»½ĞÏù
-        // data ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÏÂÒ»»ØºÏÊ¹ÓÃµÄÊı¾İ£¬Áô¿Õ±íÊ¾É¾³ı
-        // globalData ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÒÔºóÊ¹ÓÃµÄÊı¾İ£¨Ìæ»»£©£¬Õâ¸öÊı¾İ¿ÉÒÔ¿ç¶Ô¾ÖÊ¹ÓÃ£¬»áÒ»Ö±°ó¶¨ÔÚÕâ¸ö Bot ÉÏ£¬Áô¿Õ±íÊ¾É¾³ı
+        // å®Œæˆå†³ç­–ï¼Œè¾“å‡ºç»“æœã€‚
+        // action è¡¨ç¤ºæœ¬å›åˆçš„ç§»åŠ¨æ–¹å‘ï¼Œstay ä¸ºä¸ç§»åŠ¨
+        // tauntText è¡¨ç¤ºæƒ³è¦å«åš£çš„è¨€è¯­ï¼Œå¯ä»¥æ˜¯ä»»æ„å­—ç¬¦ä¸²ï¼Œé™¤äº†æ˜¾ç¤ºåœ¨å±å¹•ä¸Šä¸ä¼šæœ‰ä»»ä½•ä½œç”¨ï¼Œç•™ç©ºè¡¨ç¤ºä¸å«åš£
+        // data è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä¸‹ä¸€å›åˆä½¿ç”¨çš„æ•°æ®ï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
+        // globalData è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä»¥åä½¿ç”¨çš„æ•°æ®ï¼ˆæ›¿æ¢ï¼‰ï¼Œè¿™ä¸ªæ•°æ®å¯ä»¥è·¨å¯¹å±€ä½¿ç”¨ï¼Œä¼šä¸€ç›´ç»‘å®šåœ¨è¿™ä¸ª Bot ä¸Šï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
         void WriteOutput(Direction action, string tauntText = "", string data = "",
                          string globalData = "", string debugData = "") const
         {
@@ -702,24 +701,24 @@ namespace Pacman
             ret["debug"] = debugData;
 
 #ifdef _BOTZONE_ONLINE
-            Json::FastWriter writer; // ÔÚÏßÆÀ²âµÄ»°ÄÜÓÃ¾ÍĞĞ¡­¡­
+            Json::FastWriter writer; // åœ¨çº¿è¯„æµ‹çš„è¯èƒ½ç”¨å°±è¡Œâ€¦â€¦
 #else
-            Json::StyledWriter writer; // ±¾µØµ÷ÊÔÕâÑùºÃ¿´ > <
+            Json::StyledWriter writer; // æœ¬åœ°è°ƒè¯•è¿™æ ·å¥½çœ‹ > <
 #endif
             cout << writer.write(ret) << endl;
         }
 
-        // ÓÃÓÚÏÔÊ¾µ±Ç°ÓÎÏ·×´Ì¬£¬µ÷ÊÔÓÃ¡£
-        // Ìá½»µ½Æ½Ì¨ºó»á±»ÓÅ»¯µô¡£
+        // ç”¨äºæ˜¾ç¤ºå½“å‰æ¸¸æˆçŠ¶æ€ï¼Œè°ƒè¯•ç”¨ã€‚
+        // æäº¤åˆ°å¹³å°åä¼šè¢«ä¼˜åŒ–æ‰ã€‚
         inline void DebugPrint() const
         {
 #ifndef _BOTZONE_ONLINE
-            printf("»ØºÏºÅ¡¾%d¡¿´æ»îÈËÊı¡¾%d¡¿| Í¼Àı ²úÉúÆ÷[G] ÓĞÍæ¼Ò[0/1/2/3] ¶à¸öÍæ¼Ò[*] ´ó¶¹[o] Ğ¡¶¹[.]\n", turnID, aliveCount);
+            printf("å›åˆå·ã€%dã€‘å­˜æ´»äººæ•°ã€%dã€‘| å›¾ä¾‹ äº§ç”Ÿå™¨[G] æœ‰ç©å®¶[0/1/2/3] å¤šä¸ªç©å®¶[*] å¤§è±†[o] å°è±†[.]\n", turnID, aliveCount);
             for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
                 const Player &p = players[_];
-                printf("[Íæ¼Ò%d(%d, %d)|Á¦Á¿%d|¼Ó³ÉÊ£Óà»ØºÏ%d|%s]\n",
-                       _, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "ËÀÍö" : "´æ»î");
+                printf("[ç©å®¶%d(%d, %d)|åŠ›é‡%d|åŠ æˆå‰©ä½™å›åˆ%d|%s]\n",
+                       _, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "æ­»äº¡" : "å­˜æ´»");
             }
             putchar(' ');
             putchar(' ');
@@ -790,11 +789,11 @@ namespace Pacman
             return result;
         }
 
-        // ³õÊ¼»¯ÓÎÏ·¹ÜÀíÆ÷
+        // åˆå§‹åŒ–æ¸¸æˆç®¡ç†å™¨
         GameField()
         {
             if (constructed)
-                throw runtime_error("Çë²»ÒªÔÙ´´½¨ GameField ¶ÔÏóÁË£¬Õû¸ö³ÌĞòÖĞÖ»Ó¦¸ÃÓĞÒ»¸ö¶ÔÏó");
+                throw runtime_error("è¯·ä¸è¦å†åˆ›å»º GameField å¯¹è±¡äº†ï¼Œæ•´ä¸ªç¨‹åºä¸­åªåº”è¯¥æœ‰ä¸€ä¸ªå¯¹è±¡");
             constructed = true;
 
             turnID = 0;
@@ -806,7 +805,7 @@ namespace Pacman
     bool GameField::constructed = false;
 }
 
-// Ò»Ğ©¸¨Öú³ÌĞò
+// ä¸€äº›è¾…åŠ©ç¨‹åº
 namespace Helpers
 {
     using namespace EnumExt;
@@ -816,75 +815,75 @@ namespace Helpers
     clock_t startTime = clock();
     string debugData;
     std::vector<string> jiangXuan = {
-        /*	u8"¸Ï½ôĞøÒ»Ãë +1s",
-        u8"ÈË…È¾Í¶¼²»ÖªµÀ",
-        u8"×Ô¼º²»¿ÉÒÔÔ¤ÁÏ",
-        u8"Ò»¸öÈËµÄÃüÔË°¡",
-        u8"µ±È»Òª¿¿×ÔÎÒµÄ·Ü¶·",
-        u8"Ò²Òª¿¼ÂÇÀúÊ·µÄĞĞ³Ì",
-        u8"×÷ÎªÒ»¸öÉÏº£ÊĞÎ¯Êé¼Ç",
-        u8"ÔõÃ´¾Í±»µ÷µ½±±¾©È¥ÁË",
-        u8"ÎÒËµÁíÇë¸ßÃ÷°É",
-        u8"ÎÒÊµÔÚÒ²²»ÊÇÇ«Ğé",
-        u8"ÖĞÑëÑĞ¾¿¶¼¾ö¶¨ÁË",
-        u8"ÄãÀ´µ±×ÜÊé¼Ç",
-        u8"µ±Ê±ÎÒ¾ÍÄîÁËÁ½¾ÓÊ«",
-        u8"¹¶Àû¹ú¼ÒÉúËÀÒÔ",
-        u8"ÆñÒò»ö¸£±ÜÇ÷Ö®",
-        u8"ÎÒÖ÷ÒªµÄ¾ÍÊÇÈı¼şÊÂÇé",
-        u8"¾ü¶ÓÒ»ÂÉ²»µÃ¾­ÉÌ",
-        u8"Õâ¶Ô¾ü¶ÓµÄÃüÔËºÜÖØÒª",
-        u8"¾Í×öÁËÒ»µãÎ¢Ğ¡µÄ¹¤×÷",
-        u8"ºÜ²ÑÀ¢£¬µ«ÊÇExcited",
-        u8"ºğ°¡",
-        u8"¶­ÏÈÉúºğ²»ºğ°¡",
-        u8"°´ÕÕ»ù±¾·¨£¬Ñ¡¾Ù·¨",
-        u8"×î½üÅ·ÃË³öÁËÒ»·İ±¨¸æ",
-        u8"ÄÚ¶¨£¬Ó²µãµÄ¸Ğ¾õ",
-        u8"²»Òª¼ûµÃ·ç¾ÍÊÇÓê",
-        u8"×Ô¼ºÒ²ÒªÑ§»áÅĞ¶Ï",
-        u8"ÎŞÖĞÉúÓĞµÄ¶«Î÷",
-        u8"ÄãÒ²ÓĞÔğÈÎ£¬¶Ô°É",
-        u8"ÎŞ¿É·î¸æ£¡",
-        u8"ÄãÃÇÓÖ²»¸ßĞË"
-        u8"²»ÊÇÎÒÒªÇÕµãËû",
-        u8"ÄãÎÊÎÒÖ§³Ö²»Ö§³Ö",
-        u8"ÎÒÃ÷È·µØ¸æËßÄãÕâÒ»µã",
-        u8"ÄãÃÇĞÂÎÅ½ç»¹ÒªÑ§Ï°",
-        u8"Î÷·½µÄÄÇÒ»Ì×ÀíÂÛ",
-        u8"ÄãÃÇ±Ï¾¹»¹too young",
-        u8"ÎÒÊÇÉí¾­°ÙÕ½À²",
-        u8"ÎÒÊÇ¼ûµÃ¶àÀ²",
-        u8"Î÷·½¹ú¼ÒÎÒ¶¼È¥¹ı",
-        u8"²»ÖªµÀ¸ßµ½ÄÄÀïÈ¥À²",
-        u8"ÎÒ¸úËûÌ¸Ğ¦·çÉú",
-        u8"Ìá¸ß×Ô¼ºµÄÖªÊ¶Ë®Æ½",
-        u8"Ê¶µÃßíÊ¶µÃ°¡£¿",
-        u8"ÎÒÒ²ÌæÄãÃÇ×Å¼±°¡",
-        u8"ÄãÃÇÓĞÒ»¸öºÃ",
-        u8"ÅÜµÃ±ÈÎ÷·½¼ÇÕß»¹¿ì",
-        u8"ÎÊÀ´ÎÊÈ¥µÄÎÊÌâ°¡",
-        u8"¶¼too simple",
+        /*	u8"èµ¶ç´§ç»­ä¸€ç§’ +1s",
+        u8"äººå¶å°±éƒ½ä¸çŸ¥é“",
+        u8"è‡ªå·±ä¸å¯ä»¥é¢„æ–™",
+        u8"ä¸€ä¸ªäººçš„å‘½è¿å•Š",
+        u8"å½“ç„¶è¦é è‡ªæˆ‘çš„å¥‹æ–—",
+        u8"ä¹Ÿè¦è€ƒè™‘å†å²çš„è¡Œç¨‹",
+        u8"ä½œä¸ºä¸€ä¸ªä¸Šæµ·å¸‚å§”ä¹¦è®°",
+        u8"æ€ä¹ˆå°±è¢«è°ƒåˆ°åŒ—äº¬å»äº†",
+        u8"æˆ‘è¯´å¦è¯·é«˜æ˜å§",
+        u8"æˆ‘å®åœ¨ä¹Ÿä¸æ˜¯è°¦è™š",
+        u8"ä¸­å¤®ç ”ç©¶éƒ½å†³å®šäº†",
+        u8"ä½ æ¥å½“æ€»ä¹¦è®°",
+        u8"å½“æ—¶æˆ‘å°±å¿µäº†ä¸¤å±…è¯—",
+        u8"è‹Ÿåˆ©å›½å®¶ç”Ÿæ­»ä»¥",
+        u8"å²‚å› ç¥¸ç¦é¿è¶‹ä¹‹",
+        u8"æˆ‘ä¸»è¦çš„å°±æ˜¯ä¸‰ä»¶äº‹æƒ…",
+        u8"å†›é˜Ÿä¸€å¾‹ä¸å¾—ç»å•†",
+        u8"è¿™å¯¹å†›é˜Ÿçš„å‘½è¿å¾ˆé‡è¦",
+        u8"å°±åšäº†ä¸€ç‚¹å¾®å°çš„å·¥ä½œ",
+        u8"å¾ˆæƒ­æ„§ï¼Œä½†æ˜¯Excited",
+        u8"å¼å•Š",
+        u8"è‘£å…ˆç”Ÿå¼ä¸å¼å•Š",
+        u8"æŒ‰ç…§åŸºæœ¬æ³•ï¼Œé€‰ä¸¾æ³•",
+        u8"æœ€è¿‘æ¬§ç›Ÿå‡ºäº†ä¸€ä»½æŠ¥å‘Š",
+        u8"å†…å®šï¼Œç¡¬ç‚¹çš„æ„Ÿè§‰",
+        u8"ä¸è¦è§å¾—é£å°±æ˜¯é›¨",
+        u8"è‡ªå·±ä¹Ÿè¦å­¦ä¼šåˆ¤æ–­",
+        u8"æ— ä¸­ç”Ÿæœ‰çš„ä¸œè¥¿",
+        u8"ä½ ä¹Ÿæœ‰è´£ä»»ï¼Œå¯¹å§",
+        u8"æ— å¯å¥‰å‘Šï¼",
+        u8"ä½ ä»¬åˆä¸é«˜å…´"
+        u8"ä¸æ˜¯æˆ‘è¦é’¦ç‚¹ä»–",
+        u8"ä½ é—®æˆ‘æ”¯æŒä¸æ”¯æŒ",
+        u8"æˆ‘æ˜ç¡®åœ°å‘Šè¯‰ä½ è¿™ä¸€ç‚¹",
+        u8"ä½ ä»¬æ–°é—»ç•Œè¿˜è¦å­¦ä¹ ",
+        u8"è¥¿æ–¹çš„é‚£ä¸€å¥—ç†è®º",
+        u8"ä½ ä»¬æ¯•ç«Ÿè¿˜too young",
+        u8"æˆ‘æ˜¯èº«ç»ç™¾æˆ˜å•¦",
+        u8"æˆ‘æ˜¯è§å¾—å¤šå•¦",
+        u8"è¥¿æ–¹å›½å®¶æˆ‘éƒ½å»è¿‡",
+        u8"ä¸çŸ¥é“é«˜åˆ°å“ªé‡Œå»å•¦",
+        u8"æˆ‘è·Ÿä»–è°ˆç¬‘é£ç”Ÿ",
+        u8"æé«˜è‡ªå·±çš„çŸ¥è¯†æ°´å¹³",
+        u8"è¯†å¾—å””è¯†å¾—å•Šï¼Ÿ",
+        u8"æˆ‘ä¹Ÿæ›¿ä½ ä»¬ç€æ€¥å•Š",
+        u8"ä½ ä»¬æœ‰ä¸€ä¸ªå¥½",
+        u8"è·‘å¾—æ¯”è¥¿æ–¹è®°è€…è¿˜å¿«",
+        u8"é—®æ¥é—®å»çš„é—®é¢˜å•Š",
+        u8"éƒ½too simple",
         u8"sometimes naive",
-        u8"ÎÒ½ñÌìÊÇ×÷ÎªÒ»¸ö³¤Õß",
-        u8"ÎÒ²»ÊÇĞÂÎÅ¹¤×÷Õß",
-        u8"µ«ÊÇÎÒ¼ûµÃÌ«¶àÁË",
-        u8"¸æËßÄãÃÇÈËÉúµÄ¾­Ñé",
-        u8"ÃÆÉù´ó·¢²Æ",
-        u8"Ê²Ã´¶¼²»ËµÊÇ×¹ºÃµÄ",
-        u8"¿´µ½ÄãÃÇÕâÑùµÄÈÈÇé°¡",
-        u8"Ò»¾ä»°²»ËµÓÖ²»ºÃ",
-        u8"±¨µÀÆ«²îÄãÃÇÒª¸ºÔğ",
-        u8"ÎÒÃ»ÓĞËµÒªÓ²µã",
-        u8"Ã»ÓĞÈÎºÎÕâ¸öÒâË¼",
-        u8"ÒªÒª£¬ÒªÒª",
-        u8"ÎÒÃÇµÄ¾ö¶¨È¨Ò²ºÜÖØÒª",
-        u8"µ½ÄÇÊ±ºòÎÒÃÇ»á±íÌ¬",
-        u8"²»ÒªÏëÏ²»¶Åª¸ö´óĞÂÎÅ",
-        u8"¾Í°ÑÎÒÅúÅĞÒ»·¬",
-        u8"ÄãÃÇ°¡£¬naive",
-        u8"ÎÒ½ñÌìËãÊÇµÃ×ïÁËÄãÃÇ",
-        u8"I'm angry!", ÔİÊ±²»¿ÉÓÃ*/
+        u8"æˆ‘ä»Šå¤©æ˜¯ä½œä¸ºä¸€ä¸ªé•¿è€…",
+        u8"æˆ‘ä¸æ˜¯æ–°é—»å·¥ä½œè€…",
+        u8"ä½†æ˜¯æˆ‘è§å¾—å¤ªå¤šäº†",
+        u8"å‘Šè¯‰ä½ ä»¬äººç”Ÿçš„ç»éªŒ",
+        u8"é—·å£°å¤§å‘è´¢",
+        u8"ä»€ä¹ˆéƒ½ä¸è¯´æ˜¯å å¥½çš„",
+        u8"çœ‹åˆ°ä½ ä»¬è¿™æ ·çš„çƒ­æƒ…å•Š",
+        u8"ä¸€å¥è¯ä¸è¯´åˆä¸å¥½",
+        u8"æŠ¥é“åå·®ä½ ä»¬è¦è´Ÿè´£",
+        u8"æˆ‘æ²¡æœ‰è¯´è¦ç¡¬ç‚¹",
+        u8"æ²¡æœ‰ä»»ä½•è¿™ä¸ªæ„æ€",
+        u8"è¦è¦ï¼Œè¦è¦",
+        u8"æˆ‘ä»¬çš„å†³å®šæƒä¹Ÿå¾ˆé‡è¦",
+        u8"åˆ°é‚£æ—¶å€™æˆ‘ä»¬ä¼šè¡¨æ€",
+        u8"ä¸è¦æƒ³å–œæ¬¢å¼„ä¸ªå¤§æ–°é—»",
+        u8"å°±æŠŠæˆ‘æ‰¹åˆ¤ä¸€ç•ª",
+        u8"ä½ ä»¬å•Šï¼Œnaive",
+        u8"æˆ‘ä»Šå¤©ç®—æ˜¯å¾—ç½ªäº†ä½ ä»¬",
+        u8"I'm angry!", æš‚æ—¶ä¸å¯ç”¨*/
         "Congratulations! +1s",
         "Congratulations! +2s",
         "Congratulations! +5s",
@@ -908,16 +907,16 @@ namespace Helpers
         "Judge By Yourself!",
         "You too have ZEREN!",
         "NeiDing, QingDian",
-        "WU KE FENG GAO£¡",
+        "WU KE FENG GAOï¼",
         "We talk, Wind blows",
         "Level of Knowledge",
         "I ZHAOJI FOR U!",
         "U have One Ge good!",
         "You Need Xue One Ge",
         "Hum, Western Theory",
-        "You £¬Naive£¡"
+        "You ï¼ŒNaiveï¼"
         "I SHEN ME YE no say.",
-        "This is ZUI HAO DE£¡",
+        "This is ZUI HAO DEï¼",
         "No Any This Meaning",
         "If U Have to ask me",
         "I Will Biao Tai",
@@ -956,11 +955,11 @@ namespace Helpers
     }
 
 
-    // Jet:¿ÉÒÔÊÔÊÔÄÄ¸öĞ§ÂÊ±È½Ï¸ß
+    // Jet:å¯ä»¥è¯•è¯•å“ªä¸ªæ•ˆç‡æ¯”è¾ƒé«˜
     typedef std::vector<Pacman::FieldProp> Path;
     //typedef std::vector<Pacman::Direction> Path;
 
-    // Jet: ÓÃccµÄ¸ÄµÄ
+    // Jet: ç”¨ccçš„æ”¹çš„
     int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
         if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
@@ -968,7 +967,7 @@ namespace Helpers
         if (startPos == endPos) 
             return 0;
 
-        //³õÊ¼»¯¹ãËÑÊı×é
+        //åˆå§‹åŒ–å¹¿æœæ•°ç»„
         int** step = new int*[gameField.height];
         for (int i = 0; i < gameField.height; i++)
         {
@@ -978,7 +977,7 @@ namespace Helpers
         }
         step[startPos.row][startPos.col] = 0;
 
-        //³õÊ¼»¯¹ãËÑ¶ÓÁĞ
+        //åˆå§‹åŒ–å¹¿æœé˜Ÿåˆ—
         Pacman::FieldProp queue[QUEUE_MAX];
         queue[0] = startPos;
         int nowFlag = 0, endFlag = 0;
@@ -994,7 +993,7 @@ namespace Helpers
                     Pacman::FieldProp newPos = queue[nowFlag];
                     newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
                     newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
-                    if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1) //ĞÂµÄµãÊÇºÃµÄ
+                    if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1) //æ–°çš„ç‚¹æ˜¯å¥½çš„
                     {
                         step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
                         queue[++endFlag] = newPos;
@@ -1017,13 +1016,13 @@ namespace Helpers
         return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
     }
 
-    // Moriartycc: ÀÎ¼ÇÎ»ÔËËãÓÅÏÈ¼¶
+    // Moriartycc: ç‰¢è®°ä½è¿ç®—ä¼˜å…ˆçº§
     int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
     {
         return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
     }
 
-    // Jet: ¸ÄĞ´ÁË¸öÄ£°æ
+    // Jet: æ”¹å†™äº†ä¸ªæ¨¡ç‰ˆ
     template <typename __Pred>
     Pacman::Direction GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
     {
@@ -1031,7 +1030,7 @@ namespace Helpers
         if (pr(gameField, startPos))
             return Pacman::Direction::stay;
 
-        //³õÊ¼»¯¹ãËÑÊı×é
+        //åˆå§‹åŒ–å¹¿æœæ•°ç»„
         Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
         for (int i = 0; i < gameField.height; i++)
         {
@@ -1040,7 +1039,7 @@ namespace Helpers
                 dirInfo[i][j] = Pacman::Direction::stay;
         }
 
-        //³õÊ¼»¯¹ãËÑ¶ÓÁĞ
+        //åˆå§‹åŒ–å¹¿æœé˜Ÿåˆ—
         Pacman::FieldProp queue[QUEUE_MAX];
         queue[0] = startPos;
         int nowFlag = 0, endFlag = 0;
@@ -1075,7 +1074,7 @@ namespace Helpers
 
         //cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
 
-        //»ØËİ
+        //å›æº¯
         Pacman::Direction dir;
         Pacman::FieldProp curPos = queue[endFlag];
         while (curPos != startPos)
@@ -1091,7 +1090,7 @@ namespace Helpers
         return dir;
     }
 
-    //weaZen:ÕÕ×ÅccµÄ¹ãËÑĞ´ÁË¸öÑ°ÕÒ·½Ïò targetÊÇGridContentTypeÀïµÄ×éºÏ ¿ÉÒÔÊÔÒ»ÏÂ³ÔÈËÁË//¦Ø\\)
+    //weaZen:ç…§ç€ccçš„å¹¿æœå†™äº†ä¸ªå¯»æ‰¾æ–¹å‘ targetæ˜¯GridContentTypeé‡Œçš„ç»„åˆ å¯ä»¥è¯•ä¸€ä¸‹åƒäººäº†//Ï‰\\)
     Pacman::Direction GetToTarget(Pacman::GameField &gameField, int myID, int target)
     {
         return GetTo(gameField, myID, 
@@ -1099,7 +1098,7 @@ namespace Helpers
         { return gameField.fieldContent[pos.row][pos.col] & target; });
     }
 
-    // Jet: Ã»¶¹×Ó³ÔµÄÊ±ºòÈ¥Éú³ÉÆ÷ÅÔ±ßµÈ×Å
+    // Jet: æ²¡è±†å­åƒçš„æ—¶å€™å»ç”Ÿæˆå™¨æ—è¾¹ç­‰ç€
     Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
     {
         return GetTo(gameField, myID,
@@ -1117,13 +1116,13 @@ namespace Helpers
         });
     }
 
-    // Jet: ËãÖ±Ïß¾àÀë
+    // Jet: ç®—ç›´çº¿è·ç¦»
     double DirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
         return sqrt((startPos.row - endPos.row) * (startPos.row - endPos.row) + (startPos.col - endPos.col) * (startPos.col - endPos.col));
     }
 
-    // weaZen:¼òµ¥µÄÎ£ÏÕÅĞ¶Ï
+    // weaZen:ç®€å•çš„å±é™©åˆ¤æ–­
     bool DangerJudge(const Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
     {
         const Pacman::Player & me = gameField.players[myID];
@@ -1156,8 +1155,8 @@ namespace Helpers
         return false;
     }
 
-     //weaZen:Ëæ±ãÕÒ¸ö²»±»³ÔµÄ·½Ïò(Èç¹û¿ÉÒÔ)
-     //Jet:ĞèÒª·µ»ØËæ»úÖµµÄÇé¿ö´ó¶à¿ÉÒÔ·µ»ØAI::RandomAI()´úÌæ
+     //weaZen:éšä¾¿æ‰¾ä¸ªä¸è¢«åƒçš„æ–¹å‘(å¦‚æœå¯ä»¥)
+     //Jet:éœ€è¦è¿”å›éšæœºå€¼çš„æƒ…å†µå¤§å¤šå¯ä»¥è¿”å›AI::RandomAI()ä»£æ›¿
     Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
     {
         Pacman::Direction dir;
@@ -1180,7 +1179,7 @@ namespace Helpers
         int count = 0, myAct = -1;
         while (true)
         {
-            // ¶ÔÃ¿¸öÍæ¼ÒÉú³ÉËæ»úµÄºÏ·¨¶¯×÷
+            // å¯¹æ¯ä¸ªç©å®¶ç”Ÿæˆéšæœºçš„åˆæ³•åŠ¨ä½œ
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
             {
                 if (gameField.players[i].dead)
@@ -1196,8 +1195,8 @@ namespace Helpers
             if (count == 0)
                 myAct = gameField.actions[myID];
 
-            // ÑİËãÒ»²½¾ÖÃæ±ä»¯
-            // NextTurn·µ»Øtrue±íÊ¾ÓÎÏ·Ã»ÓĞ½áÊø
+            // æ¼”ç®—ä¸€æ­¥å±€é¢å˜åŒ–
+            // NextTurnè¿”å›trueè¡¨ç¤ºæ¸¸æˆæ²¡æœ‰ç»“æŸ
             bool hasNext = gameField.NextTurn();
             count++;
 
@@ -1205,7 +1204,7 @@ namespace Helpers
                 break;
         }
 
-        // ¼ÆËã·ÖÊı
+        // è®¡ç®—åˆ†æ•°
         int rank2player[] = {0, 1, 2, 3};
         for (int j = 0; j < MAX_PLAYER_COUNT; j++)
             for (int k = 0; k < MAX_PLAYER_COUNT - j - 1; k++)
@@ -1228,7 +1227,7 @@ namespace Helpers
                 }
             }
 
-        // »Ö¸´ÓÎÏ·×´Ì¬µ½±¾»ØºÏ³õ
+        // æ¢å¤æ¸¸æˆçŠ¶æ€åˆ°æœ¬å›åˆåˆ
         gameField.RollBack(count);
 
         return ((myAct + 1) << 2) + actionScore;
@@ -1256,14 +1255,14 @@ namespace AI
         return Pacman::Direction(maxD - 1);
     }
 
-    //weaZen£ºÏÈ³Ôµ½¶¹ÔÙËµ£¬¾¡Á¿±ÜÃâ±»ÈË³Ôµô
+    //weaZenï¼šå…ˆåƒåˆ°è±†å†è¯´ï¼Œå°½é‡é¿å…è¢«äººåƒæ‰
     Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
     {
         Pacman::Direction dir;
         int target = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
         {
-            if (_ == myID)
+            if (gameField.players[_].dead || _ == myID)
                 continue;
             if (Helpers::DeltaATK(gameField, myID, _) > 0)
                 target |= Pacman::playerID2Mask[_];
@@ -1277,7 +1276,7 @@ namespace AI
         //return MCTS_AI(gameField, myID, true);
     }
 
-    // Jet :ÕâÊÇÒ»¸ö¿¼ÂÇ¶¹×Ó·Ö²¼Çé¿ö½øĞĞ¹À¼ÆµÄ¹ÀÖµº¯Êı
+    // Jet :è¿™æ˜¯ä¸€ä¸ªè€ƒè™‘è±†å­åˆ†å¸ƒæƒ…å†µè¿›è¡Œä¼°è®¡çš„ä¼°å€¼å‡½æ•°
     float GreedyEval(const Pacman::GameField &gameField, int myID)
     {
         if (gameField.players[myID].dead)
@@ -1287,34 +1286,32 @@ namespace AI
         //    e -= 1.4 * Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
         for (int i = 0; i < MAX_PLAYER_COUNT; i++)
         {
-            if (i == myID)
+            if (gameField.players[i].dead || i == myID)
                 continue;
 
-            int dD = Helpers::Distance(gameField, myID, i);
+            int dD = Helpers::Distance(gameField, myID, i) + 2;
             if (dD >= 5)
                 continue;
 
             int dA = Helpers::DeltaATK(gameField, myID, i);
-            if (dA >= 3)
-                e += float(dA) / dD;
-            else if (dA >= 1)
-                e += 1.0f / dD;
+            if (dA >= 1)
+                e += 0.8f / dD;
             else if (dA <= -1)
-                e -= 1.0f * dA * dA / dD;
+                e -= 0.3f * (5 - dD);
         }
 
         float tmp;
         for (int i = 0; i < gameField.height; i++)
             for (int j = 0; j < gameField.width; j++)
                 if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    e -= tmp / Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
+                    e += tmp / (Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) + 1);
 
         e -= 2.0f * Helpers::DangerJudge(gameField, myID);
 
         return e;
     }
 
-    // Jet :ÕâÊÇÒ»¸ö¿¼ÂÇ¶¹×Ó·Ö²¼Çé¿ö½øĞĞ¹À¼ÆµÄAI
+    // Jet :è¿™æ˜¯ä¸€ä¸ªè€ƒè™‘è±†å­åˆ†å¸ƒæƒ…å†µè¿›è¡Œä¼°è®¡çš„AI
     Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
     {
         float *evals = new float[5];
@@ -1331,6 +1328,8 @@ namespace AI
             evals[dir + 1] = GreedyEval(gameField, myID);
             gameField.RollBack(1);
         }
+
+        evals[NaiveAI(gameField, myID) + 1] += 1.0f;
 
         int maxD = 0;
         for (int d = 0; d < 5; d++)
@@ -1359,13 +1358,13 @@ int main()
     auto TAUNT = Helpers::MoHa;
 
     Pacman::GameField mainGameField;
-    string data, globalData; // ÕâÊÇ»ØºÏÖ®¼ä¿ÉÒÔ´«µİµÄĞÅÏ¢
-                             // Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬ÓĞinput.txtÔò»á¶ÁÈ¡ÎÄ¼şÄÚÈİ×÷ÎªÊäÈë
-                             // Èç¹ûÔÚÆ½Ì¨ÉÏ£¬Ôò²»»áÈ¥¼ì²éÓĞÎŞinput.txt
-    int myID = mainGameField.ReadInput("input.txt", data, globalData); // ÊäÈë£¬²¢»ñµÃ×Ô¼ºID
+    string data, globalData; // è¿™æ˜¯å›åˆä¹‹é—´å¯ä»¥ä¼ é€’çš„ä¿¡æ¯
+                             // å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œæœ‰input.txtåˆ™ä¼šè¯»å–æ–‡ä»¶å†…å®¹ä½œä¸ºè¾“å…¥
+                             // å¦‚æœåœ¨å¹³å°ä¸Šï¼Œåˆ™ä¸ä¼šå»æ£€æŸ¥æœ‰æ— input.txt
+    int myID = mainGameField.ReadInput("input.txt", data, globalData); // è¾“å…¥ï¼Œå¹¶è·å¾—è‡ªå·±ID
     srand(unsigned(Pacman::seed + myID));
 
-    // Êä³öµ±Ç°ÓÎÏ·¾ÖÃæ×´Ì¬ÒÔ¹©±¾µØµ÷ÊÔ¡£×¢ÒâÌá½»µ½Æ½Ì¨ÉÏ»á×Ô¶¯ÓÅ»¯µô£¬²»±Øµ£ĞÄ¡£
+    // è¾“å‡ºå½“å‰æ¸¸æˆå±€é¢çŠ¶æ€ä»¥ä¾›æœ¬åœ°è°ƒè¯•ã€‚æ³¨æ„æäº¤åˆ°å¹³å°ä¸Šä¼šè‡ªåŠ¨ä¼˜åŒ–æ‰ï¼Œä¸å¿…æ‹…å¿ƒã€‚
     mainGameField.DebugPrint();
 
 #ifndef _BOTZONE_ONLINE
@@ -1374,7 +1373,7 @@ int main()
 
     Helpers::debugData += to_string(Helpers::randomPlayCount + Helpers::TimeThrough() - TIME_LIMIT);
 
-    // ÖĞÑë¾ö¶¨Ò»¶¨Òª½ĞÏù
+    // ä¸­å¤®å†³å®šä¸€å®šè¦å«åš£
     Pacman::Direction choice = AI(mainGameField, myID);
     mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Helpers::debugData);
 
