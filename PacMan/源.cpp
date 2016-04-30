@@ -1289,37 +1289,47 @@ namespace AI
     // Jet :这是一个考虑豆子分布情况进行估计的估值函数
     float GreedyEval(const Pacman::GameField &gameField, int myID)
     {
+		int minGeneratorDis = 100;
+		int generatorDisSum = 0;
         if (gameField.players[myID].dead)
             return -1000000.0f;
         float e = 0.0f;
-        //for (int i = 0; i < gameField.generatorCount; i++)
-        //    e -= 1.4 * Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
-        for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-        {
-            if (i == myID)
-                continue;
+		float tmp;
+		for (int i = 0; i < gameField.generatorCount; i++) {
+			tmp = Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
+			generatorDisSum += tmp;
+			if (minGeneratorDis > tmp) minGeneratorDis = tmp;
+		}
+		if (minGeneratorDis > gameField.generatorTurnLeft) e -= minGeneratorDis - gameField.generatorTurnLeft;
+		//else e -= 0.5 * generatorDisSum / gameField.generatorCount;
 
-            int dD = Helpers::Distance(gameField, myID, i);
-            if (dD >= 5)
-                continue;
+  //这里暂时不太完善
+  //      for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+  //      {
+  //          if (i == myID)
+  //              continue;
 
-            int dA = Helpers::DeltaATK(gameField, myID, i);
-            if (dA >= 3)
-                e += float(dA) / dD;
-            else if (dA >= 1)
-                e += 1.0f / dD;
-            else if (dA <= -1)
-                e -= 1.0f * dA * dA / dD;
-        }
+  //          float dD = Helpers::Distance(gameField, myID, i) + 0.5;//防止除以零
+  //          if (dD >= 5)
+  //              continue;
 
-        float tmp;
-        for (int i = 0; i < gameField.height; i++)
-            for (int j = 0; j < gameField.width; j++)
-                if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    e -= tmp / Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
+  //          int dA = Helpers::DeltaATK(gameField, myID, i);
+  //          if (dA >= 3)
+  //              e += float(dA) / dD;
+  //          else if (dA >= 1)
+  //              e += 1.0f / dD;
+  //          else if (dA <= -1)
+  //              e -= 1.0f * dA * dA / dD;
+  //      }
 
+        
+		for (int i = 0; i < gameField.height; i++)
+			for (int j = 0; j < gameField.width; j++)
+				if ((tmp = gameField.GetFruitValue(i, j)) != 0)
+					e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID])/1000;
+		
         e -= 2.0f * Helpers::DangerJudge(gameField, myID);
-
+		e +=  gameField.players[myID].strength;
         return e;
     }
 
@@ -1342,6 +1352,7 @@ namespace AI
 			gameField.actions[myID] = dir;
 			hasNext = gameField.NextTurn();
 			tmp = SimpleSearch(gameField, myID, depth + 1, hasNext);
+			tmp += GreedyEval(gameField, myID);//这是为了把来回走的淘汰掉
 			max = tmp > max ? tmp : max;
 			gameField.RollBack(1);
 		}
@@ -1353,6 +1364,8 @@ namespace AI
     Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
     {
         float *evals = new float[5];
+		float max = -1000000.0f;
+		Pacman::Direction naiveDir = NaiveAI(gameField, myID);
         for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
         {
 			if (!gameField.ActionValid(myID, dir))
@@ -1375,6 +1388,7 @@ namespace AI
 			if (gameField.turnID == MAX_TURN - 1) return NaiveAI(gameField, myID);
             gameField.NextTurn();
             evals[dir + 1] = AI::SimpleSearch(gameField, myID, true);
+			max = max > evals[dir + 1] ? max : evals[dir + 1];
             gameField.RollBack(1);
         }
 
@@ -1385,10 +1399,7 @@ namespace AI
             if (evals[d] >= evals[maxD])
                 maxD = d;
         }
-
-        std::sort(evals, evals + 5);
-        if (evals[0] == evals[4])
-            return NaiveAI(gameField, myID);
+		if (evals[naiveDir + 1] == max) maxD = naiveDir + 1;
         delete[] evals;
         return Pacman::Direction(maxD - 1);
     }
