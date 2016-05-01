@@ -1407,8 +1407,7 @@ namespace AI
 		return Pacman::Direction(maxD - 1);
 	}
 
-	//weaZen：先吃到豆再说，尽量避免被人吃掉
-	//weaZen： 现在他只会把在逃不出死路的玩家和附近可能会走进死路的玩家加入攻击范围
+	//weaZen： 现在他只会把可能逃不出死路的值得一吃的玩家和附近可能会走进死路的玩家加入攻击范围
 	Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
 	{
 		int fruitDirInfo, playerDirInfo;
@@ -1649,7 +1648,7 @@ namespace AI
 				solutions.push_back(sol);
 			Helpers::debugData += "depth" + to_string(depth) + ' ' + to_string(solutions.back().second) + ' ';
 		}
-		if (solutions.size() == 1)
+		if (solutions.size() == 0)
 			return NaiveAI(gameField, myID);
 		return solutions.back().first;
 	}
