@@ -1422,7 +1422,7 @@ namespace AI
 				continue;
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
-				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 1 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
+				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
 					playerTarget |= Pacman::playerID2Mask[_];
 				if (gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2)
 					playerTarget |= Pacman::playerID2Mask[_];
@@ -1468,10 +1468,19 @@ namespace AI
 	{
 		float minGeneratorDis = 100.0f;
 		float generatorDisSum = 0.0f;
+		int strengthSum = 0;
 		if (gameField.players[myID].dead)
 			return -1000000.0f;
 		float e = 0.0f;
 		float tmp;
+		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		{
+			strengthSum += gameField.players[i].strength;
+		}
+		e = gameField.players[myID].strength / (float)strengthSum * 100.0f;
+		if (!gameField.hasNext)
+			return e;
+
 		for (int i = 0; i < gameField.generatorCount; i++)
 		{
 			tmp = Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
@@ -1507,15 +1516,10 @@ namespace AI
 		for (int i = 0; i < gameField.height; i++)
 			for (int j = 0; j < gameField.width; j++)
 				if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-					e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 1000.0f;
+					e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 100.0f;
 
 		//e -= 2.0f * Helpers::DangerJudge(gameField, myID);
-		e += gameField.players[myID].strength;
-		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
-		{
-			if (Helpers::DeltaATK(gameField, myID, i) > 3) continue;
-			e += Helpers::DeltaATK(gameField, myID, i) / 4;
-		}
+		//e += gameField.players[myID].strength;
 		return e;
 	}
 
