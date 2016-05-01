@@ -191,7 +191,10 @@ namespace Pacman
 	{
 		int degree;
 		bool isImpasse;
-		PathInfoType(int y = 0, int x = 0, int d = 0, bool i = false): FieldProp(y, x), degree(d), isImpasse(i){}
+		bool isExit;
+		int fleeLength;//到死路出口的距离
+		FieldProp * pExit;
+		PathInfoType(int y = 0, int x = 0): FieldProp(y, x), degree(0), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL){}
 	};
 
     // 场地上的玩家
@@ -609,6 +612,8 @@ namespace Pacman
 			{
 				for (int x = 0; x < width; ++x)
 				{
+					pathInfo[y][x].row = y;
+					pathInfo[y][x].col = x;
 					int degreeCount = 0;
 					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
 						if (!(fieldStatic[y][x] & Pacman::direction2OpposingWall[dir]))
@@ -616,7 +621,7 @@ namespace Pacman
 					pathInfo[y][x].degree = degreeCount;
 					if (degreeCount == 1)
 					{
-						//pathInfo[y][x].isImpasse = true;
+						pathInfo[y][x].isImpasse = true;
 						deadSpot[dCount].row = y;
 						deadSpot[dCount++].col = x;
 					}
@@ -626,6 +631,8 @@ namespace Pacman
 			{
 				FieldProp startPos = deadSpot[i];
 				FieldProp queue[QUEUE_MAX];
+				FieldProp * pExit;
+				pExit = NULL;
 				queue[0] = startPos;
 				int nowFlag = 0, endFlag = 0;
 				while (nowFlag <= endFlag)
@@ -643,11 +650,48 @@ namespace Pacman
 								pathInfo[newPos.row][newPos.col].isImpasse = true;
 								queue[++endFlag] = newPos;			
 							}
+							if (pathInfo[newPos.row][newPos.col].degree > 2)
+							{
+								pathInfo[newPos.row][newPos.col].isExit = true;
+								pExit = &pathInfo[newPos.row][newPos.col];
+								pathInfo[newPos.row][newPos.col].fleeLength = 0;
+							}
 						}
 					}
 					++nowFlag;
 				}
+				for (int i = 0; i <= endFlag; ++i)
+				{
+					pathInfo[queue[i].row][queue[i].col].fleeLength = endFlag - i + 1;
+					pathInfo[queue[i].row][queue[i].col].pExit = pExit;
+				}
+					
 			}
+#ifdef DEBUG
+			int tmp = 0;
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					if (pathInfo[y][x].isImpasse)
+					{
+						cout << ++tmp << ' ' << y << ' ' << x << ' ' << pathInfo[y][x].fleeLength << endl;
+						cout << pathInfo[y][x].pExit->row << ' ' << pathInfo[y][x].pExit->col << endl;
+					}
+				}
+			}
+			cout << "***********************" << endl;
+			tmp = 0;
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					if (pathInfo[y][x].isExit)
+						cout << ++tmp << ' ' << y << ' ' << x << ' ' << pathInfo[y][x].fleeLength << endl;
+				}
+			}
+
+#endif // DEBUG
 		}
 
         // 读取并解析程序输入，本地调试或提交平台使用都可以。
@@ -1244,9 +1288,6 @@ namespace Helpers
         for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
             if (gameField.ActionValid(myID, d) && !DangerJudge(gameField, myID, d))
                 valid[vCount++] = d;
-#ifdef DEBUG
-        cout << '*' << vCount << endl;
-#endif // DEBUG
         if (vCount == 0) return Pacman::Direction::stay;
         dir = valid[RandBetween(0, vCount)];
         return dir;
@@ -1338,16 +1379,25 @@ namespace AI
     }
 
     //weaZen：先吃到豆再说，尽量避免被人吃掉
+	//weaZen： 现在他只会把在逃不出死路的玩家和附近可能会走进死路的玩家加入攻击范围
     Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
     {
         Pacman::Direction dir;
         int target = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
         {
-            if (gameField.players[_].dead || _ == myID)
+			Pacman::Player & rival = gameField.players[_];
+            if (rival.dead || _ == myID)
                 continue;
-            if (Helpers::DeltaATK(gameField, myID, _) > 0 && gameField.pathInfo[gameField.players[_].row][gameField.players[_].col].isImpasse)
-                target |= Pacman::playerID2Mask[_];
+			if (Helpers::DeltaATK(gameField, myID, _) > 0)
+			{
+				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength <= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
+					target |= Pacman::playerID2Mask[_];
+				if (gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2)
+					target |= Pacman::playerID2Mask[_];
+			}
+			
+				
         }
         dir = Helpers::GetToTarget(gameField, myID, target);
         if (dir == Pacman::Direction::ul)
