@@ -59,11 +59,11 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.975
+#define TIME_LIMIT 0.950
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define DEFAULT_DEPTH 7
-#define MAX_DEPTH 16
+#define DEFAULT_DEPTH 6
+#define MAX_DEPTH 9
 
 //#define DEBUG
 
@@ -944,127 +944,127 @@ namespace Helpers
 {
 	using namespace EnumExt;
 
-    int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
-    int randomPlayCount = 0;
-    clock_t startTime = clock();
-    string debugData;
-    bool timeOutFlag = false;
-    std::vector<string> jiangXuan = {
-        /*	u8"赶紧续一秒 +1s",
-        u8"人吶就都不知道",
-        u8"自己不可以预料",
-        u8"一个人的命运啊",
-        u8"当然要靠自我的奋斗",
-        u8"也要考虑历史的行程",
-        u8"作为一个上海市委书记",
-        u8"怎么就被调到北京去了",
-        u8"我说另请高明吧",
-        u8"我实在也不是谦虚",
-        u8"中央研究都决定了",
-        u8"你来当总书记",
-        u8"当时我就念了两居诗",
-        u8"苟利国家生死以",
-        u8"岂因祸福避趋之",
-        u8"我主要的就是三件事情",
-        u8"军队一律不得经商",
-        u8"这对军队的命运很重要",
-        u8"就做了一点微小的工作",
-        u8"很惭愧，但是Excited",
-        u8"吼啊",
-        u8"董先生吼不吼啊",
-        u8"按照基本法，选举法",
-        u8"最近欧盟出了一份报告",
-        u8"内定，硬点的感觉",
-        u8"不要见得风就是雨",
-        u8"自己也要学会判断",
-        u8"无中生有的东西",
-        u8"你也有责任，对吧",
-        u8"无可奉告！",
-        u8"你们又不高兴"
-        u8"不是我要钦点他",
-        u8"你问我支持不支持",
-        u8"我明确地告诉你这一点",
-        u8"你们新闻界还要学习",
-        u8"西方的那一套理论",
-        u8"你们毕竟还too young",
-        u8"我是身经百战啦",
-        u8"我是见得多啦",
-        u8"西方国家我都去过",
-        u8"不知道高到哪里去啦",
-        u8"我跟他谈笑风生",
-        u8"提高自己的知识水平",
-        u8"识得唔识得啊？",
-        u8"我也替你们着急啊",
-        u8"你们有一个好",
-        u8"跑得比西方记者还快",
-        u8"问来问去的问题啊",
-        u8"都too simple",
-        u8"sometimes naive",
-        u8"我今天是作为一个长者",
-        u8"我不是新闻工作者",
-        u8"但是我见得太多了",
-        u8"告诉你们人生的经验",
-        u8"闷声大发财",
-        u8"什么都不说是坠好的",
-        u8"看到你们这样的热情啊",
-        u8"一句话不说又不好",
-        u8"报道偏差你们要负责",
-        u8"我没有说要硬点",
-        u8"没有任何这个意思",
-        u8"要要，要要",
-        u8"我们的决定权也很重要",
-        u8"到那时候我们会表态",
-        u8"不要想喜欢弄个大新闻",
-        u8"就把我批判一番",
-        u8"你们啊，naive",
-        u8"我今天算是得罪了你们",
-        u8"I'm angry!", 暂时不可用*/
-        "Congratulations! +1s",
-        "Congratulations! +2s",
-        "Congratulations! +5s",
-        "A man, He not knows",
-        "He can't predict",
-        "Fen Dou + History",
-        "I'm not being modest",
-        "I'm a Shanghai mayor",
-        "U ask other GAO MING",
-        "ZHONGYANG decided!",
-        "3 minor things",
-        "Army No Bussiness!",
-        "Micro work so CanKui!"
-        "This thing, Excited!"
-        "HO AH",
-        "HO BU HO AH?",
-        "ZHONGYANG supports!"
-        "Read The EU's report",
-        "Never heard of",
-        "No Feng Is Rain",
-        "Judge By Yourself!",
-        "You too have ZEREN!",
-        "NeiDing, QingDian",
-        "WU KE FENG GAO！",
-        "We talk, Wind blows",
-        "Level of Knowledge",
-        "I ZHAOJI FOR U!",
-        "U have One Ge good!",
-        "You Need Xue One Ge",
-        "Hum, Western Theory",
-        "You ，Naive！"
-        "I SHEN ME YE no say.",
-        "This is ZUI HAO DE！",
-        "No Any This Meaning",
-        "If U Have to ask me",
-        "I Will Biao Tai",
-        "wanna make BIG NEWS?",
-        "sound outta sin(x)?",
-        "I'll sing BJ opera",
-        "Two Ju Cantonese",
-        "I Drive Red Ferrari",
-        "YoYo! YoYo!",
-        "I'm healthier than u",
-        "U Young People",
-        "No Future For U"
-    };
+	int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
+	int randomPlayCount = 0;
+	clock_t startTime = clock();
+	string debugData;
+	bool timeOutFlag = false;
+	std::vector<string> jiangXuan = {
+		/*	u8"赶紧续一秒 +1s",
+		u8"人吶就都不知道",
+		u8"自己不可以预料",
+		u8"一个人的命运啊",
+		u8"当然要靠自我的奋斗",
+		u8"也要考虑历史的行程",
+		u8"作为一个上海市委书记",
+		u8"怎么就被调到北京去了",
+		u8"我说另请高明吧",
+		u8"我实在也不是谦虚",
+		u8"中央研究都决定了",
+		u8"你来当总书记",
+		u8"当时我就念了两居诗",
+		u8"苟利国家生死以",
+		u8"岂因祸福避趋之",
+		u8"我主要的就是三件事情",
+		u8"军队一律不得经商",
+		u8"这对军队的命运很重要",
+		u8"就做了一点微小的工作",
+		u8"很惭愧，但是Excited",
+		u8"吼啊",
+		u8"董先生吼不吼啊",
+		u8"按照基本法，选举法",
+		u8"最近欧盟出了一份报告",
+		u8"内定，硬点的感觉",
+		u8"不要见得风就是雨",
+		u8"自己也要学会判断",
+		u8"无中生有的东西",
+		u8"你也有责任，对吧",
+		u8"无可奉告！",
+		u8"你们又不高兴"
+		u8"不是我要钦点他",
+		u8"你问我支持不支持",
+		u8"我明确地告诉你这一点",
+		u8"你们新闻界还要学习",
+		u8"西方的那一套理论",
+		u8"你们毕竟还too young",
+		u8"我是身经百战啦",
+		u8"我是见得多啦",
+		u8"西方国家我都去过",
+		u8"不知道高到哪里去啦",
+		u8"我跟他谈笑风生",
+		u8"提高自己的知识水平",
+		u8"识得唔识得啊？",
+		u8"我也替你们着急啊",
+		u8"你们有一个好",
+		u8"跑得比西方记者还快",
+		u8"问来问去的问题啊",
+		u8"都too simple",
+		u8"sometimes naive",
+		u8"我今天是作为一个长者",
+		u8"我不是新闻工作者",
+		u8"但是我见得太多了",
+		u8"告诉你们人生的经验",
+		u8"闷声大发财",
+		u8"什么都不说是坠好的",
+		u8"看到你们这样的热情啊",
+		u8"一句话不说又不好",
+		u8"报道偏差你们要负责",
+		u8"我没有说要硬点",
+		u8"没有任何这个意思",
+		u8"要要，要要",
+		u8"我们的决定权也很重要",
+		u8"到那时候我们会表态",
+		u8"不要想喜欢弄个大新闻",
+		u8"就把我批判一番",
+		u8"你们啊，naive",
+		u8"我今天算是得罪了你们",
+		u8"I'm angry!", 暂时不可用*/
+		"Congratulations! +1s",
+		"Congratulations! +2s",
+		"Congratulations! +5s",
+		"A man, He not knows",
+		"He can't predict",
+		"Fen Dou + History",
+		"I'm not being modest",
+		"I'm a Shanghai mayor",
+		"U ask other GAO MING",
+		"ZHONGYANG decided!",
+		"3 minor things",
+		"Army No Bussiness!",
+		"Micro work so CanKui!"
+		"This thing, Excited!"
+		"HO AH",
+		"HO BU HO AH?",
+		"ZHONGYANG supports!"
+		"Read The EU's report",
+		"Never heard of",
+		"No Feng Is Rain",
+		"Judge By Yourself!",
+		"You too have ZEREN!",
+		"NeiDing, QingDian",
+		"WU KE FENG GAO！",
+		"We talk, Wind blows",
+		"Level of Knowledge",
+		"I ZHAOJI FOR U!",
+		"U have One Ge good!",
+		"You Need Xue One Ge",
+		"Hum, Western Theory",
+		"You ，Naive！"
+		"I SHEN ME YE no say.",
+		"This is ZUI HAO DE！",
+		"No Any This Meaning",
+		"If U Have to ask me",
+		"I Will Biao Tai",
+		"wanna make BIG NEWS?",
+		"sound outta sin(x)?",
+		"I'll sing BJ opera",
+		"Two Ju Cantonese",
+		"I Drive Red Ferrari",
+		"YoYo! YoYo!",
+		"I'm healthier than u",
+		"U Young People",
+		"No Future For U"
+	};
 
 
 	inline double TimeThrough()
@@ -1072,8 +1072,8 @@ namespace Helpers
 		return double(clock() - Helpers::startTime) / CLOCKS_PER_SEC;
 	}
 
-    inline bool TimeOut()
-    {
+	inline bool TimeOut()
+	{
 		if (timeOutFlag || TimeThrough() > TIME_LIMIT) {
 			Helpers::debugData += " TIMEOUT!!! ";
 			return timeOutFlag = true;
@@ -1386,8 +1386,8 @@ namespace Helpers
 
 namespace AI
 {
-    using namespace EnumExt;
-    typedef std::pair<Pacman::Direction, float> Solution;
+	using namespace EnumExt;
+	typedef std::pair<Pacman::Direction, float> Solution;
 
 	Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
 	{
@@ -1414,6 +1414,7 @@ namespace AI
 		int fruitDirInfo, playerDirInfo;
 		int fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
 		int playerTarget = 0;
+		int targetStrength = 0;
 		int fruitInfo, playerInfo;
 		Pacman::Direction dir;
 
@@ -1424,10 +1425,14 @@ namespace AI
 				continue;
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
-				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
+				bool preyFlag;
+				preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+				preyFlag |= gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2;
+				if (preyFlag)
+				{
 					playerTarget |= Pacman::playerID2Mask[_];
-				if (gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2)
-					playerTarget |= Pacman::playerID2Mask[_];
+					targetStrength = std::max(targetStrength, gameField.players[_].strength);
+				}
 			}
 		}
 		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget);
@@ -1450,7 +1455,7 @@ namespace AI
 			dir = Pacman::Direction(fruitDirInfo - 1);
 			break;
 		case (0):
-			if ((playerInfo >> 3) <= 2 + (fruitInfo >> 3))
+			if ((playerInfo >> 3) <= targetStrength / 2 + (fruitInfo >> 3))
 				dir = Pacman::Direction(playerDirInfo - 1);
 			else
 				dir = Pacman::Direction(fruitDirInfo - 1);
@@ -1481,7 +1486,7 @@ namespace AI
 		}
 		e = gameField.players[myID].strength / (float)strengthSum * 100.0f;
 		if (!gameField.hasNext)
-			return e;
+			return 10 * e;
 
 		for (int i = 0; i < gameField.generatorCount; i++)
 		{
@@ -1521,7 +1526,7 @@ namespace AI
 					e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 100.0f;
 
 		//e -= 2.0f * Helpers::DangerJudge(gameField, myID);
-		//e += gameField.players[myID].strength;
+		e += gameField.players[myID].strength;
 		return e;
 	}
 
@@ -1531,13 +1536,13 @@ namespace AI
 		float max = -1000000.0f;
 		float tmp;
 		int strength = gameField.players[myID].strength;
-        //cout << depth << ' ';
-        if (Helpers::TimeOut() || depth == 0 || gameField.players[myID].dead || !gameField.hasNext)
-            return GreedyEval(gameField, myID);
-        for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
-        {
-            if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir)) 
-                continue;
+		//cout << depth << ' ';
+		if (Helpers::timeOutFlag || Helpers::TimeOut() || depth == 0 || gameField.players[myID].dead || !gameField.hasNext)
+			return GreedyEval(gameField, myID);
+		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
+		{
+			if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir))
+				continue;
 			//基于以下两点猜测减少搜索量
 			//1.没有力量增加却往反方向跑是无意义的
 			//2.不在生成器周围却不动是无意义的
@@ -1560,12 +1565,12 @@ namespace AI
 			if (gameField.players[myID].strength - strength == 0)
 				tmp = SimpleSearch(gameField, myID, depth - 1, dir);
 			else tmp = SimpleSearch(gameField, myID, depth - 1);
-            tmp += GreedyEval(gameField, myID); //这是为了把来回走的淘汰掉
-            max = std::max(max, tmp);
-            gameField.RollBack(1);
+			tmp += GreedyEval(gameField, myID); //这是为了把来回走的淘汰掉
+			max = std::max(max, tmp);
+			gameField.RollBack(1);
 
 			// 超时处理
-			if (Helpers::TimeOut())
+			if (Helpers::timeOutFlag || Helpers::TimeOut())
 				return max;
 		}
 
@@ -1582,6 +1587,8 @@ namespace AI
 			return std::make_pair(naiveDir, 0.0f);
 		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
+			if (Helpers::timeOutFlag || Helpers::TimeOut())
+				break;
 			if (!gameField.ActionValid(myID, dir))
 			{
 				evals[dir + 1] = -9999999.0f;
@@ -1605,43 +1612,47 @@ namespace AI
 			gameField.NextTurn();
 			evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
 			//不知道为什么特别容易不动 只好先这样了
-			if (dir == Pacman::Direction::stay && !Helpers::isBesideGenerator(gameField, gameField.players[myID]))
-				evals[dir + 1] /= 2;
+			if (dir == Pacman::Direction::stay)
+				evals[dir + 1] *= (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL);
 			max = std::max(max, evals[dir + 1]);
 			gameField.RollBack(1);
 		}
 
 		evals[NaiveAI(gameField, myID) + 1] += 1.0f;
 
-        int maxD = 0;
-        for (int d = 0; d < 5; d++)
-        {
-            Helpers::debugData += '*' + Pacman::dirStr[d] + ' ' + to_string(evals[d]) + ' ';
-            if (evals[d] >= evals[maxD])
-                maxD = d;
-        }
-        if (evals[naiveDir + 1] == max)
-            return std::make_pair(naiveDir, max);
-        max = evals[maxD];
-        delete[] evals;
-        return std::make_pair(Pacman::Direction(maxD - 1), max);
-    }
+		int maxD = 0;
+		for (int d = 0; d < 5; d++)
+		{
+			Helpers::debugData += '*' + Pacman::dirStr[d] + ' ' + to_string(evals[d]) + ' ';
+			if (evals[d] >= evals[maxD])
+				maxD = d;
+		}
+		if (evals[naiveDir + 1] == max)
+			return std::make_pair(naiveDir, max);
+		max = evals[maxD];
+		delete[] evals;
+		return std::make_pair(Pacman::Direction(maxD - 1), max);
+	}
 
-    Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
-    {
-        typedef std::pair<Pacman::Direction, float> Solution;
-        std::vector<Solution> solutions;
+	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
+	{
+		typedef std::pair<Pacman::Direction, float> Solution;
+		std::vector<Solution> solutions;
 
-        for (int depth = DEFAULT_DEPTH; !Helpers::TimeOut() && depth < MAX_DEPTH; depth++)
-        {
-            solutions.push_back(GreedySearchAI(gameField, myID, depth));
-            Helpers::debugData += " depth" + to_string(depth) + ' ' + to_string(solutions.back().second) + ' ';
-        }
-        if (solutions.size() >= 2 && Helpers::TimeOut())
-            solutions.pop_back();
-
-        return solutions.back().first;
-    }
+		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
+		{
+			AI::Solution sol;
+			sol = GreedySearchAI(gameField, myID, depth);
+			if (Helpers::timeOutFlag || Helpers::TimeOut())
+				break;
+			else
+				solutions.push_back(sol);
+			Helpers::debugData += "depth" + to_string(depth) + ' ' + to_string(solutions.back().second) + ' ';
+		}
+		if (solutions.size() == 1)
+			return NaiveAI(gameField, myID);
+		return solutions.back().first;
+	}
 
 	//Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
 	//{
@@ -1651,8 +1662,8 @@ namespace AI
 
 int main()
 {
-    auto AI = AI::IterativeGreedySearch;
-    auto TAUNT = Helpers::MoHa;
+	auto AI = AI::IterativeGreedySearch;
+	auto TAUNT = Helpers::MoHa;
 
 	Pacman::GameField mainGameField;
 	string data, globalData; // 这是回合之间可以传递的信息
@@ -1672,8 +1683,8 @@ int main()
 	// 中央决定一定要叫嚣
 	Pacman::Direction choice = AI(mainGameField, myID);
 
-#ifndef _BOTZONE_ONLINE
-    Helpers::debugData.clear();
+#ifdef _BOTZONE_ONLINE
+	Helpers::debugData.clear();
 #endif
 
 	Helpers::debugData += "Time used " + to_string(Helpers::TimeThrough());
