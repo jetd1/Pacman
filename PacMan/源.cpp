@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define MAX_DEPTH 4
+#define MAX_DEPTH 9
 
 //#define DEBUG
 
