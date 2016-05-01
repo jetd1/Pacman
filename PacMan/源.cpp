@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define MAX_DEPTH 9
+#define MAX_DEPTH 4
 
 //#define DEBUG
 
@@ -1422,7 +1422,7 @@ namespace AI
 				continue;
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
-				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
+				if (gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 1 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit))
 					playerTarget |= Pacman::playerID2Mask[_];
 				if (gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2)
 					playerTarget |= Pacman::playerID2Mask[_];
