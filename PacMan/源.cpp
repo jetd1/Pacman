@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define MAX_DEPTH 10
+#define DEFAULT_DEPTH 7
 
 //#define DEBUG
 
@@ -77,8 +77,7 @@ using std::to_string;
 using std::runtime_error;
 
 //string presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,1,16,0,16,2,0],[0,0,32,0,32,0,0],[0,0,0,0,0,0,0],[0,0,16,16,16,0,0],[0,0,0,0,0,0,0],[0,0,32,0,32,0,0],[0,4,16,0,16,8,0]],"height":7,"id":3,"seed":1461989745,"static":[[0,5,6,31,12,5,0],[0,5,5,5,5,5,0],[4,3,9,1,3,9,4],[13,0,2,10,8,0,7],[1,6,12,4,6,12,1],[0,5,5,5,5,5,0],[0,5,3,31,9,5,0]],"width":7},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":3}},{"0":{"action":0},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":-1}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":1},"3":{"action":2}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":0},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":2},"1":{"action":0},"2":{"action":3},"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":-1},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":-1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":0},"2":null,"3":{"action":-1}},{"0":{"action":0},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":null,"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":3},"1":{"action":2},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":1},"2":null,"3":{"action":-1}},{"0":{"action":2},"1":{"action":-1},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}},{"0":{"action":1},"1":{"action":3},"2":null,"3":{"action":-1}}],"responses":[{"action":1,"tauntText":"You ，Naive！I SHEN ME YE no say."},{"action":0,"tauntText":"You Need Xue One Ge"},{"action":3,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"U have One Ge good!"},{"action":3,"tauntText":"U have One Ge good!"},{"action":1,"tauntText":"ZHONGYANG decided!"},{"action":-1,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":3,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"ZHONGYANG supports!Read The EU's report"},{"action":1,"tauntText":"If U Have to ask me"},{"action":2,"tauntText":"No Any This Meaning"},{"action":2,"tauntText":"WU KE FENG GAO！"},{"action":1,"tauntText":"WU KE FENG GAO！"},{"action":0,"tauntText":"I'm a Shanghai mayor"},{"action":0,"tauntText":"3 minor things"},{"action":1,"tauntText":"3 minor things"},{"action":1,"tauntText":"U have One Ge good!"},{"action":1,"tauntText":"If U Have to ask me"},{"action":-1,"tauntText":"If U Have to ask me"},{"action":1,"tauntText":"If U Have to ask me"},{"action":3,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":1,"tauntText":"WU KE FENG GAO！"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":1,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"Two Ju Cantonese"},{"action":3,"tauntText":"No Any This Meaning"},{"action":3,"tauntText":"No Any This Meaning"},{"action":1,"tauntText":"YoYo! YoYo!"},{"action":-1,"tauntText":"Congratulations! +2s"},{"action":1,"tauntText":"Micro work so CanKui!This thing, Excited!HO AH"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"Army No Bussiness!"},{"action":-1,"tauntText":"I Will Biao Tai"},{"action":-1,"tauntText":"I Will Biao Tai"},{"action":-1,"tauntText":"If U Have to ask me"},{"action":-1,"tauntText":"I'm a Shanghai mayor"},{"action":-1,"tauntText":"Hum, Western Theory"},{"action":-1,"tauntText":"ZHONGYANG decided!"},{"action":-1,"tauntText":"I ZHAOJI FOR U!"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"He can't predict"},{"action":-1,"tauntText":"NeiDing, QingDian"},{"action":-1,"tauntText":"YoYo! YoYo!"},{"action":1,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"Army No Bussiness!"},{"action":1,"tauntText":"I'll sing BJ opera"},{"action":2,"tauntText":"I'll sing BJ opera"},{"action":2,"tauntText":"I'll sing BJ opera"},{"action":3,"tauntText":"I'll sing BJ opera"},{"action":-1,"tauntText":"You too have ZEREN!"},{"action":-1,"tauntText":"Two Ju Cantonese"},{"action":-1,"tauntText":"U have One Ge good!"},{"action":-1,"tauntText":"wanna make BIG NEWS?"},{"action":-1,"tauntText":"Hum, Western Theory"},{"action":-1,"tauntText":"WU KE FENG GAO！"},{"action":-1,"tauntText":"You Need Xue One Ge"},{"action":-1,"tauntText":"NeiDing, QingDian"},{"action":-1,"tauntText":"Congratulations! +2s"},{"action":-1,"tauntText":"WU KE FENG GAO！"},{"action":-1,"tauntText":"U have One Ge good!"}]})*";
-string presetString;
-
+string presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,16,16,16,16,16,16,0],[0,0,0,1,16,16,2,0,0,0],[0,0,0,0,32,32,0,0,0,0],[0,0,0,0,32,32,0,0,0,0],[0,0,0,4,16,16,8,0,0,0],[0,16,16,16,16,16,16,16,16,0]],"height":6,"id":0,"seed":1462096578,"static":[[9,5,4,3,11,11,9,4,5,3],[14,11,31,12,2,8,6,31,11,14],[5,4,5,1,0,0,1,5,4,5],[5,1,5,4,0,0,4,5,1,5],[11,14,31,9,2,8,3,31,14,11],[12,5,1,6,14,14,12,1,5,6]],"width":10},{"0":{"action":1},"1":{"action":0},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":-1}},{"0":{"action":2},"1":{"action":3},"2":{"action":-1},"3":{"action":1}},{"0":{"action":0},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":-1}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":-1},"3":{"action":0}},{"0":{"action":2},"1":{"action":0},"2":{"action":0},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":-1},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":-1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":-1},"3":{"action":2}},{"0":{"action":0},"1":{"action":0},"2":{"action":-1},"3":{"action":0}},{"0":{"action":3},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":-1},"2":{"action":1},"3":{"action":0}},{"0":{"action":3},"1":{"action":3},"2":{"action":-1},"3":{"action":3}}],"responses":[{"action":1,"tauntText":"Army No Bussiness!"},{"action":2,"tauntText":"We talk, Wind blows"},{"action":2,"tauntText":"3 minor things"},{"action":1,"tauntText":"WU KE FENG GAO！"},{"action":2,"tauntText":"U Young People"},{"action":0,"tauntText":"Two Ju Cantonese"},{"action":0,"tauntText":"We talk, Wind blows"},{"action":0,"tauntText":"Never heard of"},{"action":0,"tauntText":"Judge By Yourself!"},{"action":2,"tauntText":"You Need Xue One Ge"},{"action":2,"tauntText":"3 minor things"},{"action":0,"tauntText":"Two Ju Cantonese"},{"action":2,"tauntText":"You ，Naive！I SHEN ME YE no say."},{"action":2,"tauntText":"I Will Biao Tai"},{"action":3,"tauntText":"We talk, Wind blows"},{"action":2,"tauntText":"A man, He not knows"},{"action":2,"tauntText":"YoYo! YoYo!"},{"action":0,"tauntText":"I'm not being modest"},{"action":3,"tauntText":"We talk, Wind blows"},{"action":2,"tauntText":"We talk, Wind blows"},{"action":3,"tauntText":"Hum, Western Theory"}]})*";
 //把枚举扩展收起来
 namespace EnumExt
 {
@@ -885,6 +884,7 @@ namespace Helpers
     int randomPlayCount = 0;
     clock_t startTime = clock();
     string debugData;
+    bool timeOutFlag = false;
     std::vector<string> jiangXuan = {
         /*	u8"赶紧续一秒 +1s",
         u8"人吶就都不知道",
@@ -1010,9 +1010,9 @@ namespace Helpers
 
     inline bool TimeOut()
     {
-		if (TimeThrough() > TIME_LIMIT) {
+		if (timeOutFlag || TimeThrough() > TIME_LIMIT) {
 			Helpers::debugData += " TIMEOUT!!! ";
-			return true;
+			return timeOutFlag = true;
 		}
 		return false;
     }
@@ -1195,7 +1195,7 @@ namespace Helpers
 
     Pacman::Direction GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
     {
-        return GetTo(gameField, myID,isBesideGenerator);
+        return GetTo(gameField, myID, isBesideGenerator);
     }
 
     // Jet: 算直线距离
@@ -1318,6 +1318,7 @@ namespace Helpers
 namespace AI
 {
     using namespace EnumExt;
+    typedef std::pair<Pacman::Direction, float> Solution;
 
     Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
     {
@@ -1371,7 +1372,7 @@ namespace AI
         float tmp;
         for (int i = 0; i < gameField.generatorCount; i++)
         {
-            tmp = Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]);
+            tmp = float(Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]));
             generatorDisSum += tmp;
             if (minGeneratorDis > tmp) 
                 minGeneratorDis = tmp;
@@ -1417,7 +1418,7 @@ namespace AI
         float tmp;
 		int strength = gameField.players[myID].strength;
         //cout << depth << ' ';
-        if (depth == MAX_DEPTH || gameField.players[myID].dead || !gameField.hasNext) 
+        if (depth == 0 || gameField.players[myID].dead || !gameField.hasNext) 
             return GreedyEval(gameField, myID);
         for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
         {
@@ -1443,8 +1444,8 @@ namespace AI
             gameField.actions[myID] = dir;
 			gameField.NextTurn();
 			if (gameField.players[myID].strength - strength == 0)
-				tmp = SimpleSearch(gameField, myID, depth + 1, dir);
-			else tmp = SimpleSearch(gameField, myID, depth + 1);
+				tmp = SimpleSearch(gameField, myID, depth - 1, dir);
+			else tmp = SimpleSearch(gameField, myID, depth - 1);
             tmp += GreedyEval(gameField, myID); //这是为了把来回走的淘汰掉
             max = std::max(max, tmp);
             gameField.RollBack(1);
@@ -1458,7 +1459,7 @@ namespace AI
     }
 
     // Jet :这是一个考虑豆子分布情况进行估计的AI
-    Pacman::Direction GreedyEvalAI(Pacman::GameField &gameField, int myID)
+    Solution GreedySearchAI(Pacman::GameField &gameField, int myID, int depth = DEFAULT_DEPTH)
     {
         float *evals = new float[5];
         float max = -1000000.0f;
@@ -1484,9 +1485,9 @@ namespace AI
 			}
             gameField.actions[myID] = dir;
             if (gameField.turnID == MAX_TURN - 1)
-                return NaiveAI(gameField, myID);
+                return std::make_pair(NaiveAI(gameField, myID), 0.0f);
             gameField.NextTurn();
-            evals[dir + 1] = AI::SimpleSearch(gameField, myID, 1);
+            evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
 			//不知道为什么特别容易不动 只好先这样了
 			if (dir == Pacman::Direction::stay && !Helpers::isBesideGenerator(gameField, gameField.players[myID]))
 				evals[dir + 1] /= 2;
@@ -1503,13 +1504,28 @@ namespace AI
             if (evals[d] >= evals[maxD])
                 maxD = d;
         }
-        if (evals[naiveDir + 1] == max) 
-            maxD = naiveDir + 1;
+        if (evals[naiveDir + 1] == max)
+            return std::make_pair(naiveDir, max);
+        max = evals[maxD];
         delete[] evals;
-        return Pacman::Direction(maxD - 1);
+        return std::make_pair(Pacman::Direction(maxD - 1), max);
     }
 
+    Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
+    {
+        typedef std::pair<Pacman::Direction, float> Solution;
+        std::vector<Solution> solutions;
 
+        for (int depth = DEFAULT_DEPTH; !Helpers::TimeOut(); depth++)
+        {
+            solutions.push_back(GreedySearchAI(gameField, myID, depth));
+            Helpers::debugData += " depth" + to_string(depth) + ' ' + to_string(solutions.back().second) + ' ';
+        }
+        if (solutions.size() >= 2)
+            solutions.pop_back();
+
+        return solutions.back().first;
+    }
 
     //Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
     //{
@@ -1519,7 +1535,7 @@ namespace AI
 
 int main()
 {
-    auto AI = AI::GreedyEvalAI;
+    auto AI = AI::IterativeGreedySearch;
     auto TAUNT = Helpers::MoHa;
 
     Pacman::GameField mainGameField;
