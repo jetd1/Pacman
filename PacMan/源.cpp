@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.99
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define MAX_DEPTH 10
+#define MAX_DEPTH 9
 
 //#define DEBUG
 
@@ -189,12 +189,11 @@ namespace Pacman
 
 	struct PathInfoType: FieldProp
 	{
-		int degree;
 		bool isImpasse;
 		bool isExit;
 		int fleeLength;//到死路出口的距离
-		FieldProp * pExit;
-		PathInfoType(int y = 0, int x = 0): FieldProp(y, x), degree(0), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL){}
+		PathInfoType * pExit;
+		PathInfoType(int y = 0, int x = 0): FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL){}
 	};
 
     // 场地上的玩家
@@ -606,8 +605,12 @@ namespace Pacman
 		//weaZen: 地图分析
 		void MapAnalyze()
 		{
-			FieldProp deadSpot[20];
+			FieldProp deadSpot[40];
+			int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
 			int dCount = 0;
+			PathInfoType * ptmpExit;
+			ptmpExit = NULL;
+
 			for (int y = 0; y < height; ++y)
 			{
 				for (int x = 0; x < width; ++x)
@@ -618,7 +621,7 @@ namespace Pacman
 					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
 						if (!(fieldStatic[y][x] & Pacman::direction2OpposingWall[dir]))
 							++degreeCount;
-					pathInfo[y][x].degree = degreeCount;
+					degree[y][x] = degreeCount;
 					if (degreeCount == 1)
 					{
 						pathInfo[y][x].isImpasse = true;
@@ -631,8 +634,6 @@ namespace Pacman
 			{
 				FieldProp startPos = deadSpot[i];
 				FieldProp queue[QUEUE_MAX];
-				FieldProp * pExit;
-				pExit = NULL;
 				queue[0] = startPos;
 				int nowFlag = 0, endFlag = 0;
 				while (nowFlag <= endFlag)
@@ -645,15 +646,17 @@ namespace Pacman
 							Pacman::FieldProp newPos = queue[nowFlag];
 							newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
 							newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
-							if (pathInfo[newPos.row][newPos.col].degree <= 2 && !pathInfo[newPos.row][newPos.col].isImpasse)
+							--degree[newPos.row][newPos.col];
+							if (degree[newPos.row][newPos.col] == 1 && !pathInfo[newPos.row][newPos.col].isImpasse)
 							{
+								pathInfo[newPos.row][newPos.col].isExit = false;
 								pathInfo[newPos.row][newPos.col].isImpasse = true;
 								queue[++endFlag] = newPos;			
 							}
-							if (pathInfo[newPos.row][newPos.col].degree > 2)
+							if (degree[newPos.row][newPos.col] > 1)
 							{
 								pathInfo[newPos.row][newPos.col].isExit = true;
-								pExit = &pathInfo[newPos.row][newPos.col];
+								pathInfo[newPos.row][newPos.col].pExit = ptmpExit = &pathInfo[newPos.row][newPos.col];
 								pathInfo[newPos.row][newPos.col].fleeLength = 0;
 							}
 						}
@@ -663,9 +666,25 @@ namespace Pacman
 				for (int i = 0; i <= endFlag; ++i)
 				{
 					pathInfo[queue[i].row][queue[i].col].fleeLength = endFlag - i + 1;
-					pathInfo[queue[i].row][queue[i].col].pExit = pExit;
+					pathInfo[queue[i].row][queue[i].col].pExit = ptmpExit;
 				}
 					
+			}
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					if (pathInfo[y][x].isImpasse)
+					{
+						ptmpExit = pathInfo[y][x].pExit;
+						while (ptmpExit != ptmpExit->pExit)
+						{
+							pathInfo[y][x].pExit = ptmpExit->pExit;
+							pathInfo[y][x].fleeLength += ptmpExit->fleeLength;
+							ptmpExit = pathInfo[y][x].pExit;
+						}
+					}
+				}
 			}
 #ifdef DEBUG
 			int tmp = 0;
@@ -676,7 +695,7 @@ namespace Pacman
 					if (pathInfo[y][x].isImpasse)
 					{
 						cout << ++tmp << ' ' << y << ' ' << x << ' ' << pathInfo[y][x].fleeLength << endl;
-						cout << pathInfo[y][x].pExit->row << ' ' << pathInfo[y][x].pExit->col << endl;
+						//cout << pathInfo[y][x].pExit->row << ' ' << pathInfo[y][x].pExit->col << endl;
 					}
 				}
 			}
@@ -1428,7 +1447,8 @@ namespace AI
         }
         if (minGeneratorDis > gameField.generatorTurnLeft) 
             e -= minGeneratorDis - gameField.generatorTurnLeft;
-        //else e -= 0.5 * generatorDisSum / gameField.generatorCount;
+        
+		//else e -= 0.5 * generatorDisSum / gameField.generatorCount;
 
         //这里暂时不太完善
         //      for (int i = 0; i < MAX_PLAYER_COUNT; i++)
@@ -1453,10 +1473,14 @@ namespace AI
         for (int i = 0; i < gameField.height; i++)
             for (int j = 0; j < gameField.width; j++)
                 if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 1000;
+                    e -= tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]) / 1000.0f;
 
         //e -= 2.0f * Helpers::DangerJudge(gameField, myID);
         e += gameField.players[myID].strength;
+		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		{
+			e += Helpers::DeltaATK(gameField, myID, i) / 4;
+		}
         return e;
     }
 
