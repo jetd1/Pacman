@@ -1677,13 +1677,6 @@ namespace AI
 			if (dir == Pacman::Direction::stay)
 				evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
 
-
-			if (depth == DEFAULT_DEPTH)
-				score[dir + 1] = evals[dir + 1];
-			else
-				score[dir + 1] = (evals[dir + 1] + score[dir + 1]) / 2;
-			
-			max = std::max(max, evals[dir + 1]);
 			gameField.RollBack(1);
 		}
 
@@ -1693,6 +1686,15 @@ namespace AI
 		for (int d = 0; d < 5; d++)
 		{
 			Debug::debugData[Helpers::depth2String(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
+			if (!Debug::TimeOut())
+			{
+				if (depth == DEFAULT_DEPTH)
+					score[d] = evals[d];
+				else
+					score[d] = (evals[d] + score[d]) / 2;
+
+				max = std::max(max, evals[d]);
+			}
 			if (evals[d] >= evals[maxD])
 				maxD = d;
 		}
@@ -1753,8 +1755,7 @@ int main()
 	int myID = mainGameField.ReadInput("input.txt", data, globalData); // 输入，并获得自己ID
 	srand(unsigned(Pacman::seed + myID));
 
-	cout << myID << endl;
-
+	
 	// 输出当前游戏局面状态以供本地调试。注意提交到平台上会自动优化掉，不必担心。
 	mainGameField.DebugPrint();
 
