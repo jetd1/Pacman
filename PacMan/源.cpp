@@ -1569,8 +1569,7 @@ namespace AI
             gameField.NextTurn();
             if (gameField.players[myID].strength - strength == 0)
                 tmp = SimpleSearch(gameField, myID, depth - 1, dir);
-            else tmp = SimpleSearch(gameField, myID, depth - 1);
-            tmp += GreedyEval(gameField, myID); //这是为了把来回走的淘汰掉
+            else tmp = SimpleSearch(gameField, myID, depth - 1) + depth;//早吃早超生 不知道有没有用
             max = std::max(max, tmp);
             gameField.RollBack(1);
 
@@ -1655,7 +1654,7 @@ namespace AI
             }
 			else
 				solutions.push_back(sol);
-            Debug::debugData["depth = " + to_string(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first];
+            Debug::debugData["depth = " + to_string(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["maxEval"] = solutions.back().second;
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
