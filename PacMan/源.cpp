@@ -63,7 +63,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 7
-#define MAX_DEPTH 15
+#define MAX_DEPTH 14
 
 //#define DEBUG
 
@@ -80,8 +80,9 @@ using std::runtime_error;
 // 用于调试
 namespace Debug
 {
-    bool printInfo = true;
-    string presetString;
+    bool printInfo = false;
+	string presetString;
+    //    R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,16,16,16,16,16,0,0],[0,0,16,0,0,0,16,0,0],[16,0,0,0,16,0,0,0,16],[0,1,0,0,0,0,0,2,0],[0,0,32,0,0,0,32,0,0],[0,4,0,0,0,0,0,8,0],[16,0,0,0,16,0,0,0,16],[0,0,16,0,0,0,16,0,0],[0,0,16,16,16,16,16,0,0]],"height":9,"id":3,"seed":1462174740,"static":[[1,2,13,5,0,5,7,8,1],[2,12,7,9,0,3,13,6,8],[4,3,13,2,10,8,7,9,4],[3,10,9,6,10,12,3,10,9],[8,0,2,31,10,31,8,0,2],[6,10,12,3,10,9,6,10,12],[1,6,13,2,10,8,7,12,1],[2,9,7,12,0,6,13,3,8],[4,2,13,5,0,5,7,8,4]],"width":9},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":-1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":0},"1":{"action":0},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":{"action":0},"1":{"action":0},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":1},"3":{"action":0}},{"0":{"action":-1},"1":{"action":0},"2":{"action":2},"3":{"action":3}},{"0":null,"1":{"action":2},"2":{"action":2},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":1},"3":{"action":0}},{"0":null,"1":{"action":0},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":1},"2":{"action":1},"3":{"action":0}},{"0":null,"1":{"action":-1},"2":{"action":-1},"3":{"action":0}},{"0":null,"1":{"action":0},"2":{"action":-1},"3":{"action":2}},{"0":null,"1":{"action":0},"2":{"action":0},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":null,"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":-1},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":-1},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":-1},"2":null,"3":{"action":1}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":3}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":-1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":0}},{"0":null,"1":{"action":-1},"2":null,"3":{"action":3}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":0}},{"0":null,"1":{"action":2},"2":null,"3":{"action":2}}],"responses":[{"action":0,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"自己不可以预料"},{"action":1,"tauntText":"你也有责任，对吧"},{"action":3,"tauntText":"自己不可以预料"},{"action":1,"tauntText":"我们的决定权也很重要"},{"action":3,"tauntText":"报道偏差你们要负责"},{"action":1,"tauntText":"我实在也不是谦虚"},{"action":3,"tauntText":"西方的那一套理论"},{"action":-1,"tauntText":"要要，要要"},{"action":2,"tauntText":"我主要的就是三件事情"},{"action":3,"tauntText":"不要想喜欢弄个大新闻"},{"action":2,"tauntText":"内定，硬点的感觉"},{"action":2,"tauntText":"自己也要学会判断"},{"action":3,"tauntText":"就把我批判一番"},{"action":2,"tauntText":"你也有责任，对吧"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":3,"tauntText":"我跟他谈笑风生"},{"action":1,"tauntText":"我明确地告诉你这一点"},{"action":2,"tauntText":"但是我见得太多了"},{"action":2,"tauntText":"苟利国家生死以"},{"action":2,"tauntText":"I'm angry!"},{"action":2,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"问来问去的问题啊"},{"action":2,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"我是身经百战啦"},{"action":2,"tauntText":"也要考虑历史的行程"},{"action":1,"tauntText":"跑得比西方记者还快"},{"action":1,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"我没有说要硬点"},{"action":3,"tauntText":"人吶就都不知道"},{"action":1,"tauntText":"闷声大发财"},{"action":0,"tauntText":"岂因祸福避趋之"},{"action":3,"tauntText":"你们新闻界还要学习"},{"action":0,"tauntText":"自己不可以预料"},{"action":0,"tauntText":"不要见得风就是雨"},{"action":3,"tauntText":"内定，硬点的感觉"},{"action":0,"tauntText":"我明确地告诉你这一点"},{"action":0,"tauntText":"我实在也不是谦虚"},{"action":2,"tauntText":"你们新闻界还要学习"},{"action":0,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"苟利国家生死以"},{"action":2,"tauntText":"无可奉告！"},{"action":0,"tauntText":"赶紧续一秒 +1s"},{"action":2,"tauntText":"很惭愧，但是Excited"},{"action":1,"tauntText":"我今天算是得罪了你们"},{"action":2,"tauntText":"跑得比西方记者还快"},{"action":2,"tauntText":"自己也要学会判断"},{"action":1,"tauntText":"但是我见得太多了"},{"action":2,"tauntText":"到那时候我们会表态"},{"action":3,"tauntText":"你们啊，naive"},{"action":1,"tauntText":"人吶就都不知道"},{"action":3,"tauntText":"都too simple"},{"action":1,"tauntText":"当时我就念了两居诗"},{"action":2,"tauntText":"我是见得多啦"},{"action":2,"tauntText":"我今天是作为一个长者"},{"action":0,"tauntText":"不知道高到哪里去啦"},{"action":2,"tauntText":"我说另请高明吧"},{"action":2,"tauntText":"报道偏差你们要负责"},{"action":2,"tauntText":"不要见得风就是雨"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":2,"tauntText":"西方的那一套理论"},{"action":2,"tauntText":"西方国家我都去过"},{"action":2,"tauntText":"怎么就被调到北京去了"},{"action":1,"tauntText":"我明确地告诉你这一点"},{"action":0,"tauntText":"我是见得多啦"},{"action":1,"tauntText":"我是见得多啦"},{"action":3,"tauntText":"不知道高到哪里去啦"},{"action":0,"tauntText":"我们的决定权也很重要"},{"action":-1,"tauntText":"西方国家我都去过"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":0,"tauntText":"我明确地告诉你这一点"},{"action":1,"tauntText":"怎么就被调到北京去了"},{"action":0,"tauntText":"你们又不高兴不是我要钦点他"},{"action":2,"tauntText":"我们的决定权也很重要"},{"action":0,"tauntText":"岂因祸福避趋之"},{"action":0,"tauntText":"你们毕竟还too young"},{"action":2,"tauntText":"我跟他谈笑风生"},{"action":0,"tauntText":"我也替你们着急啊"},{"action":3,"tauntText":"我今天算是得罪了你们"},{"action":1,"tauntText":"内定，硬点的感觉"},{"action":2,"tauntText":"无可奉告！"},{"action":2,"tauntText":"这对军队的命运很重要"},{"action":0,"tauntText":"就做了一点微小的工作"},{"action":2,"tauntText":"内定，硬点的感觉"}]})*";
     Json::Value debugData;
     bool timeOutFlag = false;
     clock_t startTime = clock();
@@ -1119,7 +1120,8 @@ namespace Helpers
 
 	string MoHa()
 	{
-		return jiangXuan[RandBetween(0, jiangXuan.size())];
+		//return jiangXuan[RandBetween(0, jiangXuan.size())];
+		return "";
 	}
 
 
@@ -1415,6 +1417,7 @@ namespace AI
 {
 	using namespace EnumExt;
 	typedef std::pair<Pacman::Direction, int> Solution;
+	double score[5];
 
 	Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
 	{
@@ -1505,16 +1508,18 @@ namespace AI
         int strengthSum = 0;
         if (gameField.players[myID].dead)
             return -1000000;
+		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		{
+			strengthSum += gameField.players[i].strength;
+		}
+
+		if (!gameField.hasNext)
+			return 1000 * gameField.players[myID].strength / strengthSum;
+
         int e = 0;
         int tmp;
-        for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
-        {
-            strengthSum += gameField.players[i].strength;
-        }
-        e = 100 * gameField.players[myID].strength / strengthSum;
-        if (!gameField.hasNext)
-            return 10 * e;
-
+        
+        
         for (int i = 0; i < gameField.generatorCount; i++)
         {
             tmp = int(Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]));
@@ -1532,10 +1537,10 @@ namespace AI
                     fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
         e -= fruitEvalSum / 100;
-        if (gameField.players[myID].powerUpLeft <= 0)
-            e += gameField.players[myID].strength;
-        else
-            e += gameField.players[myID].strength - 10 + gameField.players[myID].powerUpLeft;
+		if (gameField.players[myID].powerUpLeft <= 0)
+			e += gameField.players[myID].strength;
+		else
+			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
 
 
         auto&& d = Debug::debugData["profiling"]["GreedyEval_int()"];
@@ -1562,7 +1567,7 @@ namespace AI
             //2.不在生成器周围却不动是无意义的
             if (lastDir != Pacman::Direction::stay && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0)
                 continue;
-            if (dir == Pacman::Direction::stay && !Helpers::isBesideGenerator(gameField, gameField.players[myID]))
+            if (dir == Pacman::Direction::stay && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) || gameField.generatorTurnLeft > 3))
                 continue;
 
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
@@ -1576,9 +1581,14 @@ namespace AI
             }
             gameField.actions[myID] = dir;
             gameField.NextTurn();
-            if (gameField.players[myID].strength - strength == 0)
-                tmp = SimpleSearch(gameField, myID, depth - 1, dir);
-            else tmp = SimpleSearch(gameField, myID, depth - 1) + depth;
+			if (gameField.players[myID].strength - strength == 0)
+			{
+				if (dir == Pacman::Direction::stay)
+					tmp = SimpleSearch(gameField, myID, depth - 1, lastDir);
+				else
+					tmp = SimpleSearch(gameField, myID, depth - 1, dir);
+			}
+			else tmp = SimpleSearch(gameField, myID, depth - 1);// + depth;
 			tmp += GreedyEval(gameField, myID);
             max = std::max(max, tmp);
             gameField.RollBack(1);
@@ -1599,18 +1609,19 @@ namespace AI
 		Pacman::Direction naiveDir = NaiveAI(gameField, myID);
 		if (gameField.turnID == MAX_TURN - 1)
 			return std::make_pair(naiveDir, 0);
+		int strength = gameField.players[myID].strength;
 		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
 			if (Debug::TimeOut())
 				break;
 			if (!gameField.ActionValid(myID, dir))
 			{
-				evals[dir + 1] = -9999999;
+				score[dir + 1] = evals[dir + 1] = -9999999;
 				continue;
 			}
 			if (Helpers::DangerJudge(gameField, myID, dir))
 			{
-				evals[dir + 1] = -1000000;
+				score[dir + 1] = evals[dir + 1] = -1000000;
 				continue;
 			}
 			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
@@ -1624,10 +1635,25 @@ namespace AI
 			}
 			gameField.actions[myID] = dir;
 			gameField.NextTurn();
-			evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
+			if (gameField.players[myID].strength - strength == 0)
+			{
+				if (dir == Pacman::Direction::stay)
+					evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
+				else
+					evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth, dir);
+			}
+			else evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
+
 			//不知道为什么特别容易不动 只好先这样了
-            if (dir == Pacman::Direction::stay)
-                evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
+			if (dir == Pacman::Direction::stay)
+				evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
+
+
+			if (depth == DEFAULT_DEPTH)
+				score[dir + 1] = evals[dir + 1];
+			else
+				score[dir + 1] = (evals[dir + 1] + score[dir + 1]) / 2;
+			
 			max = std::max(max, evals[dir + 1]);
 			gameField.RollBack(1);
 		}
@@ -1651,7 +1677,9 @@ namespace AI
 	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
 	{
 		std::vector<Solution> solutions;
-
+		double max = -1e+07;
+		Pacman::Direction dir;
+		
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
 		{
             clock_t startTime = clock();
@@ -1668,9 +1696,19 @@ namespace AI
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["maxEval"] = solutions.back().second;
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (max < score[i])
+			{
+				max = score[i];
+				dir = Pacman::Direction(i - 1);
+			}
+		}
+		cout << endl;
 		if (solutions.size() == 0)
 			return NaiveAI(gameField, myID);
-		return solutions.back().first;
+		return dir;
 	}
 }
 
@@ -1691,6 +1729,7 @@ int main()
 
 #ifndef _BOTZONE_ONLINE
 	Debug::startTime = clock();
+	Debug::printInfo = true;
 #endif
 
 
