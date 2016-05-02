@@ -80,6 +80,7 @@ using std::runtime_error;
 // 用于调试
 namespace Debug
 {
+    bool printInfo = true;
     string presetString;
     Json::Value debugData;
     bool timeOutFlag = false;
@@ -866,9 +867,8 @@ namespace Pacman
 			ret["response"]["tauntText"] = tauntText;
 			ret["data"] = data;
 			ret["globaldata"] = globalData;
-#ifndef _BOTZONE_ONLINE
-            ret["debug"] = debugData;
-#endif
+            if (Debug::printInfo)
+                ret["debug"] = debugData;
 
 #ifdef _BOTZONE_ONLINE
 			Json::FastWriter writer; // 在线评测的话能用就行……
@@ -1627,7 +1627,7 @@ namespace AI
 		int maxD = 0;
 		for (int d = 0; d < 5; d++)
 		{
-			Debug::debugData["depth = " + to_string(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
+			Debug::debugData["depth = " + to_string(depth)][Pacman::dirStr[d + 1]] = to_string(evals[d]);
 			if (evals[d] >= evals[maxD])
 				maxD = d;
 		}
@@ -1649,7 +1649,7 @@ namespace AI
 			sol = GreedySearchAI(gameField, myID, depth);
             if (Debug::TimeOut())
             {
-                Debug::debugData["depth = " + to_string(depth)]["notFinished"] = true;
+                Debug::debugData["depth = " + to_string(depth)]["*solution"]["notFinished"] = true;
                 break;
             }
 			else
