@@ -63,7 +63,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 6
-#define MAX_DEPTH 9
+#define MAX_DEPTH 10
 
 //#define DEBUG
 
@@ -823,9 +823,9 @@ namespace Pacman
 		// data 表示自己想存储供下一回合使用的数据，留空表示删除
 		// globalData 表示自己想存储供以后使用的数据（替换），这个数据可以跨对局使用，会一直绑定在这个 Bot 上，留空表示删除
 		void WriteOutput(Direction action, string tauntText = "", string data = "",
-			string globalData = "", string debugData = "") const
+			string globalData = "", Json::Value debugData = "") const
 		{
-			debugData += ' ' + to_string(seed);
+			debugData["seed"] = seed;
 
 			Json::Value ret;
 			ret["response"]["action"] = action;
@@ -947,7 +947,8 @@ namespace Helpers
 	int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
 	int randomPlayCount = 0;
 	clock_t startTime = clock();
-	string debugData;
+	Json::Value debugData;
+
 	bool timeOutFlag = false;
 	std::vector<string> jiangXuan = {
 		/*	u8"赶紧续一秒 +1s",
@@ -1075,7 +1076,7 @@ namespace Helpers
 	inline bool TimeOut()
 	{
 		if (timeOutFlag || TimeThrough() > TIME_LIMIT) {
-			Helpers::debugData += " TIMEOUT!!! ";
+            Helpers::debugData["TimeUsed"]["TimeOut"] = true;
 			return timeOutFlag = true;
 		}
 		return false;
@@ -1233,7 +1234,7 @@ namespace Helpers
 		//cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
 
 		//回溯
-		Pacman::Direction dir;
+		Pacman::Direction dir = Pacman::stay;
 		Pacman::FieldProp curPos = queue[endFlag];
 		while (curPos != startPos)
 		{
@@ -1251,7 +1252,8 @@ namespace Helpers
 	//weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
 	int GetToTarget(Pacman::GameField &gameField, int myID, int target)
 	{
-		if (target == 0) return Pacman::Direction::ur + 1;
+		if (target == 0) 
+            return Pacman::Direction::ur + 1;
 		return GetTo(gameField, myID,
 			[target](const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
 		{ return gameField.fieldContent[pos.row][pos.col] & target; });
@@ -1334,7 +1336,7 @@ namespace Helpers
 			{
 				if (gameField.players[i].dead)
 					continue;
-				Pacman::Direction valid[5];
+                Pacman::Direction valid[5]{};
 				int vCount = 0;
 				for (Pacman::Direction d = Pacman::Direction(-1 + noStay); d < 4; ++d)
 					if (gameField.ActionValid(i, d))
@@ -1361,11 +1363,9 @@ namespace Helpers
 				if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
 					swap(rank2player[k], rank2player[k + 1]);
 
-		int actionScore;
+		int actionScore = 0;
 		int scorebase = 0;
-		if (rank2player[0] == myID)
-			actionScore = 0;
-		else
+        if (rank2player[0] != myID)
 			for (int j = 1; j < MAX_PLAYER_COUNT; j++)
 			{
 				if (gameField.players[rank2player[j - 1]].strength < gameField.players[rank2player[j]].strength)
@@ -1622,7 +1622,7 @@ namespace AI
 		int maxD = 0;
 		for (int d = 0; d < 5; d++)
 		{
-			Helpers::debugData += '*' + Pacman::dirStr[d] + ' ' + to_string(evals[d]) + ' ';
+			Helpers::debugData["depth = " + to_string(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
 			if (evals[d] >= evals[maxD])
 				maxD = d;
 		}
@@ -1646,7 +1646,7 @@ namespace AI
 				break;
 			else
 				solutions.push_back(sol);
-			Helpers::debugData += "depth" + to_string(depth) + ' ' + to_string(solutions.back().second) + ' ';
+            Helpers::debugData["depth = " + to_string(depth)]["Eval"] = to_string(solutions.back().second);
 		}
 		if (solutions.size() == 0)
 			return NaiveAI(gameField, myID);
@@ -1686,7 +1686,7 @@ int main()
 	Helpers::debugData.clear();
 #endif
 
-	Helpers::debugData += "Time used " + to_string(Helpers::TimeThrough());
+	Helpers::debugData["TimeUsed"] = Helpers::TimeThrough();
 	mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Helpers::debugData);
 
 	//cout << Helpers::Distance(mainGameField, 1, 1);
