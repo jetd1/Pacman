@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Edited By Jet, Moriarty, weaZen
 * 2016/05/02 14:01
 * Naive AI Guzuta
@@ -639,6 +639,8 @@ namespace Pacman
 		//weaZen: 地图分析
 		void MapAnalyze()
 		{
+            clock_t startTime = clock();
+
 			FieldProp deadSpot[40];
 			int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
 			int dCount = 0;
@@ -745,6 +747,9 @@ namespace Pacman
 			}
 
 #endif // DEBUG
+
+            auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
+            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
 
 		// 读取并解析程序输入，本地调试或提交平台使用都可以。
