@@ -1120,7 +1120,8 @@ namespace Helpers
 
 	string MoHa()
 	{
-		return jiangXuan[RandBetween(0, jiangXuan.size())];
+		//return jiangXuan[RandBetween(0, jiangXuan.size())];
+		return "";
 	}
 
 
@@ -1416,6 +1417,7 @@ namespace AI
 {
 	using namespace EnumExt;
 	typedef std::pair<Pacman::Direction, int> Solution;
+	double score[5];
 
 	Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
 	{
@@ -1586,8 +1588,8 @@ namespace AI
 				else
 					tmp = SimpleSearch(gameField, myID, depth - 1, dir);
 			}
-			else tmp = SimpleSearch(gameField, myID, depth - 1);// +depth;
-			//tmp += GreedyEval(gameField, myID);
+			else tmp = SimpleSearch(gameField, myID, depth - 1);// + depth;
+			tmp += GreedyEval(gameField, myID);
             max = std::max(max, tmp);
             gameField.RollBack(1);
 
@@ -1614,12 +1616,12 @@ namespace AI
 				break;
 			if (!gameField.ActionValid(myID, dir))
 			{
-				evals[dir + 1] = -9999999;
+				score[dir + 1] = evals[dir + 1] = -9999999;
 				continue;
 			}
 			if (Helpers::DangerJudge(gameField, myID, dir))
 			{
-				evals[dir + 1] = -1000000;
+				score[dir + 1] = evals[dir + 1] = -1000000;
 				continue;
 			}
 			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
@@ -1640,11 +1642,18 @@ namespace AI
 				else
 					evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth, dir);
 			}
-			else evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);// + depth;
+			else evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
 
 			//不知道为什么特别容易不动 只好先这样了
-            if (dir == Pacman::Direction::stay)
-                evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
+			if (dir == Pacman::Direction::stay)
+				evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
+
+
+			if (depth == DEFAULT_DEPTH)
+				score[dir + 1] = evals[dir + 1];
+			else
+				score[dir + 1] = (evals[dir + 1] + score[dir + 1]) / 2;
+			
 			max = std::max(max, evals[dir + 1]);
 			gameField.RollBack(1);
 		}
@@ -1668,7 +1677,9 @@ namespace AI
 	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
 	{
 		std::vector<Solution> solutions;
-
+		double max = -1e+07;
+		Pacman::Direction dir;
+		
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
 		{
             clock_t startTime = clock();
@@ -1685,9 +1696,19 @@ namespace AI
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["maxEval"] = solutions.back().second;
             Debug::debugData["depth = " + to_string(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (max < score[i])
+			{
+				max = score[i];
+				dir = Pacman::Direction(i - 1);
+			}
+		}
+		cout << endl;
 		if (solutions.size() == 0)
 			return NaiveAI(gameField, myID);
-		return solutions.back().first;
+		return dir;
 	}
 }
 
