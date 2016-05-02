@@ -59,7 +59,7 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.96
+#define TIME_LIMIT 0.97
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 7
@@ -81,8 +81,7 @@ using std::runtime_error;
 namespace Debug
 {
     bool printInfo = false;
-	string presetString;
-    //    R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,16,16,16,16,16,0,0],[0,0,16,0,0,0,16,0,0],[16,0,0,0,16,0,0,0,16],[0,1,0,0,0,0,0,2,0],[0,0,32,0,0,0,32,0,0],[0,4,0,0,0,0,0,8,0],[16,0,0,0,16,0,0,0,16],[0,0,16,0,0,0,16,0,0],[0,0,16,16,16,16,16,0,0]],"height":9,"id":3,"seed":1462174740,"static":[[1,2,13,5,0,5,7,8,1],[2,12,7,9,0,3,13,6,8],[4,3,13,2,10,8,7,9,4],[3,10,9,6,10,12,3,10,9],[8,0,2,31,10,31,8,0,2],[6,10,12,3,10,9,6,10,12],[1,6,13,2,10,8,7,12,1],[2,9,7,12,0,6,13,3,8],[4,2,13,5,0,5,7,8,4]],"width":9},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":-1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":0},"1":{"action":0},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":{"action":0},"1":{"action":0},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":1},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":1},"3":{"action":0}},{"0":{"action":-1},"1":{"action":0},"2":{"action":2},"3":{"action":3}},{"0":null,"1":{"action":2},"2":{"action":2},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":1},"3":{"action":0}},{"0":null,"1":{"action":0},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":1},"2":{"action":1},"3":{"action":0}},{"0":null,"1":{"action":-1},"2":{"action":-1},"3":{"action":0}},{"0":null,"1":{"action":0},"2":{"action":-1},"3":{"action":2}},{"0":null,"1":{"action":0},"2":{"action":0},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":null,"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":0}},{"0":null,"1":{"action":1},"2":{"action":-1},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":null,"1":{"action":-1},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":null,"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":null,"1":{"action":1},"2":{"action":0},"3":{"action":2}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":-1},"2":null,"3":{"action":1}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":3}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":-1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":0},"2":null,"3":{"action":2}},{"0":null,"1":{"action":0},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":0}},{"0":null,"1":{"action":1},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":0}},{"0":null,"1":{"action":-1},"2":null,"3":{"action":3}},{"0":null,"1":{"action":0},"2":null,"3":{"action":1}},{"0":null,"1":{"action":3},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":2}},{"0":null,"1":{"action":2},"2":null,"3":{"action":0}},{"0":null,"1":{"action":2},"2":null,"3":{"action":2}}],"responses":[{"action":0,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"自己不可以预料"},{"action":1,"tauntText":"你也有责任，对吧"},{"action":3,"tauntText":"自己不可以预料"},{"action":1,"tauntText":"我们的决定权也很重要"},{"action":3,"tauntText":"报道偏差你们要负责"},{"action":1,"tauntText":"我实在也不是谦虚"},{"action":3,"tauntText":"西方的那一套理论"},{"action":-1,"tauntText":"要要，要要"},{"action":2,"tauntText":"我主要的就是三件事情"},{"action":3,"tauntText":"不要想喜欢弄个大新闻"},{"action":2,"tauntText":"内定，硬点的感觉"},{"action":2,"tauntText":"自己也要学会判断"},{"action":3,"tauntText":"就把我批判一番"},{"action":2,"tauntText":"你也有责任，对吧"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":3,"tauntText":"我跟他谈笑风生"},{"action":1,"tauntText":"我明确地告诉你这一点"},{"action":2,"tauntText":"但是我见得太多了"},{"action":2,"tauntText":"苟利国家生死以"},{"action":2,"tauntText":"I'm angry!"},{"action":2,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"问来问去的问题啊"},{"action":2,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"我是身经百战啦"},{"action":2,"tauntText":"也要考虑历史的行程"},{"action":1,"tauntText":"跑得比西方记者还快"},{"action":1,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"就做了一点微小的工作"},{"action":3,"tauntText":"我没有说要硬点"},{"action":3,"tauntText":"人吶就都不知道"},{"action":1,"tauntText":"闷声大发财"},{"action":0,"tauntText":"岂因祸福避趋之"},{"action":3,"tauntText":"你们新闻界还要学习"},{"action":0,"tauntText":"自己不可以预料"},{"action":0,"tauntText":"不要见得风就是雨"},{"action":3,"tauntText":"内定，硬点的感觉"},{"action":0,"tauntText":"我明确地告诉你这一点"},{"action":0,"tauntText":"我实在也不是谦虚"},{"action":2,"tauntText":"你们新闻界还要学习"},{"action":0,"tauntText":"中央研究都决定了"},{"action":2,"tauntText":"苟利国家生死以"},{"action":2,"tauntText":"无可奉告！"},{"action":0,"tauntText":"赶紧续一秒 +1s"},{"action":2,"tauntText":"很惭愧，但是Excited"},{"action":1,"tauntText":"我今天算是得罪了你们"},{"action":2,"tauntText":"跑得比西方记者还快"},{"action":2,"tauntText":"自己也要学会判断"},{"action":1,"tauntText":"但是我见得太多了"},{"action":2,"tauntText":"到那时候我们会表态"},{"action":3,"tauntText":"你们啊，naive"},{"action":1,"tauntText":"人吶就都不知道"},{"action":3,"tauntText":"都too simple"},{"action":1,"tauntText":"当时我就念了两居诗"},{"action":2,"tauntText":"我是见得多啦"},{"action":2,"tauntText":"我今天是作为一个长者"},{"action":0,"tauntText":"不知道高到哪里去啦"},{"action":2,"tauntText":"我说另请高明吧"},{"action":2,"tauntText":"报道偏差你们要负责"},{"action":2,"tauntText":"不要见得风就是雨"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":2,"tauntText":"西方的那一套理论"},{"action":2,"tauntText":"西方国家我都去过"},{"action":2,"tauntText":"怎么就被调到北京去了"},{"action":1,"tauntText":"我明确地告诉你这一点"},{"action":0,"tauntText":"我是见得多啦"},{"action":1,"tauntText":"我是见得多啦"},{"action":3,"tauntText":"不知道高到哪里去啦"},{"action":0,"tauntText":"我们的决定权也很重要"},{"action":-1,"tauntText":"西方国家我都去过"},{"action":2,"tauntText":"我实在也不是谦虚"},{"action":0,"tauntText":"我明确地告诉你这一点"},{"action":1,"tauntText":"怎么就被调到北京去了"},{"action":0,"tauntText":"你们又不高兴不是我要钦点他"},{"action":2,"tauntText":"我们的决定权也很重要"},{"action":0,"tauntText":"岂因祸福避趋之"},{"action":0,"tauntText":"你们毕竟还too young"},{"action":2,"tauntText":"我跟他谈笑风生"},{"action":0,"tauntText":"我也替你们着急啊"},{"action":3,"tauntText":"我今天算是得罪了你们"},{"action":1,"tauntText":"内定，硬点的感觉"},{"action":2,"tauntText":"无可奉告！"},{"action":2,"tauntText":"这对军队的命运很重要"},{"action":0,"tauntText":"就做了一点微小的工作"},{"action":2,"tauntText":"内定，硬点的感觉"}]})*";
+    string presetString;
     Json::Value debugData;
     bool timeOutFlag = false;
     clock_t startTime = clock();
@@ -1433,6 +1432,14 @@ namespace Helpers
 
 		return ((myAct + 1) << 2) + actionScore;
 	}
+
+    inline string depth2String(int depth)
+    {
+        string str = to_string(depth);
+        if (str.length() == 1)
+            str.insert(str.begin(), '0');
+        return "depth = " + str;
+    }
 }
 
 namespace AI
@@ -1685,7 +1692,7 @@ namespace AI
 		int maxD = 0;
 		for (int d = 0; d < 5; d++)
 		{
-			Debug::debugData["depth = " + to_string(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
+			Debug::debugData[Helpers::depth2String(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
 			if (evals[d] >= evals[maxD])
 				maxD = d;
 		}
@@ -1709,14 +1716,14 @@ namespace AI
 			sol = GreedySearchAI(gameField, myID, depth);
             if (Debug::TimeOut())
             {
-                Debug::debugData["depth = " + to_string(depth)]["*solution"]["notFinished"] = true;
+                Debug::debugData[Helpers::depth2String(depth)]["*solution"]["notFinished"] = true;
                 break;
             }
 			else
 				solutions.push_back(sol);
-            Debug::debugData["depth = " + to_string(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
-            Debug::debugData["depth = " + to_string(depth)]["*solution"]["maxEval"] = solutions.back().second;
-            Debug::debugData["depth = " + to_string(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
+            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
+            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["maxEval"] = solutions.back().second;
+            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
 
 		for (int i = 0; i < 5; ++i)
