@@ -62,7 +62,7 @@
 #define TIME_LIMIT 0.97
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define DEFAULT_DEPTH 7
+#define DEFAULT_DEPTH 8
 #define MAX_DEPTH 14
 
 //#define DEBUG
@@ -1117,10 +1117,9 @@ namespace Helpers
 		return gamefield.players[id1].strength - gamefield.players[id2].strength;
 	}
 
-	string MoHa()
+	inline string MoHa()
 	{
-		//return jiangXuan[RandBetween(0, jiangXuan.size())];
-		return "";
+		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
 
@@ -1309,10 +1308,10 @@ namespace Helpers
 		return GetTo(gameField, myID, isBesideGenerator);
 	}
 
-	// Jet: 算直线距离
-	double DirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
+	// Jet: 近似算直线距离
+	inline int ApprDirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
 	{
-		return sqrt((startPos.row - endPos.row) * (startPos.row - endPos.row) + (startPos.col - endPos.col) * (startPos.col - endPos.col));
+        return (abs(startPos.row - endPos.row) + abs(startPos.col - endPos.col) + 1) / 2;
 	}
 
 	// weaZen:简单的危险判断
@@ -1529,7 +1528,7 @@ namespace AI
         
         for (int i = 0; i < gameField.generatorCount; i++)
         {
-            tmp = int(Helpers::DirectDistance(gameField.generators[i], gameField.players[myID]));
+            tmp = int(Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]));
             generatorDisSum += tmp;
             if (minGeneratorDis > tmp)
                 minGeneratorDis = tmp;
@@ -1550,7 +1549,7 @@ namespace AI
 			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
 
 
-        auto&& d = Debug::debugData["profiling"]["GreedyEval_int()"];
+        auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
         return e;
@@ -1714,7 +1713,13 @@ namespace AI
 		}
 		cout << endl;
 		if (solutions.size() == 0)
-			return NaiveAI(gameField, myID);
+        {
+            Debug::debugData["*choice"]["NAIVE"] = true;
+            return NaiveAI(gameField, myID);
+        }
+
+        Debug::debugData["*choice"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
+        Debug::debugData["*choice"]["finalEval"] = solutions.back().second;
 		return dir;
 	}
 }
