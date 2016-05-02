@@ -63,7 +63,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 7
-#define MAX_DEPTH 14
+#define MAX_DEPTH 15
 
 //#define DEBUG
 
@@ -1125,6 +1125,7 @@ namespace Helpers
 	}
 
 
+	// weaZen: 双向
 	// Jet: 用cc的改的
 	int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
 	{
@@ -1133,7 +1134,7 @@ namespace Helpers
 		if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
 			return distance[startPos.row][startPos.col][endPos.row][endPos.col];
 		if (startPos == endPos)
-			return 0;
+			return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
 
 		//初始化广搜数组
 		int** step = new int*[gameField.height];
@@ -1141,15 +1142,19 @@ namespace Helpers
 		{
 			step[i] = new int[gameField.width];
 			for (int j = 0; j < gameField.width; j++)
-				step[i][j] = MAX_INT;
+				step[i][j] = 0;
 		}
-		step[startPos.row][startPos.col] = 0;
+		step[startPos.row][startPos.col] = 1;
+		step[endPos.row][endPos.col] = -1;
 
 		//初始化广搜队列
 		Pacman::FieldProp queue[QUEUE_MAX];
 		queue[0] = startPos;
-		int nowFlag = 0, endFlag = 0;
+		queue[1] = endPos;
+		int nowFlag = 0, endFlag = 1;
 		bool hasFound = false;
+		int ret;
+
 
 		while (nowFlag <= endFlag && !hasFound)
 		{
@@ -1161,14 +1166,32 @@ namespace Helpers
 					Pacman::FieldProp newPos = queue[nowFlag];
 					newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
 					newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
-					if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1) //新的点是好的
+					if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
 					{
-						step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
-						queue[++endFlag] = newPos;
-						if (newPos == endPos)
+						if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
+						{
+							step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
+							distance[startPos.row][startPos.col][newPos.row][newPos.col] = step[newPos.row][newPos.col] - 1;
+							queue[++endFlag] = newPos;
+						}
+						if (step[newPos.row][newPos.col] < 0)
 						{
 							hasFound = true;
-							break;
+							ret = step[queue[nowFlag].row][queue[nowFlag].col] - step[newPos.row][newPos.col] - 1;
+						}
+					}
+					if (step[queue[nowFlag].row][queue[nowFlag].col] < 0)
+					{
+						if (step[newPos.row][newPos.col] < step[queue[nowFlag].row][queue[nowFlag].col] - 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
+						{
+							step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] - 1;
+							distance[endPos.row][endPos.col][newPos.row][newPos.col] = - step[newPos.row][newPos.col] - 1;
+							queue[++endFlag] = newPos;
+						}
+						if (step[newPos.row][newPos.col] > 0)
+						{
+							hasFound = true;
+							ret = - step[queue[nowFlag].row][queue[nowFlag].col] + step[newPos.row][newPos.col] - 1;
 						}
 					}
 				}
@@ -1176,7 +1199,6 @@ namespace Helpers
 			++nowFlag;
 		}
 
-		int ret = step[endPos.row][endPos.col];
 		for (int i = 0; i < gameField.height; i++)
 			delete[]step[i];
 		delete[]step;
@@ -1724,6 +1746,8 @@ int main()
 	int myID = mainGameField.ReadInput("input.txt", data, globalData); // 输入，并获得自己ID
 	srand(unsigned(Pacman::seed + myID));
 
+	cout << myID << endl;
+
 	// 输出当前游戏局面状态以供本地调试。注意提交到平台上会自动优化掉，不必担心。
 	mainGameField.DebugPrint();
 
@@ -1731,7 +1755,6 @@ int main()
 	Debug::startTime = clock();
 	Debug::printInfo = true;
 #endif
-
 
 	// 中央决定一定要叫嚣
 	Pacman::Direction choice = AI(mainGameField, myID);
