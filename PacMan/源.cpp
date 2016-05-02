@@ -1,7 +1,7 @@
 ﻿/*
 * Edited By Jet, Moriarty, weaZen
-* 2016/05/02 14:01
-* Naive AI Guzuta
+* 2016/05/02 15:58
+* Clever AI 琴思聪
 */
 
 /*
