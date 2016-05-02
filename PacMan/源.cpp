@@ -59,7 +59,7 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.950
+#define TIME_LIMIT 0.95
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 6
@@ -822,6 +822,7 @@ namespace Pacman
 		// tauntText 表示想要叫嚣的言语，可以是任意字符串，除了显示在屏幕上不会有任何作用，留空表示不叫嚣
 		// data 表示自己想存储供下一回合使用的数据，留空表示删除
 		// globalData 表示自己想存储供以后使用的数据（替换），这个数据可以跨对局使用，会一直绑定在这个 Bot 上，留空表示删除
+        // Jet: debugData为一个Json对象，botzone上不打印，用于本地调试
 		void WriteOutput(Direction action, string tauntText = "", string data = "",
 			string globalData = "", Json::Value debugData = "") const
 		{
@@ -832,7 +833,9 @@ namespace Pacman
 			ret["response"]["tauntText"] = tauntText;
 			ret["data"] = data;
 			ret["globaldata"] = globalData;
-			ret["debug"] = debugData;
+#ifndef _BOTZONE_ONLINE
+            ret["debug"] = debugData;
+#endif
 
 #ifdef _BOTZONE_ONLINE
 			Json::FastWriter writer; // 在线评测的话能用就行……
@@ -1100,13 +1103,11 @@ namespace Helpers
 	}
 
 
-	// Jet:可以试试哪个效率比较高
-	typedef std::vector<Pacman::FieldProp> Path;
-	//typedef std::vector<Pacman::Direction> Path;
-
 	// Jet: 用cc的改的
 	int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
 	{
+        clock_t startTime = clock();
+
 		if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
 			return distance[startPos.row][startPos.col][endPos.row][endPos.col];
 		if (startPos == endPos)
@@ -1158,6 +1159,9 @@ namespace Helpers
 			delete[]step[i];
 		delete[]step;
 
+        auto&& d = Helpers::debugData["profiling"]["Distance()"];
+        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+
 		return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
 	}
 
@@ -1167,11 +1171,13 @@ namespace Helpers
 		return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
 	}
 
-	//weaZen: 返回distance<<3 + dir + 1以便决策
+	// weaZen: 返回distance<<3 + dir + 1以便决策
 	// Jet: 改写了个模版
 	template <typename __Pred>
-	int GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
+	char GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
 	{
+        clock_t startTime = clock();
+
 		Pacman::FieldProp startPos = gameField.players[myID];
 		if (pr(gameField, startPos))
 			return 0;
@@ -1184,12 +1190,12 @@ namespace Helpers
 			for (int j = 0; j < gameField.width; j++)
 				dirInfo[i][j] = Pacman::Direction::stay;
 		}
-		int** step = new int*[gameField.height];
+		char** step = new char*[gameField.height];
 		for (int i = 0; i < gameField.height; i++)
 		{
-			step[i] = new int[gameField.width];
+			step[i] = new char[gameField.width];
 			for (int j = 0; j < gameField.width; j++)
-				step[i][j] = MAX_INT;
+				step[i][j] = 31;
 		}
 		step[startPos.row][startPos.col] = 0;
 
@@ -1197,8 +1203,8 @@ namespace Helpers
 		//初始化广搜队列
 		Pacman::FieldProp queue[QUEUE_MAX];
 		queue[0] = startPos;
-		int nowFlag = 0, endFlag = 0;
-		int dis = 0;
+		char nowFlag = 0, endFlag = 0;
+		char dis = 0;
 		bool hasEaten = false;
 
 		while (nowFlag <= endFlag && !hasEaten)
@@ -1246,11 +1252,14 @@ namespace Helpers
 			delete[]dirInfo[i];
 		delete[]dirInfo;
 
+        auto&& d = Helpers::debugData["profiling"]["GetTo()"];
+        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+
 		return (dis << 3) + dir + 1;
 	}
 
 	//weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
-	int GetToTarget(Pacman::GameField &gameField, int myID, int target)
+	char GetToTarget(Pacman::GameField &gameField, int myID, int target)
 	{
 		if (target == 0) 
             return Pacman::Direction::ur + 1;
@@ -1274,7 +1283,7 @@ namespace Helpers
 		return false;
 	}
 
-	int GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
+	char GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
 	{
 		return GetTo(gameField, myID, isBesideGenerator);
 	}
@@ -1322,8 +1331,6 @@ namespace Helpers
 		dir = valid[RandBetween(0, vCount)];
 		return dir;
 	}
-
-
 
 	char RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
 	{
@@ -1677,11 +1684,7 @@ int main()
 	// 中央决定一定要叫嚣
 	Pacman::Direction choice = AI(mainGameField, myID);
 
-#ifdef _BOTZONE_ONLINE
-	Helpers::debugData.clear();
-#endif
-
-	Helpers::debugData["TimeUsed"] = Helpers::TimeThrough();
+	Helpers::debugData["profiling"]["TimeUsed"] = Helpers::TimeThrough();
 	mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Helpers::debugData);
 
 	//cout << Helpers::Distance(mainGameField, 1, 1);
