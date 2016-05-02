@@ -1627,7 +1627,7 @@ namespace AI
 		int maxD = 0;
 		for (int d = 0; d < 5; d++)
 		{
-			Debug::debugData["depth = " + to_string(depth)][Pacman::dirStr[d + 1]] = to_string(evals[d]);
+			Debug::debugData["depth = " + to_string(depth)][Pacman::dirStr[d]] = to_string(evals[d]);
 			if (evals[d] >= evals[maxD])
 				maxD = d;
 		}
