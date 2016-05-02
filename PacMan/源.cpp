@@ -627,13 +627,13 @@ namespace Pacman
 			if (fieldContent[row][col] & smallFruit)
 				v += 1;
 			if (fieldContent[row][col] & largeFruit)
-				v += isSmallMap() ? 6 : 4;
+				v += isSmallMap() ? 4 : 2;
 			return v;
 		}
 
         inline bool isSmallMap()const 
         {
-            return height <= 8 && width <= 8;
+            return height <= 10 && width <= 10 && height + width <= 16;
         }
 
 		//weaZen: 地图分析
@@ -983,7 +983,7 @@ namespace Helpers
 	int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
 	int randomPlayCount = 0;
 	std::vector<string> jiangXuan = {
-		/*	u8"赶紧续一秒 +1s",
+		u8"赶紧续一秒 +1s",
 		u8"人吶就都不知道",
 		u8"自己不可以预料",
 		u8"一个人的命运啊",
@@ -1051,8 +1051,8 @@ namespace Helpers
 		u8"就把我批判一番",
 		u8"你们啊，naive",
 		u8"我今天算是得罪了你们",
-		u8"I'm angry!", 暂时不可用*/
-		"Congratulations! +1s",
+		u8"I'm angry!",
+		/*"Congratulations! +1s",
 		"Congratulations! +2s",
 		"Congratulations! +5s",
 		"A man, He not knows",
@@ -1096,7 +1096,7 @@ namespace Helpers
 		"YoYo! YoYo!",
 		"I'm healthier than u",
 		"U Young People",
-		"No Future For U"
+		"No Future For U"*/
 	};
 
 
@@ -1527,7 +1527,11 @@ namespace AI
                     fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
         e -= fruitEvalSum / 100;
-        e += gameField.players[myID].strength;
+        if (gameField.players[myID].powerUpLeft <= 0)
+            e += gameField.players[myID].strength;
+        else
+            e += gameField.players[myID].strength - 10 + gameField.players[myID].powerUpLeft;
+
 
         auto&& d = Debug::debugData["profiling"]["GreedyEval_int()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
