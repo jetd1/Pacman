@@ -1646,17 +1646,12 @@ namespace AI
 				break;
 			else
 				solutions.push_back(sol);
-            Helpers::debugData["depth = " + to_string(depth)]["Eval"] = to_string(solutions.back().second);
+            Helpers::debugData["depth = " + to_string(depth)]["maxEval"] = to_string(solutions.back().second);
 		}
 		if (solutions.size() == 0)
 			return NaiveAI(gameField, myID);
 		return solutions.back().first;
 	}
-
-	//Pacman::Direction JetAI(Pacman::GameField &gameField, int myID)
-	//{
-	//    throw new std::exception("Not Implemented");
-	//}
 }
 
 int main()
