@@ -1578,7 +1578,8 @@ namespace AI
             gameField.NextTurn();
             if (gameField.players[myID].strength - strength == 0)
                 tmp = SimpleSearch(gameField, myID, depth - 1, dir);
-            else tmp = SimpleSearch(gameField, myID, depth - 1) + depth;//早吃早超生 不知道有没有用
+            else tmp = SimpleSearch(gameField, myID, depth - 1) + depth;
+			tmp += GreedyEval(gameField, myID);
             max = std::max(max, tmp);
             gameField.RollBack(1);
 
