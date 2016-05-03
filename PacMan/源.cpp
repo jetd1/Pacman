@@ -1000,7 +1000,7 @@ namespace Helpers
 		u8"我实在也不是谦虚",
 		u8"中央研究都决定了",
 		u8"你来当总书记",
-		u8"当时我就念了两居诗",
+		u8"当时我就念了两句诗",
 		u8"苟利国家生死以",
 		u8"岂因祸福避趋之",
 		u8"我主要的就是三件事情",
@@ -1249,11 +1249,20 @@ namespace Helpers
 		char dis = 0;
 		bool hasEaten = false;
 
+		//初始化随机方向
+		Pacman::Direction randomDir[4];
+		for (int i = 0; i < 4; ++i)
+			randomDir[i] = Pacman::Direction(i);
+
 		while (nowFlag <= endFlag && !hasEaten)
 		{
 			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-			for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+			for (int i = 0; i < 4; ++i)
+				swap(randomDir[RandBetween(0, 4)], randomDir[RandBetween(0, 4)]);
+			Pacman::Direction dir;
+			for (int i = 0; i < 4; ++i)
 			{
+				dir = randomDir[i];
 				if (!(curGrid & Pacman::direction2OpposingWall[dir]))
 				{
 					Pacman::FieldProp newPos = queue[nowFlag];
@@ -1484,7 +1493,7 @@ namespace AI
 			{
 				bool preyFlag;
 				preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
-				preyFlag |= gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2;
+				preyFlag |= gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2 && Helpers::DeltaATK(gameField, myID, _) > 2;
 				if (preyFlag)
 				{
 					playerTarget |= Pacman::playerID2Mask[_];
@@ -1635,8 +1644,8 @@ namespace AI
 		int *evals = new int[5];
 		int max = -100000000;
 		Pacman::Direction naiveDir = NaiveAI(gameField, myID);
-		if (gameField.turnID == MAX_TURN - 1)
-			return std::make_pair(naiveDir, 0);
+		//if (gameField.turnID == MAX_TURN - 1)
+		//	return std::make_pair(naiveDir, 0);
 		int strength = gameField.players[myID].strength;
 		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
@@ -1674,7 +1683,7 @@ namespace AI
 
 			//不知道为什么特别容易不动 只好先这样了
 			if (dir == Pacman::Direction::stay)
-				evals[dir + 1] = int(evals[dir + 1] * (1 - (float)gameField.generatorTurnLeft / gameField.GENERATOR_INTERVAL));
+				evals[dir + 1] = int(evals[dir + 1] * (1 - ((float)gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
 
 			gameField.RollBack(1);
 		}
