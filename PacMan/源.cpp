@@ -93,6 +93,9 @@ namespace Debug
 
     inline bool TimeOut()
     {
+//#ifdef DEBUG
+//		return false;
+//#endif // DEBUG
         if (timeOutFlag || TimeThrough() > TIME_LIMIT)
         {
             Debug::debugData["profiling"]["TimeOut"] = true;
@@ -722,31 +725,6 @@ namespace Pacman
 					}
 				}
 			}
-#ifdef DEBUG
-			int tmp = 0;
-			for (int y = 0; y < height; ++y)
-			{
-				for (int x = 0; x < width; ++x)
-				{
-					if (pathInfo[y][x].isImpasse)
-					{
-						cout << ++tmp << ' ' << y << ' ' << x << ' ' << pathInfo[y][x].fleeLength << endl;
-						//cout << pathInfo[y][x].pExit->row << ' ' << pathInfo[y][x].pExit->col << endl;
-					}
-				}
-			}
-			cout << "***********************" << endl;
-			tmp = 0;
-			for (int y = 0; y < height; ++y)
-			{
-				for (int x = 0; x < width; ++x)
-				{
-					if (pathInfo[y][x].isExit)
-						cout << ++tmp << ' ' << y << ' ' << x << ' ' << pathInfo[y][x].fleeLength << endl;
-				}
-			}
-
-#endif // DEBUG
 
             auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
             d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -1119,7 +1097,8 @@ namespace Helpers
 
 	inline string MoHa()
 	{
-		return jiangXuan[RandBetween(0, jiangXuan.size())];
+		return "";
+		//return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
 
@@ -1477,11 +1456,12 @@ namespace AI
 	//weaZen： 现在他只会把可能逃不出死路的值得一吃的玩家和附近可能会走进死路的玩家加入攻击范围
 	Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
 	{
-		char fruitDirInfo, playerDirInfo;
+		char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
         char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         char playerTarget = 0;
+		char tryPlayerTarget = 0;
         int targetStrength = 0;
-        char fruitInfo, playerInfo;
+        char fruitInfo, playerInfo, tryPlayerInfo;
 		Pacman::Direction dir;
 
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -1492,42 +1472,45 @@ namespace AI
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
 				bool preyFlag;
+				bool tryPreyFlag;
 				preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
-				preyFlag |= gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2 && Helpers::DeltaATK(gameField, myID, _) > 2;
+				tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2 && Helpers::DeltaATK(gameField, myID, _) > 2;
 				if (preyFlag)
 				{
 					playerTarget |= Pacman::playerID2Mask[_];
+					targetStrength = std::max(targetStrength, gameField.players[_].strength);
+				}
+				if (tryPreyFlag)
+				{
+					tryPlayerTarget |= Pacman::playerID2Mask[_];
 					targetStrength = std::max(targetStrength, gameField.players[_].strength);
 				}
 			}
 		}
 		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget);
 		playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget);
+		tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget);
 #ifdef DEBUG
 		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
 		fruitDirInfo = fruitInfo & 7;
 		playerDirInfo = playerInfo & 7;
+		tryPlayerDirInfo = tryPlayerInfo & 7;
 
-		switch ((fruitDirInfo == 5) * 10 + (playerDirInfo == 5))
-		{
-		case (11):
-			dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID) & 7) - 1);
-			break;
-		case (10):
+		int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
+
+		
+		if (info >= 4)
 			dir = Pacman::Direction(playerDirInfo - 1);
-			break;
-		case (1):
-			dir = Pacman::Direction(fruitDirInfo - 1);
-			break;
-		case (0):
-			if ((playerInfo >> 3) <= targetStrength / 2 + (fruitInfo >> 3))
-				dir = Pacman::Direction(playerDirInfo - 1);
+		else
+			if (info >= 2)
+				dir = Pacman::Direction(tryPlayerDirInfo - 1);
 			else
-				dir = Pacman::Direction(fruitDirInfo - 1);
-			break;
-		}
-
+				if (info >= 1)
+					dir = Pacman::Direction(fruitDirInfo - 1);
+				else
+					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID) & 7) - 1);
+		
 		if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
 			return dir;
 		//为了能够搜索减少耗时直接随机
@@ -1573,7 +1556,7 @@ namespace AI
                 if ((tmp = gameField.GetFruitValue(i, j)) != 0)
                     fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
-        e -= fruitEvalSum / 100;
+        //e -= fruitEvalSum / 100;
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
@@ -1593,6 +1576,7 @@ namespace AI
         int tmp;
         int strength = gameField.players[myID].strength;
         //cout << depth << ' ';
+		
         if (Debug::TimeOut() || depth == 0 || gameField.players[myID].dead || !gameField.hasNext)
             return GreedyEval(gameField, myID);
         for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
@@ -1614,10 +1598,31 @@ namespace AI
                 if (gameField.players[i].dead)
                     continue;
                 gameField.actions[i] = NaiveAI(gameField, i);
-                //cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
             }
             gameField.actions[myID] = dir;
+
+//#ifdef DEBUG
+//			gameField.DebugPrint();
+//			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+//			{
+//				if (gameField.players[i].dead)
+//					continue;
+//				cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
+//			}
+//			
+//			for (int i = 0; i < 5; ++i)
+//			{
+//				cout << Pacman::dirStr[i] << '\t' << score[i] << endl;
+//			}
+//
+//			system("pause");
+//			//system("cls");
+//#endif // DEBUG
+			
+
             gameField.NextTurn();
+
+			
 			if (gameField.players[myID].strength - strength == 0)
 			{
 				if (dir == Pacman::Direction::stay)
@@ -1626,7 +1631,7 @@ namespace AI
 					tmp = SimpleSearch(gameField, myID, depth - 1, dir);
 			}
 			else tmp = SimpleSearch(gameField, myID, depth - 1);// + depth;
-			tmp += GreedyEval(gameField, myID);
+			if (tmp > 0) tmp += GreedyEval(gameField, myID);
             max = std::max(max, tmp);
             gameField.RollBack(1);
 
@@ -1634,7 +1639,6 @@ namespace AI
             if (Debug::TimeOut())
                 return max;
         }
-
         return max;
     }
 
@@ -1681,8 +1685,16 @@ namespace AI
 			}
 			else evals[dir + 1] = AI::SimpleSearch(gameField, myID, depth);
 
+#ifdef DEBUG
+			if (depth == DEFAULT_DEPTH)
+				score[dir + 1] = evals[dir + 1];
+			else
+				score[dir + 1] = (evals[dir + 1] + score[dir + 1]) / 2;
+#endif // DEBUG
+			
+
 			//不知道为什么特别容易不动 只好先这样了
-			if (dir == Pacman::Direction::stay)
+			if (dir == Pacman::Direction::stay && evals[dir + 1] > 0)
 				evals[dir + 1] = int(evals[dir + 1] * (1 - ((float)gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
 
 			gameField.RollBack(1);
