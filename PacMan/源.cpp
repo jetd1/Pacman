@@ -82,6 +82,7 @@ namespace Debug
 {
     bool printInfo = false;
     string presetString;
+        //= R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,16,1,16,2,16,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,16,0,0,0,0],[0,0,0,16,32,16,0,0,0],[0,0,0,16,32,16,0,0,0],[0,0,0,0,16,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,16,4,16,8,16,0,0]],"height":8,"id":3,"seed":1462195463,"static":[[8,3,13,5,0,5,7,9,2],[10,12,5,5,0,5,5,6,10],[2,11,31,9,4,3,31,11,8],[10,12,1,0,1,0,1,6,10],[10,9,4,0,4,0,4,3,10],[2,14,31,12,1,6,31,14,8],[10,9,5,5,0,5,5,3,10],[8,6,13,5,0,5,7,12,2]],"width":9},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":-1}},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":0}},{"0":{"action":1},"1":{"action":0},"2":{"action":2},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":{"action":1},"1":{"action":0},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":-1},"2":{"action":1},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":2}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":1},"1":{"action":0},"2":{"action":2},"3":{"action":3}},{"0":{"action":-1},"1":{"action":-1},"2":{"action":1},"3":{"action":0}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":2}},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3")*";
     Json::Value debugData;
     bool timeOutFlag = false;
     clock_t startTime = clock();
@@ -385,7 +386,7 @@ namespace Pacman
 		// Jet:把PopState包装了一下 方便一些
 		void RollBack(int turnCount = -1)
 		{
-            clock_t startTime = clock();
+            //clock_t startTime = clock();
 			if (turnCount < 0)
 				while (PopState());
             else
@@ -393,8 +394,8 @@ namespace Pacman
 				if (!PopState())
 					break;
 
-            auto&& d = Debug::debugData["profiling"]["RollBack()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+            //auto&& d = Debug::debugData["profiling"]["RollBack()"];
+            //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
 
 		// 判断指定玩家向指定方向移动是不是合法的（没有撞墙且没有踩到豆子产生器）
@@ -411,7 +412,7 @@ namespace Pacman
 		// 是终局的话就返回false
 		bool NextTurn()
 		{
-            clock_t startTime = clock();
+            //clock_t startTime = clock();
             
 			int _, i, j;
 
@@ -598,8 +599,8 @@ namespace Pacman
 
 			++turnID;
 
-            auto&& d = Debug::debugData["profiling"]["NextTurn()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+            //auto&& d = Debug::debugData["profiling"]["NextTurn()"];
+            //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
 			// 是否只剩一人？
 			if (aliveCount <= 1)
@@ -639,7 +640,7 @@ namespace Pacman
 		//weaZen: 地图分析
 		void MapAnalyze()
 		{
-            clock_t startTime = clock();
+            //clock_t startTime = clock();
 
 			FieldProp deadSpot[40];
 			int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
@@ -748,8 +749,8 @@ namespace Pacman
 
 #endif // DEBUG
 
-            auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+            //auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
+            //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
 
 		// 读取并解析程序输入，本地调试或提交平台使用都可以。
@@ -1122,12 +1123,17 @@ namespace Helpers
 		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
+    inline string KeepSilentMakeFortune()
+    {
+        return "";
+    }
+
 
 	// weaZen: 双向
 	// Jet: 用cc的改的
 	int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
 	{
-        clock_t startTime = clock();
+        //clock_t startTime = clock();
 
 		if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
 			return distance[startPos.row][startPos.col][endPos.row][endPos.col];
@@ -1201,8 +1207,8 @@ namespace Helpers
 			delete[]step[i];
 		delete[]step;
 
-        auto&& d = Debug::debugData["profiling"]["Distance()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+        //auto&& d = Debug::debugData["profiling"]["Distance()"];
+        //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
 		return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
 	}
@@ -1218,7 +1224,7 @@ namespace Helpers
 	template <typename __Pred>
 	char GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
 	{
-        clock_t startTime = clock();
+        //clock_t startTime = clock();
 
 		Pacman::FieldProp startPos = gameField.players[myID];
 		if (pr(gameField, startPos))
@@ -1294,8 +1300,8 @@ namespace Helpers
 			delete[]dirInfo[i];
 		delete[]dirInfo;
 
-        auto&& d = Debug::debugData["profiling"]["GetTo()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+        //auto&& d = Debug::debugData["profiling"]["GetTo()"];
+        //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
 		return (dis << 3) + dir + 1;
 	}
@@ -1333,7 +1339,11 @@ namespace Helpers
 	// Jet: 近似算直线距离
 	inline int ApprDirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
 	{
-        return (abs(startPos.row - endPos.row) + abs(startPos.col - endPos.col) + 1) / 2;
+        //clock_t startTime = clock();
+        auto ret = (abs(startPos.row - endPos.row) + abs(startPos.col - endPos.col) + 1) / 2;
+        //auto&& d = Debug::debugData["profiling"]["ApprDirectDistance()"];
+        //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+        return ret;
 	}
 
 	// weaZen:简单的危险判断
@@ -1529,7 +1539,7 @@ namespace AI
 
     int GreedyEval(const Pacman::GameField &gameField, int myID)
     {
-        clock_t startTime = clock();
+        //clock_t startTime = clock();
 
         int minGeneratorDis = 100;
         int generatorDisSum = 0;
@@ -1571,8 +1581,8 @@ namespace AI
 			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
 
 
-        auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+        //auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
+        //d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
         return e;
     }
@@ -1751,7 +1761,7 @@ namespace AI
 int main()
 {
 	auto AI = AI::IterativeGreedySearch;
-	auto TAUNT = Helpers::MoHa;
+	auto TAUNT = Helpers::KeepSilentMakeFortune;
 
 	Pacman::GameField mainGameField;
 	string data, globalData; // 这是回合之间可以传递的信息
