@@ -1,7 +1,7 @@
 ﻿/*
 * Edited By Jet, Moriarty, weaZen
-* 2016/05/02 15:58
-* Clever AI 琴思聪
+* 2016/05/05 00:31
+* AI XXXXX
 */
 
 /*
@@ -1369,7 +1369,7 @@ namespace Helpers
 		return dir;
 	}
 
-	char RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
+	short RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
 	{
 		randomPlayCount++;
 		int count = 0, myAct = -1;
@@ -1407,24 +1407,17 @@ namespace Helpers
 				if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
 					swap(rank2player[k], rank2player[k + 1]);
 
-		int actionScore = 0;
-		int scorebase = 0;
-		if (rank2player[0] != myID)
-			for (int j = 1; j < MAX_PLAYER_COUNT; j++)
-			{
-				if (gameField.players[rank2player[j - 1]].strength < gameField.players[rank2player[j]].strength)
-					scorebase = j + 1;
-				if (rank2player[j] == myID)
-				{
-					actionScore = scorebase;
-					break;
-				}
-			}
+        int actionScore = 0,
+            total = 0;
+        for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+            total += gameField.players[_].strength;
+
+        actionScore = (10000 * gameField.players[myID].strength / total) / 100;
 
 		// 恢复游戏状态到本回合初
 		gameField.RollBack(count);
 
-		return ((myAct + 1) << 2) + actionScore;
+		return ((myAct + 1) << 8) + actionScore;
 	}
 
 	inline string depth2String(int depth)
@@ -1440,16 +1433,16 @@ namespace AI
 {
 	using namespace EnumExt;
 	typedef std::pair<Pacman::Direction, int> Solution;
-	double score[5];
+	int score[5];
 
 	Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
 	{
 		int actionScore[5]{};
-		char tmp;
+		short tmp;
 		while (!Debug::TimeOut())
 		{
 			tmp = Helpers::RandomPlay(gameField, myID, noStay);
-			actionScore[tmp >> 2] += (tmp & 3);
+			actionScore[tmp >> 8] += (tmp & 255);
 		}
 
 		int maxD = 0, d;
