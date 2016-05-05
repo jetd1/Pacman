@@ -83,7 +83,8 @@ using std::runtime_error;
 namespace Debug
 {
 	bool printInfo = false;
-	string presetString;
+    string presetString
+        = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,0,0,0,0,0,0],[16,0,0,0,0,0,0,16],[16,1,0,32,32,0,2,16],[0,0,0,16,16,0,0,0],[16,4,0,32,32,0,8,16],[16,0,0,0,0,0,0,16],[0,0,0,0,0,0,0,0]],"height":7,"id":0,"seed":1462470756,"static":[[11,12,1,5,5,1,6,11],[12,3,10,31,31,10,9,6],[1,6,12,1,1,6,12,1],[8,5,5,0,0,5,5,2],[4,3,9,4,4,3,9,4],[9,6,10,31,31,10,12,3],[14,9,4,5,5,4,3,14]],"width":8},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":-1},"1":{"action":2},"2":{"action":0},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":-1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":3},"2":{"action":-1},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":-1},"3":null},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":0},"1":{"action":2},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":-1},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":-1},"3":null}],"responses":[{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""}]})*";
 	Json::Value debugData;
 	bool timeOutFlag = false;
 	clock_t startTime = clock();
@@ -1522,11 +1523,8 @@ namespace AI
 			return dir;
 
         double timeRemain = TIME_LIMIT - Debug::TimeThrough();
-		//为了能够搜索减少耗时直接随机
-        if (timeRemain < 0.15)
-		    return Helpers::SimpleRandom(gameField, myID);
 
-        return MCTS_AI(gameField, myID, false, timeRemain / 4).back().first;
+        return MCTS_AI(gameField, myID, false, timeRemain / 8).back().first;
     }
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
@@ -1539,9 +1537,7 @@ namespace AI
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
 		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
-		{
 			strengthSum += gameField.players[i].strength;
-		}
 
 		if (!gameField.hasNext)
 			return 1000 * gameField.players[myID].strength / strengthSum;
@@ -1549,10 +1545,9 @@ namespace AI
 		int e = 0;
 		int tmp;
 
-
 		for (int i = 0; i < gameField.generatorCount; i++)
 		{
-			tmp = int(Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]));
+			tmp = Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]);
 			generatorDisSum += tmp;
 			if (minGeneratorDis > tmp)
 				minGeneratorDis = tmp;
@@ -1619,9 +1614,14 @@ namespace AI
 			//基于以下两点猜测减少搜索量
 			//1.没有力量增加或驱逐对手却往反方向跑是无意义的
 			//2.不在生成器周围却不动是无意义的
-			if (lastDir != Pacman::Direction::stay && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0 && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
+			if (lastDir != Pacman::Direction::stay 
+                && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 
+                && Pacman::dx[dir] + Pacman::dx[lastDir] == 0 
+                && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
 				continue;
-			if (!top && dir == Pacman::Direction::stay && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) || gameField.generatorTurnLeft > 3))
+			if (!top && dir == Pacman::Direction::stay 
+                && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) 
+                    || gameField.generatorTurnLeft > 3))
 				continue;
 
 			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
@@ -1655,7 +1655,7 @@ namespace AI
 
 			gameField.NextTurn();
 
-
+            
 			if (gameField.players[myID].strength - strength == 0)
 			{
 				if (dir == Pacman::Direction::stay)
@@ -1738,9 +1738,10 @@ namespace AI
 			Debug::debugData[Helpers::depth2String(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 		}
 
+        averagedEvals[0] -= 5;
 		for (int i = 0; i < 5; ++i)
 		{
-			if (max < averagedEvals[i])
+			if (max <= averagedEvals[i])
 			{
 				max = averagedEvals[i];
 				dir = Pacman::Direction(i - 1);
