@@ -1539,9 +1539,7 @@ namespace AI
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
 		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
-		{
 			strengthSum += gameField.players[i].strength;
-		}
 
 		if (!gameField.hasNext)
 			return 1000 * gameField.players[myID].strength / strengthSum;
@@ -1575,12 +1573,15 @@ namespace AI
 
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
 		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+        auto&& f = Debug::debugData["profiling"]["Call For GreedyEval()"];
+        f = f.asInt() + 1;
 
 		return e;
 	}
 
 	// weaZen:简单的搜索，非第一层(top)返回最高估值 若上一步造成力量变化则不给出lastDir 第一层(top)更新averagedEvals并返回最佳选择
-	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false)
+	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction lastDir = Pacman::Direction::stay,
+                    bool top = false, bool rivalFlag = false)
 	{
 		int max = DEATH_EVAL;
 		int tmp;
@@ -1633,26 +1634,6 @@ namespace AI
 				gameField.actions[i] = NaiveAI(gameField, i);
 			}
 			gameField.actions[myID] = dir;
-
-			//#ifdef DEBUG
-			//			gameField.DebugPrint();
-			//			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-			//			{
-			//				if (gameField.players[i].dead)
-			//					continue;
-			//				cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
-			//			}
-			//			
-			//			for (int i = 0; i < 5; ++i)
-			//			{
-			//				cout << Pacman::dirStr[i] << '\t' << score[i] << endl;
-			//			}
-			//
-			//			system("pause");
-			//			//system("cls");
-			//#endif // DEBUG
-
-
 			gameField.NextTurn();
 
 
@@ -1715,7 +1696,7 @@ namespace AI
 		return std::make_pair(Pacman::Direction(maxD - 1), max);
 	}
 
-	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
+	Pacman::Direction IterativeSearch(Pacman::GameField &gameField, int myID)
 	{
 		std::vector<Solution> solutions;
 		double max = -1e+07;
@@ -1724,7 +1705,7 @@ namespace AI
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
 		{
 			clock_t startTime = clock();
-			AI::Solution sol;
+			Solution sol;
 			sol = GreedySearchAI(gameField, myID, depth);
 			if (Debug::TimeOut())
 			{
@@ -1739,14 +1720,12 @@ namespace AI
 		}
 
 		for (int i = 0; i < 5; ++i)
-		{
-			if (max < averagedEvals[i])
+            if (max < averagedEvals[i])
 			{
 				max = averagedEvals[i];
 				dir = Pacman::Direction(i - 1);
 			}
-		}
-		cout << endl;
+
 		if (solutions.size() == 0)
 		{
 			Debug::debugData["*choice"]["NAIVE"] = true;
@@ -1761,7 +1740,7 @@ namespace AI
 
 int main()
 {
-	auto AI = AI::IterativeGreedySearch;
+	auto AI = AI::IterativeSearch;
 	auto TAUNT = Helpers::KeepSilentMakeFortune;
 
 	Pacman::GameField mainGameField;
