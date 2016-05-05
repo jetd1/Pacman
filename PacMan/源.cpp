@@ -1583,10 +1583,13 @@ namespace AI
 		{
 			if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir))
 				continue;
+			Pacman::FieldProp nextGrid;
+			nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
+			nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
 			//基于以下两点猜测减少搜索量
-			//1.没有力量增加却往反方向跑是无意义的
+			//1.没有力量增加或驱逐对手却往反方向跑是无意义的
 			//2.不在生成器周围却不动是无意义的
-			if (lastDir != Pacman::Direction::stay && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0)
+			if (lastDir != Pacman::Direction::stay && Pacman::dy[dir] + Pacman::dy[lastDir] == 0 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0 && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
 				continue;
 			if (dir == Pacman::Direction::stay && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) || gameField.generatorTurnLeft > 3))
 				continue;
