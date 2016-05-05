@@ -1551,7 +1551,7 @@ namespace AI
 				if ((tmp = gameField.GetFruitValue(i, j)) != 0)
 					fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
-		//e -= fruitEvalSum / 100;
+		e -= (fruitEvalSum >> 4);
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
