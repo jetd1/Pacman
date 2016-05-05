@@ -88,9 +88,9 @@ namespace Debug
 	bool timeOutFlag = false;
 	clock_t startTime = clock();
 
-	inline double TimeThrough()
+	inline double TimeThrough(clock_t startTime = Debug::startTime)
 	{
-		return double(clock() - Debug::startTime) / CLOCKS_PER_SEC;
+		return double(clock() - startTime) / CLOCKS_PER_SEC;
 	}
 
 	inline bool TimeOut()
@@ -1432,26 +1432,31 @@ namespace Helpers
 namespace AI
 {
 	using namespace EnumExt;
-	typedef std::pair<Pacman::Direction, int> Solution;
+	
 	int tmpEvals[5];
 	int averagedEvals[5];
 
-	Pacman::Direction MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false)
+    typedef std::pair<Pacman::Direction, int> Solution;
+    bool operator <(const Solution& a, const Solution& b) { return a.second < b.second; }
+    bool operator >(const Solution& a, const Solution& b) { return a.second > b.second; }
+
+	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
+        clock_t startTime = clock();
 		int actionScore[5]{};
 		short tmp;
-		while (!Debug::TimeOut())
+		while (Debug::TimeThrough(startTime) < timeOut)
 		{
 			tmp = Helpers::RandomPlay(gameField, myID, noStay);
 			actionScore[tmp >> 8] += (tmp & 255);
 		}
 
-		int maxD = 0, d;
-		for (d = 0; d < 5; d++)
-			if (actionScore[d] > actionScore[maxD])
-				maxD = d;
+        std::vector<Solution> solutions;
+        for (int d = 0; d < 5; d++)
+            solutions.push_back(std::make_pair(Pacman::Direction(d - 1), actionScore[d]));
+        sort(solutions.begin(), solutions.end());
 
-		return Pacman::Direction(maxD - 1);
+		return solutions;
 	}
 
 	//weaZen： 现在他只会把可能逃不出死路的值得一吃的玩家和附近可能会走进死路的玩家加入攻击范围
@@ -1472,10 +1477,11 @@ namespace AI
 				continue;
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
-				bool preyFlag;
-				bool tryPreyFlag;
-				preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
-				tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit && Helpers::Distance(gameField, myID, _) <= 2 && Helpers::DeltaATK(gameField, myID, _) > 2;
+				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse 
+                    && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit 
+                    && Helpers::Distance(gameField, myID, _) <= 2 
+                    && Helpers::DeltaATK(gameField, myID, _) > 2;
 				if (preyFlag)
 				{
 					playerTarget |= Pacman::playerID2Mask[_];
@@ -1514,11 +1520,14 @@ namespace AI
 
 		if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
 			return dir;
+
+        double timeRemain = TIME_LIMIT - Debug::TimeThrough();
 		//为了能够搜索减少耗时直接随机
-		return Helpers::SimpleRandom(gameField, myID);
-		//return MCTS_AI(gameField, myID);
-		//return MCTS_AI(gameField, myID, true);
-	}
+        if (timeRemain < 0.15)
+		    return Helpers::SimpleRandom(gameField, myID);
+
+        return MCTS_AI(gameField, myID, false, timeRemain / 4).back().first;
+    }
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
 	{
