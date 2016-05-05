@@ -59,10 +59,10 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.97
+#define TIME_LIMIT 0.98
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define DEFAULT_DEPTH 8
+#define DEFAULT_DEPTH 7
 #define MAX_DEPTH 15
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
@@ -83,9 +83,8 @@ using std::runtime_error;
 namespace Debug
 {
 	bool printInfo = false;
-    string presetString
-        = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,0,0,0,0,0,0],[16,0,0,0,0,0,0,16],[16,1,0,32,32,0,2,16],[0,0,0,16,16,0,0,0],[16,4,0,32,32,0,8,16],[16,0,0,0,0,0,0,16],[0,0,0,0,0,0,0,0]],"height":7,"id":0,"seed":1462470756,"static":[[11,12,1,5,5,1,6,11],[12,3,10,31,31,10,9,6],[1,6,12,1,1,6,12,1],[8,5,5,0,0,5,5,2],[4,3,9,4,4,3,9,4],[9,6,10,31,31,10,12,3],[14,9,4,5,5,4,3,14]],"width":8},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":-1},"1":{"action":2},"2":{"action":0},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":-1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":3},"2":{"action":-1},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":-1},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":-1},"3":null},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":1},"3":null},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":0},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":0},"1":{"action":2},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":null},{"0":{"action":3},"1":{"action":1},"2":{"action":-1},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":-1},"1":{"action":0},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":null},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":null},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":null},{"0":{"action":0},"1":{"action":1},"2":{"action":-1},"3":null}],"responses":[{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":-1,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""}]})*";
-	Json::Value debugData;
+    string presetString;
+    Json::Value debugData;
 	bool timeOutFlag = false;
 	clock_t startTime = clock();
 
@@ -96,9 +95,6 @@ namespace Debug
 
 	inline bool TimeOut()
 	{
-		//#ifdef DEBUG
-		//		return false;
-		//#endif // DEBUG
 		if (timeOutFlag || TimeThrough() > TIME_LIMIT)
 		{
 			Debug::debugData["profiling"]["TimeOut"] = true;
@@ -966,6 +962,14 @@ namespace Helpers
 {
 	using namespace EnumExt;
 
+    class Solution: public std::pair<Pacman::Direction, int>
+    {
+    public:
+        Solution() {}
+        Solution(const std::pair<Pacman::Direction, int>& p): std::pair<Pacman::Direction, int>(p) {}
+        bool operator < (const Solution& o) { return second < o.second; }
+    };
+
 	int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
 	int randomPlayCount = 0;
 	std::vector<string> jiangXuan = {
@@ -1100,8 +1104,7 @@ namespace Helpers
 
 	inline string MoHa()
 	{
-		return "";
-		//return jiangXuan[RandBetween(0, jiangXuan.size())];
+		return jiangXuan[RandBetween(0, jiangXuan.size())];
 	}
 
 	inline string KeepSilentMakeFortune()
@@ -1370,7 +1373,7 @@ namespace Helpers
 		return dir;
 	}
 
-	short RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
+	Solution RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
 	{
 		randomPlayCount++;
 		int count = 0, myAct = -1;
@@ -1402,13 +1405,7 @@ namespace Helpers
 		}
 
 		// 计算分数
-		int rank2player[] = { 0, 1, 2, 3 };
-		for (int j = 0; j < MAX_PLAYER_COUNT; j++)
-			for (int k = 0; k < MAX_PLAYER_COUNT - j - 1; k++)
-				if (gameField.players[rank2player[k]].strength > gameField.players[rank2player[k + 1]].strength)
-					swap(rank2player[k], rank2player[k + 1]);
-
-		int actionScore = 0,
+        int actionScore,
 			total = 0;
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 			total += gameField.players[_].strength;
@@ -1418,7 +1415,7 @@ namespace Helpers
 		// 恢复游戏状态到本回合初
 		gameField.RollBack(count);
 
-		return ((myAct + 1) << 8) + actionScore;
+		return std::make_pair(Pacman::Direction(myAct), actionScore);
 	}
 
 	inline string depth2String(int depth)
@@ -1433,23 +1430,18 @@ namespace Helpers
 namespace AI
 {
 	using namespace EnumExt;
-	
+    using Helpers::Solution;
 	int tmpEvals[5];
 	int averagedEvals[5];
-
-    typedef std::pair<Pacman::Direction, int> Solution;
-    bool operator <(const Solution& a, const Solution& b) { return a.second < b.second; }
-    bool operator >(const Solution& a, const Solution& b) { return a.second > b.second; }
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
         clock_t startTime = clock();
 		int actionScore[5]{};
-		short tmp;
 		while (Debug::TimeThrough(startTime) < timeOut)
 		{
-			tmp = Helpers::RandomPlay(gameField, myID, noStay);
-			actionScore[tmp >> 8] += (tmp & 255);
+			Solution sol = Helpers::RandomPlay(gameField, myID, noStay);
+			actionScore[sol.first + 1] += sol.second;
 		}
 
         std::vector<Solution> solutions;
@@ -1519,12 +1511,10 @@ namespace AI
 				else
 					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID) & 7) - 1);
 
-		if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
+		if (!Helpers::DangerJudge(gameField, myID, dir))
 			return dir;
 
-        double timeRemain = TIME_LIMIT - Debug::TimeThrough();
-
-        return MCTS_AI(gameField, myID, false, timeRemain / 8).back().first;
+        return Helpers::SimpleRandom(gameField, myID);
     }
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
@@ -1769,6 +1759,9 @@ int main()
 	string data, globalData; // 这是回合之间可以传递的信息
 							 // 如果在本地调试，有input.txt则会读取文件内容作为输入
 							 // 如果在平台上，则不会去检查有无input.txt
+#ifdef _BOTZONE_ONLINE
+    Debug::presetString.clear();
+#endif
 	int myID = mainGameField.ReadInput("input.txt", data, globalData); // 输入，并获得自己ID
 	srand(unsigned(Pacman::seed + myID));
 
