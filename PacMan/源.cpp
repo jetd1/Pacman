@@ -1254,7 +1254,7 @@ namespace Helpers
 		//禁止的方向设为已经访问
 		for (int i = 0; i < 4; ++i)
 		{
-			if (forbiddenDirs & (1 << (i + 1)))
+			if (forbiddenDirs & (1 << (i + 1)) && !(gameField.fieldStatic[startPos.row][startPos.col] & Pacman::direction2OpposingWall[i]))
 				dirInfo[(startPos.row + Pacman::dy[i] + gameField.height) % gameField.height][(startPos.col + Pacman::dx[i] + gameField.width) % gameField.width] = Pacman::Direction::up;
 		}
 
