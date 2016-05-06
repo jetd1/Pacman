@@ -68,7 +68,7 @@
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
-#define DEBUG
+//#define DEBUG
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
@@ -1486,7 +1486,10 @@ namespace AI
 		for (int i = -1; i < 4; ++i)
 		{
 			if (!gameField.ActionValid(myID, Pacman::Direction(i)))
+			{
+				forbiddenDirs |= 1 << (i + 1);
 				continue;
+			}
 			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
 				forbiddenDirs |= 1 << (i + 1);
 		}
@@ -1540,12 +1543,13 @@ namespace AI
 				else
 					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
 
-		if (dir != Pacman::Direction::stay)
+		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
 		//为了能够搜索减少耗时直接随机
-		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
-		//return MCTS_AI(gameField, myID);
-		//return MCTS_AI(gameField, myID, true);
+		if (forbiddenDirs == 31)//（基本）必死无疑
+			return Helpers::SimpleRandom(gameField, myID);
+		else
+			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
 	//weaZen： 会回避死亡的高级AI
@@ -1565,7 +1569,10 @@ namespace AI
 			dir = Pacman::Direction(i);
 			Pacman::FieldProp nextGrid;
 			if (!gameField.ActionValid(myID, Pacman::Direction(i)))
+			{
+				forbiddenDirs |= 1 << (i + 1);
 				continue;
+			}
 			if (i != -1)
 			{
 				nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
@@ -1579,6 +1586,17 @@ namespace AI
 				forbiddenDirs |= 1 << (i + 1);
 			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
 			{
+				int fleeLength = gameField.pathInfo[nextGrid.row][nextGrid.col].fleeLength;
+				bool enemyFlag = false;
+				//死路出口附近没有其他人时不用搜索了
+				//其实只需要从死路出口搜索fleeLength + 1步（别人还没走）, 待优化
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+				{
+					if (_ == myID) continue;
+					if (Helpers::Distance(gameField, gameField.players[_], *gameField.pathInfo[nextGrid.row][nextGrid.col].pExit) <= fleeLength + 1)
+						enemyFlag = true;
+				}
+				if (!enemyFlag) continue;
 				//注意只有一个gamefield 模拟其他AI时注意action的还原
 				Pacman::Direction tmpDir[MAX_PLAYER_COUNT];
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -1605,6 +1623,7 @@ namespace AI
 			}
 		}
 
+		
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 		{
 			Pacman::Player & rival = gameField.players[_];
@@ -1653,10 +1672,12 @@ namespace AI
 				else
 					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
 
-		if (dir != Pacman::Direction::stay)
+		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
-
-		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
+		if (forbiddenDirs == 31)//（基本）必死无疑
+			return Helpers::SimpleRandom(gameField, myID);
+		else
+			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
@@ -1694,7 +1715,7 @@ namespace AI
 				if ((tmp = gameField.GetFruitValue(i, j)) != 0)
 					fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
-		//e -= (fruitEvalSum >> 4);
+		//e -= fruitEvalSum / 100;
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
