@@ -245,3 +245,5 @@ ModelManifest.xml
 .fake
 
 PacMan/prototype.cpp
+/PacMan/Profiler
+/Profiler
