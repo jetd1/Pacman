@@ -1,25 +1,25 @@
-ï»¿/*
+/*
 * Edited By Jet, Moriarty, weaZen
 * 2016/05/05 00:31
 * AI XXXXX
 */
 
 /*
-* Pacman æ ·ä¾‹ç¨‹åº
-* ä½œè€…ï¼šzhouhy
-* æ—¶é—´ï¼š2016/3/22 15:32:51
-* æœ€åæ›´æ–°ï¼š2016/4/22 16:18
-* ã€æ›´æ–°å†…å®¹ã€‘
-* ä¿®å¤äº†æ–‡ä»¶ä¸å­˜åœ¨æ—¶ä¸èƒ½é€šè¿‡æ§åˆ¶å°è¾“å…¥çš„Bugâ€¦â€¦
-* ä¿®æ”¹çš„éƒ¨ä½ï¼šåŒ…å«äº†fstreamåº“ã€ReadInputçš„å‡½æ•°ä½“ä¸­å‰å‡ è¡Œå‘ç”Ÿäº†å˜åŒ–ï¼Œä¸ä½¿ç”¨freopenäº†ã€‚
+* Pacman ÑùÀı³ÌĞò
+* ×÷Õß£ºzhouhy
+* Ê±¼ä£º2016/3/22 15:32:51
+* ×îºó¸üĞÂ£º2016/4/22 16:18
+* ¡¾¸üĞÂÄÚÈİ¡¿
+* ĞŞ¸´ÁËÎÄ¼ş²»´æÔÚÊ±²»ÄÜÍ¨¹ı¿ØÖÆÌ¨ÊäÈëµÄBug¡­¡­
+* ĞŞ¸ÄµÄ²¿Î»£º°üº¬ÁËfstream¿â¡¢ReadInputµÄº¯ÊıÌåÖĞÇ°¼¸ĞĞ·¢ÉúÁË±ä»¯£¬²»Ê¹ÓÃfreopenÁË¡£
 *
-* ã€å‘½åæƒ¯ä¾‹ã€‘
-*  r/R/y/Yï¼šRowï¼Œè¡Œï¼Œçºµåæ ‡
-*  c/C/x/Xï¼šColumnï¼Œåˆ—ï¼Œæ¨ªåæ ‡
-*  æ•°ç»„çš„ä¸‹æ ‡éƒ½æ˜¯[y][x]æˆ–[r][c]çš„é¡ºåº
-*  ç©å®¶ç¼–å·0123
+* ¡¾ÃüÃû¹ßÀı¡¿
+*  r/R/y/Y£ºRow£¬ĞĞ£¬×İ×ø±ê
+*  c/C/x/X£ºColumn£¬ÁĞ£¬ºá×ø±ê
+*  Êı×éµÄÏÂ±ê¶¼ÊÇ[y][x]»ò[r][c]µÄË³Ğò
+*  Íæ¼Ò±àºÅ0123
 *
-* ã€åæ ‡ç³»ã€‘
+* ¡¾×ø±êÏµ¡¿
 *   0 1 2 3 4 5 6 7 8
 * 0 +----------------> x
 * 1 |
@@ -32,13 +32,14 @@
 * 8 |
 *   v y
 *
-* ã€æç¤ºã€‘ä½ å¯ä»¥ä½¿ç”¨
+* ¡¾ÌáÊ¾¡¿Äã¿ÉÒÔÊ¹ÓÃ
 * #ifndef _BOTZONE_ONLINE
-* è¿™æ ·çš„é¢„ç¼–è¯‘æŒ‡ä»¤æ¥åŒºåˆ†åœ¨çº¿è¯„æµ‹å’Œæœ¬åœ°è¯„æµ‹
+* ÕâÑùµÄÔ¤±àÒëÖ¸ÁîÀ´Çø·ÖÔÚÏßÆÀ²âºÍ±¾µØÆÀ²â
 *
-* ã€æç¤ºã€‘ä¸€èˆ¬çš„æ–‡æœ¬ç¼–è¾‘å™¨éƒ½ä¼šæ”¯æŒå°†ä»£ç å—æŠ˜å èµ·æ¥
-* å¦‚æœä½ è§‰å¾—è‡ªå¸¦ä»£ç å¤ªè¿‡å†—é•¿ï¼Œå¯ä»¥è€ƒè™‘å°†æ•´ä¸ªnamespaceæŠ˜å 
+* ¡¾ÌáÊ¾¡¿Ò»°ãµÄÎÄ±¾±à¼­Æ÷¶¼»áÖ§³Ö½«´úÂë¿éÕÛµşÆğÀ´
+* Èç¹ûÄã¾õµÃ×Ô´ø´úÂëÌ«¹ıÈß³¤£¬¿ÉÒÔ¿¼ÂÇ½«Õû¸önamespaceÕÛµş
 */
+
 
 #include <fstream>
 #include <cstdio>
@@ -56,7 +57,7 @@
 
 #define FIELD_MAX_HEIGHT 20
 #define FIELD_MAX_WIDTH 20
-#define MAX_GENERATOR_COUNT 4 // æ¯ä¸ªè±¡é™1
+#define MAX_GENERATOR_COUNT 4 // Ã¿¸öÏóÏŞ1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
 #define TIME_LIMIT 0.98
@@ -69,7 +70,7 @@
 
 //#define DEBUG
 
-// ä½ ä¹Ÿå¯ä»¥é€‰ç”¨ using namespace std; ä½†æ˜¯ä¼šæ±¡æŸ“å‘½åç©ºé—´
+// ÄãÒ²¿ÉÒÔÑ¡ÓÃ using namespace std; µ«ÊÇ»áÎÛÈ¾ÃüÃû¿Õ¼ä
 using std::cin;
 using std::cout;
 using std::endl;
@@ -79,328 +80,331 @@ using std::getline;
 using std::to_string;
 using std::runtime_error;
 
-// ç”¨äºè°ƒè¯•
+// ÓÃÓÚµ÷ÊÔ
 namespace Debug
 {
-    bool printInfo = false;
-    string presetString
-        = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,16,16,0,0,0,16,16,0,0],[32,0,16,0,1,0,2,0,16,0,32],[0,0,0,0,16,0,16,0,0,0,0],[16,0,0,0,16,16,16,0,0,0,16],[0,16,0,0,16,0,16,0,0,16,0],[16,0,0,0,16,16,16,0,0,0,16],[0,0,0,0,16,0,16,0,0,0,0],[32,0,16,0,4,0,8,0,16,0,32],[0,0,16,16,0,0,0,16,16,0,0]],"height":9,"id":0,"seed":1462475722,"static":[[13,0,7,13,5,0,5,7,13,0,7],[9,6,9,5,5,4,5,5,3,12,3],[8,3,10,31,13,1,7,31,10,9,2],[10,12,6,13,1,0,1,7,12,6,10],[0,5,5,5,2,10,8,5,5,5,0],[10,9,3,13,4,0,4,7,9,3,10],[8,6,10,31,13,4,7,31,10,12,2],[12,3,12,5,5,1,5,5,6,9,6],[13,0,7,13,5,0,5,7,13,0,7]],"width":11},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":0},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":0},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":-1},"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":2}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":3},"3":{"action":1}},{"0":{"action":-1},"1":{"action":1},"2":{"action":1},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":0},"2":{"action":0},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":0},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":2},"3":{"action":2}}],"responses":[{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":-1,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""}]})*";
-    Json::Value debugData;
-    bool timeOutFlag = false;
-    clock_t startTime = clock();
+	bool printInfo = false;
+	string presetString;
+	// = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,0,16,16,0,0,0,16,16,0,0],[32,0,16,0,1,0,2,0,16,0,32],[0,0,0,0,16,0,16,0,0,0,0],[16,0,0,0,16,16,16,0,0,0,16],[0,16,0,0,16,0,16,0,0,16,0],[16,0,0,0,16,16,16,0,0,0,16],[0,0,0,0,16,0,16,0,0,0,0],[32,0,16,0,4,0,8,0,16,0,32],[0,0,16,16,0,0,0,16,16,0,0]],"height":9,"id":0,"seed":1462475722,"static":[[13,0,7,13,5,0,5,7,13,0,7],[9,6,9,5,5,4,5,5,3,12,3],[8,3,10,31,13,1,7,31,10,9,2],[10,12,6,13,1,0,1,7,12,6,10],[0,5,5,5,2,10,8,5,5,5,0],[10,9,3,13,4,0,4,7,9,3,10],[8,6,10,31,13,4,7,31,10,12,2],[12,3,12,5,5,1,5,5,6,9,6],[13,0,7,13,5,0,5,7,13,0,7]],"width":11},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":{"action":2}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":-1},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":0},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":1},"3":{"action":2}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":0},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":2}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":-1},"3":{"action":3}},{"0":{"action":3},"1":{"action":2},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":0},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":1},"1":{"action":3},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":2},"1":{"action":2},"2":{"action":3},"3":{"action":1}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":1},"1":{"action":2},"2":{"action":2},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":0},"2":{"action":2},"3":{"action":1}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":0},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":0},"2":{"action":1},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":-1},"1":{"action":3},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":3},"3":{"action":2}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":2}},{"0":{"action":1},"1":{"action":2},"2":{"action":3},"3":{"action":3}},{"0":{"action":1},"1":{"action":2},"2":{"action":0},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":0},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":3},"3":{"action":0}},{"0":{"action":0},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":2},"2":{"action":2},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":2},"3":{"action":0}},{"0":{"action":0},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":0},"1":{"action":0},"2":{"action":3},"3":{"action":1}},{"0":{"action":-1},"1":{"action":1},"2":{"action":1},"3":{"action":2}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":0},"2":{"action":3},"3":{"action":0}},{"0":{"action":3},"1":{"action":0},"2":{"action":0},"3":{"action":0}},{"0":{"action":3},"1":{"action":1},"2":{"action":0},"3":{"action":0}},{"0":{"action":2},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":3},"2":{"action":2},"3":{"action":2}}],"responses":[{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":2,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":-1,"tauntText":""},{"action":3,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":0,"tauntText":""},{"action":0,"tauntText":""},{"action":-1,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":3,"tauntText":""},{"action":2,"tauntText":""},{"action":2,"tauntText":""}]})*";
+	Json::Value debugData;
+	bool timeOutFlag = false;
+	clock_t startTime = clock();
 
-    inline double TimeThrough(clock_t startTime = Debug::startTime)
-    {
-        return double(clock() - startTime) / CLOCKS_PER_SEC;
-    }
+	inline double TimeThrough(clock_t startTime = Debug::startTime)
+	{
+		return double(clock() - startTime) / CLOCKS_PER_SEC;
+	}
 
-    inline bool TimeOut()
-    {
-        if (timeOutFlag || TimeThrough() > TIME_LIMIT)
-        {
-            Debug::debugData["profiling"]["TimeOut"] = true;
-            return timeOutFlag = true;
-        }
-        return false;
-    }
+	inline bool TimeOut()
+	{
+		//#ifdef DEBUG
+		//		return false;
+		//#endif // DEBUG
+		if (timeOutFlag || TimeThrough() > TIME_LIMIT)
+		{
+			Debug::debugData["profiling"]["TimeOut"] = true;
+			return timeOutFlag = true;
+		}
+		return false;
+	}
 }
 
-//æŠŠæšä¸¾æ‰©å±•æ”¶èµ·æ¥
+//°ÑÃ¶¾ÙÀ©Õ¹ÊÕÆğÀ´
 namespace EnumExt
 {
-    // è®©æšä¸¾ä¹Ÿå¯ä»¥ç”¨è¿™äº›è¿ç®—äº†ï¼ˆä¸åŠ ä¼šç¼–è¯‘é”™è¯¯ï¼‰
-    template<typename T>
-    inline T operator |=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator |(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &=(T &a, const T &b)
-    {
-        return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator &(const T &a, const T &b)
-    {
-        return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
-    }
-    template<typename T>
-    inline T operator ++(T &a)
-    {
-        return a = static_cast<T>(static_cast<int>(a) + 1);
-    }
-    template<typename T>
-    inline T operator ~(const T &a)
-    {
-        return static_cast<T>(~static_cast<int>(a));
-    }
+	// ÈÃÃ¶¾ÙÒ²¿ÉÒÔÓÃÕâĞ©ÔËËãÁË£¨²»¼Ó»á±àÒë´íÎó£©
+	template<typename T>
+	inline T operator |=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator |(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &=(T &a, const T &b)
+	{
+		return a = static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator &(const T &a, const T &b)
+	{
+		return static_cast<T>(static_cast<int>(a) & static_cast<int>(b));
+	}
+	template<typename T>
+	inline T operator ++(T &a)
+	{
+		return a = static_cast<T>(static_cast<int>(a) + 1);
+	}
+	template<typename T>
+	inline T operator ~(const T &a)
+	{
+		return static_cast<T>(~static_cast<int>(a));
+	}
 }
 
-// å¹³å°æä¾›çš„åƒè±†äººç›¸å…³é€»è¾‘å¤„ç†ç¨‹åº
+// Æ½Ì¨Ìá¹©µÄ³Ô¶¹ÈËÏà¹ØÂß¼­´¦Àí³ÌĞò
 namespace Pacman
 {
-    using namespace EnumExt;
+	using namespace EnumExt;
 
-    const time_t seed = time(0);
-    const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
-    const string dirStr[] = {"stay" ,"up","right","down","left","ur","dr","dl","ul"};
+	const time_t seed = time(0);
+	const int dx[] = { 0, 1, 0, -1, 1, 1, -1, -1 }, dy[] = { -1, 0, 1, 0, -1, 1, 1, -1 };
+	const string dirStr[] = { "stay" ,"up","right","down","left","ur","dr","dl","ul" };
 
-    // æšä¸¾å®šä¹‰ï¼›ä½¿ç”¨æšä¸¾è™½ç„¶ä¼šæµªè´¹ç©ºé—´ï¼ˆsizeof(GridContentType) == 4ï¼‰ï¼Œä½†æ˜¯è®¡ç®—æœºå¤„ç†32ä½çš„æ•°å­—æ•ˆç‡æ›´é«˜
+	// Ã¶¾Ù¶¨Òå£»Ê¹ÓÃÃ¶¾ÙËäÈ»»áÀË·Ñ¿Õ¼ä£¨sizeof(GridContentType) == 4£©£¬µ«ÊÇ¼ÆËã»ú´¦Àí32Î»µÄÊı×ÖĞ§ÂÊ¸ü¸ß
 
-    // æ¯ä¸ªæ ¼å­å¯èƒ½å˜åŒ–çš„å†…å®¹ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
-    enum GridContentType
-    {
-        empty = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
-        player1 = 1, // 1å·ç©å®¶
-        player2 = 2, // 2å·ç©å®¶
-        player3 = 4, // 3å·ç©å®¶
-        player4 = 8, // 4å·ç©å®¶
-        playerMask = 1 | 2 | 4 | 8, // ç”¨äºæ£€æŸ¥æœ‰æ²¡æœ‰ç©å®¶ç­‰
-        smallFruit = 16, // å°è±†å­
-        largeFruit = 32 // å¤§è±†å­
-    };
+	// Ã¿¸ö¸ñ×Ó¿ÉÄÜ±ä»¯µÄÄÚÈİ£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
+	enum GridContentType
+	{
+		empty = 0, // ÆäÊµ²»»áÓÃµ½
+		player1 = 1, // 1ºÅÍæ¼Ò
+		player2 = 2, // 2ºÅÍæ¼Ò
+		player3 = 4, // 3ºÅÍæ¼Ò
+		player4 = 8, // 4ºÅÍæ¼Ò
+		playerMask = 1 | 2 | 4 | 8, // ÓÃÓÚ¼ì²éÓĞÃ»ÓĞÍæ¼ÒµÈ
+		smallFruit = 16, // Ğ¡¶¹×Ó
+		largeFruit = 32 // ´ó¶¹×Ó
+	};
 
-    // ç”¨ç©å®¶IDæ¢å–æ ¼å­ä¸Šç©å®¶çš„äºŒè¿›åˆ¶ä½
-    GridContentType playerID2Mask[] = {player1, player2, player3, player4};
-    string playerID2str[] = {"0", "1", "2", "3"};
+	// ÓÃÍæ¼ÒID»»È¡¸ñ×ÓÉÏÍæ¼ÒµÄ¶ş½øÖÆÎ»
+	GridContentType playerID2Mask[] = { player1, player2, player3, player4 };
+	string playerID2str[] = { "0", "1", "2", "3" };
 
-    // æ¯ä¸ªæ ¼å­å›ºå®šçš„ä¸œè¥¿ï¼Œä¼šé‡‡ç”¨â€œæˆ–â€é€»è¾‘è¿›è¡Œç»„åˆ
-    enum GridStaticType
-    {
-        emptyWall = 0, // å…¶å®ä¸ä¼šç”¨åˆ°
-        wallNorth = 1, // åŒ—å¢™ï¼ˆçºµåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
-        wallEast = 2, // ä¸œå¢™ï¼ˆæ¨ªåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
-        wallSouth = 4, // å—å¢™ï¼ˆçºµåæ ‡å¢åŠ çš„æ–¹å‘ï¼‰
-        wallWest = 8, // è¥¿å¢™ï¼ˆæ¨ªåæ ‡å‡å°‘çš„æ–¹å‘ï¼‰
-        generator = 16 // è±†å­äº§ç”Ÿå™¨
-    };
+	// Ã¿¸ö¸ñ×Ó¹Ì¶¨µÄ¶«Î÷£¬»á²ÉÓÃ¡°»ò¡±Âß¼­½øĞĞ×éºÏ
+	enum GridStaticType
+	{
+		emptyWall = 0, // ÆäÊµ²»»áÓÃµ½
+		wallNorth = 1, // ±±Ç½£¨×İ×ø±ê¼õÉÙµÄ·½Ïò£©
+		wallEast = 2, // ¶«Ç½£¨ºá×ø±êÔö¼ÓµÄ·½Ïò£©
+		wallSouth = 4, // ÄÏÇ½£¨×İ×ø±êÔö¼ÓµÄ·½Ïò£©
+		wallWest = 8, // Î÷Ç½£¨ºá×ø±ê¼õÉÙµÄ·½Ïò£©
+		generator = 16 // ¶¹×Ó²úÉúÆ÷
+	};
 
-    // ç”¨ç§»åŠ¨æ–¹å‘æ¢å–è¿™ä¸ªæ–¹å‘ä¸Šé˜»æŒ¡ç€çš„å¢™çš„äºŒè¿›åˆ¶ä½
-    GridStaticType direction2OpposingWall[] = {wallNorth, wallEast, wallSouth, wallWest};
+	// ÓÃÒÆ¶¯·½Ïò»»È¡Õâ¸ö·½ÏòÉÏ×èµ²×ÅµÄÇ½µÄ¶ş½øÖÆÎ»
+	GridStaticType direction2OpposingWall[] = { wallNorth, wallEast, wallSouth, wallWest };
 
-    // æ–¹å‘ï¼Œå¯ä»¥ä»£å…¥dxã€dyæ•°ç»„ï¼ŒåŒæ—¶ä¹Ÿå¯ä»¥ä½œä¸ºç©å®¶çš„åŠ¨ä½œ
-    enum Direction
-    {
-        stay = -1,
-        up = 0,
-        right = 1,
-        down = 2,
-        left = 3,
-        // ä¸‹é¢çš„è¿™å‡ ä¸ªåªæ˜¯ä¸ºäº†äº§ç”Ÿå™¨ç¨‹åºæ–¹ä¾¿ï¼Œä¸ä¼šå®é™…ç”¨åˆ°
-        ur = 4, // å³ä¸Š
-        dr = 5, // å³ä¸‹
-        dl = 6, // å·¦ä¸‹
-        ul = 7 // å·¦ä¸Š
-    };
+	// ·½Ïò£¬¿ÉÒÔ´úÈëdx¡¢dyÊı×é£¬Í¬Ê±Ò²¿ÉÒÔ×÷ÎªÍæ¼ÒµÄ¶¯×÷
+	enum Direction
+	{
+		stay = -1,
+		up = 0,
+		right = 1,
+		down = 2,
+		left = 3,
+		// ÏÂÃæµÄÕâ¼¸¸öÖ»ÊÇÎªÁË²úÉúÆ÷³ÌĞò·½±ã£¬²»»áÊµ¼ÊÓÃµ½
+		ur = 4, // ÓÒÉÏ
+		dr = 5, // ÓÒÏÂ
+		dl = 6, // ×óÏÂ
+		ul = 7 // ×óÉÏ
+	};
 
-    // åœºåœ°ä¸Šå¸¦æœ‰åæ ‡çš„ç‰©ä»¶
-    struct FieldProp
-    {
-        int row, col;
-        FieldProp(int i = 0, int j = 0): row(i), col(j) {}
-        inline bool operator==(const FieldProp &a)
-        {
-            return (row == a.row && col == a.col);
-        }
-        inline bool operator!=(const FieldProp &a)
-        {
-            return (row != a.row || col != a.col);
-        }
-    };
+	// ³¡µØÉÏ´øÓĞ×ø±êµÄÎï¼ş
+	struct FieldProp
+	{
+		int row, col;
+		FieldProp(int i = 0, int j = 0) : row(i), col(j) {}
+		inline bool operator==(const FieldProp &a)
+		{
+			return (row == a.row && col == a.col);
+		}
+		inline bool operator!=(const FieldProp &a)
+		{
+			return (row != a.row || col != a.col);
+		}
+	};
 
-    struct PathInfoType: FieldProp
-    {
-        bool isImpasse;
-        bool isExit;
-        int fleeLength;//åˆ°æ­»è·¯å‡ºå£çš„è·ç¦»
-        PathInfoType * pExit;
-        PathInfoType(int y = 0, int x = 0): FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL) {}
-    };
+	struct PathInfoType : FieldProp
+	{
+		bool isImpasse;
+		bool isExit;
+		int fleeLength;//µ½ËÀÂ·³ö¿ÚµÄ¾àÀë
+		PathInfoType * pExit;
+		PathInfoType(int y = 0, int x = 0) : FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL) {}
+	};
 
-    // åœºåœ°ä¸Šçš„ç©å®¶
-    struct Player: FieldProp
-    {
-        int strength;
-        int powerUpLeft;
-        bool dead;
-    };
+	// ³¡µØÉÏµÄÍæ¼Ò
+	struct Player : FieldProp
+	{
+		int strength;
+		int powerUpLeft;
+		bool dead;
+	};
 
-    // å›åˆæ–°äº§ç”Ÿçš„è±†å­çš„åæ ‡
-    struct NewFruits
-    {
-        FieldProp newFruits[MAX_GENERATOR_COUNT * 8];
-        int newFruitCount;
-    } newFruits[MAX_TURN];
-    int newFruitsCount = 0;
+	// »ØºÏĞÂ²úÉúµÄ¶¹×ÓµÄ×ø±ê
+	struct NewFruits
+	{
+		FieldProp newFruits[MAX_GENERATOR_COUNT * 8];
+		int newFruitCount;
+	} newFruits[MAX_TURN];
+	int newFruitsCount = 0;
 
-    // çŠ¶æ€è½¬ç§»è®°å½•ç»“æ„
-    struct TurnStateTransfer
-    {
-        enum StatusChange // å¯ç»„åˆ
-        {
-            none = 0,
-            ateSmall = 1,
-            ateLarge = 2,
-            powerUpCancel = 4,
-            die = 8,
-            error = 16
-        };
+	// ×´Ì¬×ªÒÆ¼ÇÂ¼½á¹¹
+	struct TurnStateTransfer
+	{
+		enum StatusChange // ¿É×éºÏ
+		{
+			none = 0,
+			ateSmall = 1,
+			ateLarge = 2,
+			powerUpCancel = 4,
+			die = 8,
+			error = 16
+		};
 
-        // ç©å®¶é€‰å®šçš„åŠ¨ä½œ
-        Direction actions[MAX_PLAYER_COUNT];
+		// Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
+		Direction actions[MAX_PLAYER_COUNT];
 
-        // æ­¤å›åˆè¯¥ç©å®¶çš„çŠ¶æ€å˜åŒ–
-        StatusChange change[MAX_PLAYER_COUNT];
+		// ´Ë»ØºÏ¸ÃÍæ¼ÒµÄ×´Ì¬±ä»¯
+		StatusChange change[MAX_PLAYER_COUNT];
 
-        // æ­¤å›åˆè¯¥ç©å®¶çš„åŠ›é‡å˜åŒ–
-        int strengthDelta[MAX_PLAYER_COUNT];
-    };
+		// ´Ë»ØºÏ¸ÃÍæ¼ÒµÄÁ¦Á¿±ä»¯
+		int strengthDelta[MAX_PLAYER_COUNT];
+	};
 
-    // æ¸¸æˆä¸»è¦é€»è¾‘å¤„ç†ç±»ï¼ŒåŒ…æ‹¬è¾“å…¥è¾“å‡ºã€å›åˆæ¼”ç®—ã€çŠ¶æ€è½¬ç§»ï¼Œå…¨å±€å”¯ä¸€
-    class GameField
-    {
-    private:
-        // ä¸ºäº†æ–¹ä¾¿ï¼Œå¤§å¤šæ•°å±æ€§éƒ½ä¸æ˜¯privateçš„
+	// ÓÎÏ·Ö÷ÒªÂß¼­´¦ÀíÀà£¬°üÀ¨ÊäÈëÊä³ö¡¢»ØºÏÑİËã¡¢×´Ì¬×ªÒÆ£¬È«¾ÖÎ¨Ò»
+	class GameField
+	{
+	private:
+		// ÎªÁË·½±ã£¬´ó¶àÊıÊôĞÔ¶¼²»ÊÇprivateµÄ
 
-        // è®°å½•æ¯å›åˆçš„å˜åŒ–ï¼ˆæ ˆï¼‰
-        TurnStateTransfer backtrack[MAX_TURN];
+		// ¼ÇÂ¼Ã¿»ØºÏµÄ±ä»¯£¨Õ»£©
+		TurnStateTransfer backtrack[MAX_TURN];
 
-        // è¿™ä¸ªå¯¹è±¡æ˜¯å¦å·²ç»åˆ›å»º
-        static bool constructed;
+		// Õâ¸ö¶ÔÏóÊÇ·ñÒÑ¾­´´½¨
+		static bool constructed;
 
-    public:
-        // åœºåœ°çš„é•¿å’Œå®½
-        int height, width;
-        int generatorCount;
-        int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
+	public:
+		// ³¡µØµÄ³¤ºÍ¿í
+		int height, width;
+		int generatorCount;
+		int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
 
-        //é“è·¯ä¿¡æ¯
-        PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		//µÀÂ·ĞÅÏ¢
+		PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
-        // åœºåœ°æ ¼å­å›ºå®šçš„å†…å®¹
-        GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		// ³¡µØ¸ñ×Ó¹Ì¶¨µÄÄÚÈİ
+		GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
-        // åœºåœ°æ ¼å­ä¼šå˜åŒ–çš„å†…å®¹
-        GridContentType fieldContent[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
-        int generatorTurnLeft; // å¤šå°‘å›åˆåäº§ç”Ÿè±†å­
-        int aliveCount; // æœ‰å¤šå°‘ç©å®¶å­˜æ´»
-        int smallFruitCount;
-        FieldProp generators[MAX_GENERATOR_COUNT]; // æœ‰å“ªäº›è±†å­äº§ç”Ÿå™¨
-        Player players[MAX_PLAYER_COUNT]; // æœ‰å“ªäº›ç©å®¶
+		// ³¡µØ¸ñ×Ó»á±ä»¯µÄÄÚÈİ
+		GridContentType fieldContent[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		int generatorTurnLeft; // ¶àÉÙ»ØºÏºó²úÉú¶¹×Ó
+		int aliveCount; // ÓĞ¶àÉÙÍæ¼Ò´æ»î
+		int smallFruitCount;
+		FieldProp generators[MAX_GENERATOR_COUNT]; // ÓĞÄÄĞ©¶¹×Ó²úÉúÆ÷
+		Player players[MAX_PLAYER_COUNT]; // ÓĞÄÄĞ©Íæ¼Ò
 
-        int turnID;
-        // ç©å®¶é€‰å®šçš„åŠ¨ä½œ
-        Direction actions[MAX_PLAYER_COUNT];
+		int turnID;
+		// Íæ¼ÒÑ¡¶¨µÄ¶¯×÷
+		Direction actions[MAX_PLAYER_COUNT];
 
-        // weaZenï¼šçœå¾—æ¯æ¬¡æŸ¥ä¸€é
-        bool hasNext;
+		// weaZen£ºÊ¡µÃÃ¿´Î²éÒ»±é
+		bool hasNext;
 
-        // æ¢å¤åˆ°ä¸Šæ¬¡åœºåœ°çŠ¶æ€ã€‚å¯ä»¥ä¸€è·¯æ¢å¤åˆ°æœ€å¼€å§‹ã€‚
-        // æ¢å¤å¤±è´¥ï¼ˆæ²¡æœ‰çŠ¶æ€å¯æ¢å¤ï¼‰è¿”å›false
-        bool PopState()
-        {
-            if (turnID <= 0)
-                return false;
+		// »Ö¸´µ½ÉÏ´Î³¡µØ×´Ì¬¡£¿ÉÒÔÒ»Â·»Ö¸´µ½×î¿ªÊ¼¡£
+		// »Ö¸´Ê§°Ü£¨Ã»ÓĞ×´Ì¬¿É»Ö¸´£©·µ»Øfalse
+		bool PopState()
+		{
+			hasNext = true;
+			if (turnID <= 0)
+				return false;
+	
+			const TurnStateTransfer &bt = backtrack[--turnID];
+			int i, _;
 
-            const TurnStateTransfer &bt = backtrack[--turnID];
-            int i, _;
+			// µ¹×ÅÀ´»Ö¸´×´Ì¬
 
-            // å€’ç€æ¥æ¢å¤çŠ¶æ€
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				GridContentType &content = fieldContent[_p.row][_p.col];
+				TurnStateTransfer::StatusChange change = bt.change[_];
 
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                GridContentType &content = fieldContent[_p.row][_p.col];
-                TurnStateTransfer::StatusChange change = bt.change[_];
+				if (!_p.dead)
+				{
+					// 5. ´ó¶¹»ØºÏ»Ö¸´
+					if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
+						_p.powerUpLeft++;
 
-                if (!_p.dead)
-                {
-                    // 5. å¤§è±†å›åˆæ¢å¤
-                    if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
-                        _p.powerUpLeft++;
+					// 4. ÍÂ³ö¶¹×Ó
+					if (change & TurnStateTransfer::ateSmall)
+					{
+						content |= smallFruit;
+						smallFruitCount++;
+					}
+					else if (change & TurnStateTransfer::ateLarge)
+					{
+						content |= largeFruit;
+						_p.powerUpLeft -= LARGE_FRUIT_DURATION;
+					}
+				}
 
-                    // 4. åå‡ºè±†å­
-                    if (change & TurnStateTransfer::ateSmall)
-                    {
-                        content |= smallFruit;
-                        smallFruitCount++;
-                    }
-                    else if (change & TurnStateTransfer::ateLarge)
-                    {
-                        content |= largeFruit;
-                        _p.powerUpLeft -= LARGE_FRUIT_DURATION;
-                    }
-                }
+				// 2. »êÙâ¹éÀ´
+				if (change & TurnStateTransfer::die)
+				{
+					_p.dead = false;
+					aliveCount++;
+					content |= playerID2Mask[_];
+				}
 
-                // 2. é­‚å…®å½’æ¥
-                if (change & TurnStateTransfer::die)
-                {
-                    _p.dead = false;
-                    aliveCount++;
-                    content |= playerID2Mask[_];
-                }
+				// 1. ÒÆĞÎ»»Ó°
+				if (!_p.dead && bt.actions[_] != stay)
+				{
+					fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
+					_p.row = (_p.row - dy[bt.actions[_]] + height) % height;
+					_p.col = (_p.col - dx[bt.actions[_]] + width) % width;
+					fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+				}
 
-                // 1. ç§»å½¢æ¢å½±
-                if (!_p.dead && bt.actions[_] != stay)
-                {
-                    fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                    _p.row = (_p.row - dy[bt.actions[_]] + height) % height;
-                    _p.col = (_p.col - dx[bt.actions[_]] + width) % width;
-                    fieldContent[_p.row][_p.col] |= playerID2Mask[_];
-                }
+				// 0. ¾ÈÊê²»ºÏ·¨µÄÁé»ê
+				if (change & TurnStateTransfer::error)
+				{
+					_p.dead = false;
+					aliveCount++;
+					content |= playerID2Mask[_];
+				}
 
-                // 0. æ•‘èµä¸åˆæ³•çš„çµé­‚
-                if (change & TurnStateTransfer::error)
-                {
-                    _p.dead = false;
-                    aliveCount++;
-                    content |= playerID2Mask[_];
-                }
+				// *. »Ö¸´Á¦Á¿
+				if (!_p.dead)
+					_p.strength -= bt.strengthDelta[_];
+			}
 
-                // *. æ¢å¤åŠ›é‡
-                if (!_p.dead)
-                    _p.strength -= bt.strengthDelta[_];
-            }
+			// 3. ÊÕ»Ø¶¹×Ó
+			if (generatorTurnLeft == GENERATOR_INTERVAL)
+			{
+				generatorTurnLeft = 1;
+				NewFruits &fruits = newFruits[--newFruitsCount];
+				for (i = 0; i < fruits.newFruitCount; i++)
+				{
+					fieldContent[fruits.newFruits[i].row][fruits.newFruits[i].col] &= ~smallFruit;
+					smallFruitCount--;
+				}
+			}
+			else
+				generatorTurnLeft++;
 
-            // 3. æ”¶å›è±†å­
-            if (generatorTurnLeft == GENERATOR_INTERVAL)
-            {
-                generatorTurnLeft = 1;
-                NewFruits &fruits = newFruits[--newFruitsCount];
-                for (i = 0; i < fruits.newFruitCount; i++)
-                {
-                    fieldContent[fruits.newFruits[i].row][fruits.newFruits[i].col] &= ~smallFruit;
-                    smallFruitCount--;
-                }
-            }
-            else
-                generatorTurnLeft++;
+			return true;
+		}
 
-            hasNext = true;
-            return true;
-        }
+		// Jet:°ÑPopState°ü×°ÁËÒ»ÏÂ ·½±ãÒ»Ğ©
+		void RollBack(int turnCount = -1)
+		{
+			clock_t startTime = clock();
+			if (turnCount < 0)
+				while (PopState());
+			else
+				for (int i = 0; i < turnCount; i++)
+					if (!PopState())
+						break;
 
-        // Jet:æŠŠPopStateåŒ…è£…äº†ä¸€ä¸‹ æ–¹ä¾¿ä¸€äº›
-        void RollBack(int turnCount = -1)
-        {
-            clock_t startTime = clock();
-            if (turnCount < 0)
-                while (PopState());
-            else
-                for (int i = 0; i < turnCount; i++)
-                    if (!PopState())
-                        break;
+			auto&& d = Debug::debugData["profiling"]["RollBack()"];
+			d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+		}
 
-            auto&& d = Debug::debugData["profiling"]["RollBack()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-        }
-
-		// åˆ¤æ–­æŒ‡å®šç©å®¶å‘æŒ‡å®šæ–¹å‘ç§»åŠ¨æ˜¯ä¸æ˜¯åˆæ³•çš„ï¼ˆæ²¡æœ‰æ’å¢™ä¸”æ²¡æœ‰è¸©åˆ°è±†å­äº§ç”Ÿå™¨ï¼‰
+		// ÅĞ¶ÏÖ¸¶¨Íæ¼ÒÏòÖ¸¶¨·½ÏòÒÆ¶¯ÊÇ²»ÊÇºÏ·¨µÄ£¨Ã»ÓĞ×²Ç½ÇÒÃ»ÓĞ²Èµ½¶¹×Ó²úÉúÆ÷£©
 		inline bool ActionValid(int playerID, const Direction &dir) const
 		{
 			if (dir == stay)
@@ -410,703 +414,705 @@ namespace Pacman
 			return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
 		}
 
-        // åœ¨å‘actionså†™å…¥ç©å®¶åŠ¨ä½œåï¼Œæ¼”ç®—ä¸‹ä¸€å›åˆå±€é¢ï¼Œå¹¶è®°å½•ä¹‹å‰æ‰€æœ‰çš„åœºåœ°çŠ¶æ€ï¼Œå¯ä¾›æ—¥åæ¢å¤ã€‚
-        // æ˜¯ç»ˆå±€çš„è¯å°±è¿”å›false
-        bool NextTurn()
-        {
-            clock_t startTime = clock();
+		// ÔÚÏòactionsĞ´ÈëÍæ¼Ò¶¯×÷ºó£¬ÑİËãÏÂÒ»»ØºÏ¾ÖÃæ£¬²¢¼ÇÂ¼Ö®Ç°ËùÓĞµÄ³¡µØ×´Ì¬£¬¿É¹©ÈÕºó»Ö¸´¡£
+		// ÊÇÖÕ¾ÖµÄ»°¾Í·µ»Øfalse
+		bool NextTurn()
+		{
+			clock_t startTime = clock();
 
-            int _, i, j;
+			int _, i, j;
 
-            TurnStateTransfer &bt = backtrack[turnID];
-            memset(&bt, 0, sizeof(bt));
+			TurnStateTransfer &bt = backtrack[turnID];
+			memset(&bt, 0, sizeof(bt));
 
-            // 0. æ€æ­»ä¸åˆæ³•è¾“å…¥
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &p = players[_];
-                if (!p.dead)
-                {
-                    Direction &action = actions[_];
-                    if (action == stay)
-                        continue;
+			// 0. É±ËÀ²»ºÏ·¨ÊäÈë
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &p = players[_];
+				if (!p.dead)
+				{
+					Direction &action = actions[_];
+					if (action == stay)
+						continue;
 
-                    if (!ActionValid(_, action))
-                    {
-                        bt.strengthDelta[_] += -p.strength;
-                        bt.change[_] = TurnStateTransfer::error;
-                        fieldContent[p.row][p.col] &= ~playerID2Mask[_];
-                        p.strength = 0;
-                        p.dead = true;
-                        aliveCount--;
-                    }
-                    else
-                    {
-                        // é‡åˆ°æ¯”è‡ªå·±å¼ºâ™‚å£®çš„ç©å®¶æ˜¯ä¸èƒ½å‰è¿›çš„
-                        GridContentType target = fieldContent
-                            [(p.row + dy[action] + height) % height]
-                        [(p.col + dx[action] + width) % width];
-                        if (target & playerMask)
-                            for (i = 0; i < MAX_PLAYER_COUNT; i++)
-                                if (target & playerID2Mask[i] && players[i].strength > p.strength)
-                                    action = stay;
-                    }
-                }
-            }
+					if (!ActionValid(_, action))
+					{
+						bt.strengthDelta[_] += -p.strength;
+						bt.change[_] = TurnStateTransfer::error;
+						fieldContent[p.row][p.col] &= ~playerID2Mask[_];
+						p.strength = 0;
+						p.dead = true;
+						aliveCount--;
+					}
+					else
+					{
+						// Óöµ½±È×Ô¼ºÇ¿¡á×³µÄÍæ¼ÒÊÇ²»ÄÜÇ°½øµÄ
+						GridContentType target = fieldContent
+							[(p.row + dy[action] + height) % height]
+						[(p.col + dx[action] + width) % width];
+						if (target & playerMask)
+							for (i = 0; i < MAX_PLAYER_COUNT; i++)
+								if (target & playerID2Mask[i] && players[i].strength > p.strength)
+									action = stay;
+					}
+				}
+			}
 
-            // 1. ä½ç½®å˜åŒ–
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 1. Î»ÖÃ±ä»¯
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                bt.actions[_] = actions[_];
+				bt.actions[_] = actions[_];
 
-                if (actions[_] == stay)
-                    continue;
+				if (actions[_] == stay)
+					continue;
 
-                // ç§»åŠ¨
-                fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                _p.row = (_p.row + dy[actions[_]] + height) % height;
-                _p.col = (_p.col + dx[actions[_]] + width) % width;
-                fieldContent[_p.row][_p.col] |= playerID2Mask[_];
-            }
+				// ÒÆ¶¯
+				fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
+				_p.row = (_p.row + dy[actions[_]] + height) % height;
+				_p.col = (_p.col + dx[actions[_]] + width) % width;
+				fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+			}
 
-            // 2. ç©å®¶äº’æ®´
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 2. Íæ¼Ò»¥Å¹
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                // åˆ¤æ–­æ˜¯å¦æœ‰ç©å®¶åœ¨ä¸€èµ·
-                int player, containedCount = 0;
-                int containedPlayers[MAX_PLAYER_COUNT];
-                for (player = 0; player < MAX_PLAYER_COUNT; player++)
-                    if (fieldContent[_p.row][_p.col] & playerID2Mask[player])
-                        containedPlayers[containedCount++] = player;
+				// ÅĞ¶ÏÊÇ·ñÓĞÍæ¼ÒÔÚÒ»Æğ
+				int player, containedCount = 0;
+				int containedPlayers[MAX_PLAYER_COUNT];
+				for (player = 0; player < MAX_PLAYER_COUNT; player++)
+					if (fieldContent[_p.row][_p.col] & playerID2Mask[player])
+						containedPlayers[containedCount++] = player;
 
-                if (containedCount > 1)
-                {
-                    // NAIVE
-                    for (i = 0; i < containedCount; i++)
-                        for (j = 0; j < containedCount - i - 1; j++)
-                            if (players[containedPlayers[j]].strength < players[containedPlayers[j + 1]].strength)
-                                swap(containedPlayers[j], containedPlayers[j + 1]);
+				if (containedCount > 1)
+				{
+					// NAIVE
+					for (i = 0; i < containedCount; i++)
+						for (j = 0; j < containedCount - i - 1; j++)
+							if (players[containedPlayers[j]].strength < players[containedPlayers[j + 1]].strength)
+								swap(containedPlayers[j], containedPlayers[j + 1]);
 
-                    int begin;
-                    for (begin = 1; begin < containedCount; begin++)
-                        if (players[containedPlayers[begin - 1]].strength > players[containedPlayers[begin]].strength)
-                            break;
+					int begin;
+					for (begin = 1; begin < containedCount; begin++)
+						if (players[containedPlayers[begin - 1]].strength > players[containedPlayers[begin]].strength)
+							break;
 
-                    // è¿™äº›ç©å®¶å°†ä¼šè¢«æ€æ­»
-                    int lootedStrength = 0;
-                    for (i = begin; i < containedCount; i++)
-                    {
-                        int id = containedPlayers[i];
-                        Player &p = players[id];
+					// ÕâĞ©Íæ¼Ò½«»á±»É±ËÀ
+					int lootedStrength = 0;
+					for (i = begin; i < containedCount; i++)
+					{
+						int id = containedPlayers[i];
+						Player &p = players[id];
 
-                        // ä»æ ¼å­ä¸Šç§»èµ°
-                        fieldContent[p.row][p.col] &= ~playerID2Mask[id];
-                        p.dead = true;
-                        int drop = p.strength / 2;
-                        bt.strengthDelta[id] += -drop;
-                        bt.change[id] |= TurnStateTransfer::die;
-                        lootedStrength += drop;
-                        p.strength -= drop;
-                        aliveCount--;
-                    }
+						// ´Ó¸ñ×ÓÉÏÒÆ×ß
+						fieldContent[p.row][p.col] &= ~playerID2Mask[id];
+						p.dead = true;
+						int drop = p.strength / 2;
+						bt.strengthDelta[id] += -drop;
+						bt.change[id] |= TurnStateTransfer::die;
+						lootedStrength += drop;
+						p.strength -= drop;
+						aliveCount--;
+					}
 
-                    // åˆ†é…ç»™å…¶ä»–ç©å®¶
-                    int inc = lootedStrength / begin;
-                    for (i = 0; i < begin; i++)
-                    {
-                        int id = containedPlayers[i];
-                        Player &p = players[id];
-                        bt.strengthDelta[id] += inc;
-                        p.strength += inc;
-                    }
-                }
-            }
+					// ·ÖÅä¸øÆäËûÍæ¼Ò
+					int inc = lootedStrength / begin;
+					for (i = 0; i < begin; i++)
+					{
+						int id = containedPlayers[i];
+						Player &p = players[id];
+						bt.strengthDelta[id] += inc;
+						p.strength += inc;
+					}
+				}
+			}
 
-            // 3. äº§ç”Ÿè±†å­
-            if (--generatorTurnLeft == 0)
-            {
-                generatorTurnLeft = GENERATOR_INTERVAL;
-                NewFruits &fruits = newFruits[newFruitsCount++];
-                fruits.newFruitCount = 0;
-                for (i = 0; i < generatorCount; i++)
-                    for (Direction d = up; d < 8; ++d)
-                    {
-                        // å–ä½™ï¼Œç©¿è¿‡åœºåœ°è¾¹ç•Œ
-                        int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
-                        if (fieldStatic[r][c] & generator || fieldContent[r][c] & (smallFruit | largeFruit))
-                            continue;
-                        fieldContent[r][c] |= smallFruit;
-                        fruits.newFruits[fruits.newFruitCount].row = r;
-                        fruits.newFruits[fruits.newFruitCount++].col = c;
-                        smallFruitCount++;
-                    }
-            }
+			// 3. ²úÉú¶¹×Ó
+			if (--generatorTurnLeft == 0)
+			{
+				generatorTurnLeft = GENERATOR_INTERVAL;
+				NewFruits &fruits = newFruits[newFruitsCount++];
+				fruits.newFruitCount = 0;
+				for (i = 0; i < generatorCount; i++)
+					for (Direction d = up; d < 8; ++d)
+					{
+						// È¡Óà£¬´©¹ı³¡µØ±ß½ç
+						int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
+						if (fieldStatic[r][c] & generator || fieldContent[r][c] & (smallFruit | largeFruit))
+							continue;
+						fieldContent[r][c] |= smallFruit;
+						fruits.newFruits[fruits.newFruitCount].row = r;
+						fruits.newFruits[fruits.newFruitCount++].col = c;
+						smallFruitCount++;
+					}
+			}
 
-            // 4. åƒæ‰è±†å­
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 4. ³Ôµô¶¹×Ó
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                GridContentType &content = fieldContent[_p.row][_p.col];
+				GridContentType &content = fieldContent[_p.row][_p.col];
 
-                // åªæœ‰åœ¨æ ¼å­ä¸Šåªæœ‰è‡ªå·±çš„æ—¶å€™æ‰èƒ½åƒæ‰è±†å­
-                if (content & playerMask & ~playerID2Mask[_])
-                    continue;
+				// Ö»ÓĞÔÚ¸ñ×ÓÉÏÖ»ÓĞ×Ô¼ºµÄÊ±ºò²ÅÄÜ³Ôµô¶¹×Ó
+				if (content & playerMask & ~playerID2Mask[_])
+					continue;
 
-                if (content & smallFruit)
-                {
-                    content &= ~smallFruit;
-                    _p.strength++;
-                    bt.strengthDelta[_]++;
-                    smallFruitCount--;
-                    bt.change[_] |= TurnStateTransfer::ateSmall;
-                }
-                else if (content & largeFruit)
-                {
-                    content &= ~largeFruit;
-                    if (_p.powerUpLeft == 0)
-                    {
-                        _p.strength += LARGE_FRUIT_ENHANCEMENT;
-                        bt.strengthDelta[_] += LARGE_FRUIT_ENHANCEMENT;
-                    }
-                    _p.powerUpLeft += LARGE_FRUIT_DURATION;
-                    bt.change[_] |= TurnStateTransfer::ateLarge;
-                }
-            }
+				if (content & smallFruit)
+				{
+					content &= ~smallFruit;
+					_p.strength++;
+					bt.strengthDelta[_]++;
+					smallFruitCount--;
+					bt.change[_] |= TurnStateTransfer::ateSmall;
+				}
+				else if (content & largeFruit)
+				{
+					content &= ~largeFruit;
+					if (_p.powerUpLeft == 0)
+					{
+						_p.strength += LARGE_FRUIT_ENHANCEMENT;
+						bt.strengthDelta[_] += LARGE_FRUIT_ENHANCEMENT;
+					}
+					_p.powerUpLeft += LARGE_FRUIT_DURATION;
+					bt.change[_] |= TurnStateTransfer::ateLarge;
+				}
+			}
 
-            // 5. å¤§è±†å›åˆå‡å°‘
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                Player &_p = players[_];
-                if (_p.dead)
-                    continue;
+			// 5. ´ó¶¹»ØºÏ¼õÉÙ
+			for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				Player &_p = players[_];
+				if (_p.dead)
+					continue;
 
-                if (_p.powerUpLeft > 0 && --_p.powerUpLeft == 0)
-                {
-                    _p.strength -= LARGE_FRUIT_ENHANCEMENT;
-                    bt.change[_] |= TurnStateTransfer::powerUpCancel;
-                    bt.strengthDelta[_] += -LARGE_FRUIT_ENHANCEMENT;
-                }
-            }
+				if (_p.powerUpLeft > 0 && --_p.powerUpLeft == 0)
+				{
+					_p.strength -= LARGE_FRUIT_ENHANCEMENT;
+					bt.change[_] |= TurnStateTransfer::powerUpCancel;
+					bt.strengthDelta[_] += -LARGE_FRUIT_ENHANCEMENT;
+				}
+			}
 
-            ++turnID;
+			++turnID;
 
-            auto&& d = Debug::debugData["profiling"]["NextTurn()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+			auto&& d = Debug::debugData["profiling"]["NextTurn()"];
+			d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
-            // æ˜¯å¦åªå‰©ä¸€äººï¼Ÿ
-            if (aliveCount <= 1)
-            {
-                for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-                    if (!players[_].dead)
-                    {
-                        bt.strengthDelta[_] += smallFruitCount;
-                        players[_].strength += smallFruitCount;
-                    }
-                return hasNext = false;
-            }
+			// ÊÇ·ñÖ»Ê£Ò»ÈË£¿
+			if (aliveCount <= 1)
+			{
+				for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+					if (!players[_].dead)
+					{
+						bt.strengthDelta[_] += smallFruitCount;
+						players[_].strength += smallFruitCount;
+					}
+				return hasNext = false;
+			}
 
-            // æ˜¯å¦å›åˆè¶…é™ï¼Ÿ
-            if (turnID >= 100)
-                return hasNext = false;
+			// ÊÇ·ñ»ØºÏ³¬ÏŞ£¿
+			if (turnID >= 100)
+				return hasNext = false;
 
-            return hasNext = true;
-        }
+			return hasNext = true;
+		}
 
-        // è·å–row, colä½ç½®çš„æ°´æœä¼°å€¼
-        inline char GetFruitValue(int row, int col)const
-        {
-            char v = 0;
-            if (fieldContent[row][col] & smallFruit)
-                v += 1;
-            if (fieldContent[row][col] & largeFruit)
-                v += isSmallMap() ? 7 : 3;
-            return v;
-        }
+		// »ñÈ¡row, colÎ»ÖÃµÄË®¹û¹ÀÖµ
+		inline char GetFruitValue(int row, int col)const
+		{
+			char v = 0;
+			if (fieldContent[row][col] & smallFruit)
+				v += 1;
+			if (fieldContent[row][col] & largeFruit)
+				v += isSmallMap() ? 7 : 3;
+			return v;
+		}
 
-        inline bool isSmallMap()const
-        {
-            return height + width <= 16;
-        }
+		inline bool isSmallMap()const
+		{
+			return height + width <= 16;
+		}
 
-        //weaZen: åœ°å›¾åˆ†æ
-        void MapAnalyze()
-        {
-            clock_t startTime = clock();
+		//weaZen: µØÍ¼·ÖÎö
+		void MapAnalyze()
+		{
+			clock_t startTime = clock();
 
-            FieldProp deadSpot[40];
-            int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
-            int dCount = 0;
-            PathInfoType * ptmpExit;
-            ptmpExit = NULL;
+			FieldProp deadSpot[40];
+			int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
+			int dCount = 0;
+			PathInfoType * ptmpExit;
+			ptmpExit = NULL;
 
-            for (int y = 0; y < height; ++y)
-            {
-                for (int x = 0; x < width; ++x)
-                {
-                    pathInfo[y][x].row = y;
-                    pathInfo[y][x].col = x;
-                    int degreeCount = 0;
-                    for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
-                        if (!(fieldStatic[y][x] & Pacman::direction2OpposingWall[dir]))
-                            ++degreeCount;
-                    degree[y][x] = degreeCount;
-                    if (degreeCount == 1)
-                    {
-                        pathInfo[y][x].isImpasse = true;
-                        deadSpot[dCount].row = y;
-                        deadSpot[dCount++].col = x;
-                    }
-                }
-            }
-            for (int i = 0; i < dCount; ++i)
-            {
-                FieldProp startPos = deadSpot[i];
-                FieldProp queue[QUEUE_MAX];
-                queue[0] = startPos;
-                int nowFlag = 0, endFlag = 0;
-                while (nowFlag <= endFlag)
-                {
-                    const Pacman::GridStaticType &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-                    for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
-                    {
-                        if (!(curGrid & Pacman::direction2OpposingWall[dir]))
-                        {
-                            Pacman::FieldProp newPos = queue[nowFlag];
-                            newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
-                            newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
-                            --degree[newPos.row][newPos.col];
-                            if (degree[newPos.row][newPos.col] == 1 && !pathInfo[newPos.row][newPos.col].isImpasse)
-                            {
-                                pathInfo[newPos.row][newPos.col].isExit = false;
-                                pathInfo[newPos.row][newPos.col].isImpasse = true;
-                                queue[++endFlag] = newPos;
-                            }
-                            if (degree[newPos.row][newPos.col] > 1)
-                            {
-                                pathInfo[newPos.row][newPos.col].isExit = true;
-                                pathInfo[newPos.row][newPos.col].pExit = ptmpExit = &pathInfo[newPos.row][newPos.col];
-                                pathInfo[newPos.row][newPos.col].fleeLength = 0;
-                            }
-                        }
-                    }
-                    ++nowFlag;
-                }
-                for (int i = 0; i <= endFlag; ++i)
-                {
-                    pathInfo[queue[i].row][queue[i].col].fleeLength = endFlag - i + 1;
-                    pathInfo[queue[i].row][queue[i].col].pExit = ptmpExit;
-                }
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					pathInfo[y][x].row = y;
+					pathInfo[y][x].col = x;
+					int degreeCount = 0;
+					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+						if (!(fieldStatic[y][x] & Pacman::direction2OpposingWall[dir]))
+							++degreeCount;
+					degree[y][x] = degreeCount;
+					if (degreeCount == 1)
+					{
+						pathInfo[y][x].isImpasse = true;
+						deadSpot[dCount].row = y;
+						deadSpot[dCount++].col = x;
+					}
+				}
+			}
+			for (int i = 0; i < dCount; ++i)
+			{
+				FieldProp startPos = deadSpot[i];
+				FieldProp queue[QUEUE_MAX];
+				queue[0] = startPos;
+				int nowFlag = 0, endFlag = 0;
+				while (nowFlag <= endFlag)
+				{
+					const Pacman::GridStaticType &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+					for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+					{
+						if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+						{
+							Pacman::FieldProp newPos = queue[nowFlag];
+							newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
+							newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
+							--degree[newPos.row][newPos.col];
+							if (degree[newPos.row][newPos.col] == 1 && !pathInfo[newPos.row][newPos.col].isImpasse)
+							{
+								pathInfo[newPos.row][newPos.col].isExit = false;
+								pathInfo[newPos.row][newPos.col].isImpasse = true;
+								queue[++endFlag] = newPos;
+							}
+							if (degree[newPos.row][newPos.col] > 1)
+							{
+								pathInfo[newPos.row][newPos.col].isExit = true;
+								pathInfo[newPos.row][newPos.col].pExit = ptmpExit = &pathInfo[newPos.row][newPos.col];
+								pathInfo[newPos.row][newPos.col].fleeLength = 0;
+							}
+						}
+					}
+					++nowFlag;
+				}
+				for (int i = 0; i <= endFlag; ++i)
+				{
+					pathInfo[queue[i].row][queue[i].col].fleeLength = endFlag - i + 1;
+					pathInfo[queue[i].row][queue[i].col].pExit = ptmpExit;
+				}
 
-            }
-            for (int y = 0; y < height; ++y)
-            {
-                for (int x = 0; x < width; ++x)
-                {
-                    if (pathInfo[y][x].isImpasse)
-                    {
-                        ptmpExit = pathInfo[y][x].pExit;
-                        while (ptmpExit != ptmpExit->pExit)
-                        {
-                            pathInfo[y][x].pExit = ptmpExit->pExit;
-                            pathInfo[y][x].fleeLength += ptmpExit->fleeLength;
-                            ptmpExit = pathInfo[y][x].pExit;
-                        }
-                    }
-                }
-            }
+			}
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					if (pathInfo[y][x].isImpasse)
+					{
+						ptmpExit = pathInfo[y][x].pExit;
+						while (ptmpExit != ptmpExit->pExit)
+						{
+							pathInfo[y][x].pExit = ptmpExit->pExit;
+							pathInfo[y][x].fleeLength += ptmpExit->fleeLength;
+							ptmpExit = pathInfo[y][x].pExit;
+						}
+					}
+				}
+			}
 
-            auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-        }
+			auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
+			d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+		}
 
-        // è¯»å–å¹¶è§£æç¨‹åºè¾“å…¥ï¼Œæœ¬åœ°è°ƒè¯•æˆ–æäº¤å¹³å°ä½¿ç”¨éƒ½å¯ä»¥ã€‚
-        // å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œç¨‹åºä¼šå…ˆè¯•ç€è¯»å–å‚æ•°ä¸­æŒ‡å®šçš„æ–‡ä»¶ä½œä¸ºè¾“å…¥æ–‡ä»¶ï¼Œå¤±è´¥åå†é€‰æ‹©ç­‰å¾…ç”¨æˆ·ç›´æ¥è¾“å…¥ã€‚
-        // æœ¬åœ°è°ƒè¯•æ—¶å¯ä»¥æ¥å—å¤šè¡Œä»¥ä¾¿æ“ä½œï¼ŒWindowsä¸‹å¯ä»¥ç”¨ Ctrl-Z æˆ–ä¸€ä¸ªã€ç©ºè¡Œ+å›è½¦ã€‘è¡¨ç¤ºè¾“å…¥ç»“æŸï¼Œä½†æ˜¯åœ¨çº¿è¯„æµ‹åªéœ€æ¥å—å•è¡Œå³å¯ã€‚
-        // localFileName å¯ä»¥ä¸ºNULL
-        // obtainedData ä¼šè¾“å‡ºè‡ªå·±ä¸Šå›åˆå­˜å‚¨ä¾›æœ¬å›åˆä½¿ç”¨çš„æ•°æ®
-        // obtainedGlobalData ä¼šè¾“å‡ºè‡ªå·±çš„ Bot ä¸Šä»¥å‰å­˜å‚¨çš„æ•°æ®
-        // è¿”å›å€¼æ˜¯è‡ªå·±çš„ playerID
-        int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
-        {
-            string str, chunk;
-            if (!Debug::presetString.empty())
-                str = Debug::presetString;
-            else
-            {
+		// ¶ÁÈ¡²¢½âÎö³ÌĞòÊäÈë£¬±¾µØµ÷ÊÔ»òÌá½»Æ½Ì¨Ê¹ÓÃ¶¼¿ÉÒÔ¡£
+		// Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬³ÌĞò»áÏÈÊÔ×Å¶ÁÈ¡²ÎÊıÖĞÖ¸¶¨µÄÎÄ¼ş×÷ÎªÊäÈëÎÄ¼ş£¬Ê§°ÜºóÔÙÑ¡ÔñµÈ´ıÓÃ»§Ö±½ÓÊäÈë¡£
+		// ±¾µØµ÷ÊÔÊ±¿ÉÒÔ½ÓÊÜ¶àĞĞÒÔ±ã²Ù×÷£¬WindowsÏÂ¿ÉÒÔÓÃ Ctrl-Z »òÒ»¸ö¡¾¿ÕĞĞ+»Ø³µ¡¿±íÊ¾ÊäÈë½áÊø£¬µ«ÊÇÔÚÏßÆÀ²âÖ»Ğè½ÓÊÜµ¥ĞĞ¼´¿É¡£
+		// localFileName ¿ÉÒÔÎªNULL
+		// obtainedData »áÊä³ö×Ô¼ºÉÏ»ØºÏ´æ´¢¹©±¾»ØºÏÊ¹ÓÃµÄÊı¾İ
+		// obtainedGlobalData »áÊä³ö×Ô¼ºµÄ Bot ÉÏÒÔÇ°´æ´¢µÄÊı¾İ
+		// ·µ»ØÖµÊÇ×Ô¼ºµÄ playerID
+		int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
+		{
+			string str, chunk;
+			if (!Debug::presetString.empty())
+				str = Debug::presetString;
+			else
+			{
 #ifdef _BOTZONE_ONLINE
-                std::ios::sync_with_stdio(false); //Ï‰\\)
-                getline(cin, str);
+				std::ios::sync_with_stdio(false); //¦Ø\\)
+				getline(cin, str);
 #else
-                if (localFileName)
-                {
-                    std::ifstream fin(localFileName);
-                    if (fin)
-                        while (getline(fin, chunk) && chunk != "")
-                            str += chunk;
-                    else
-                        while (getline(cin, chunk) && chunk != "")
-                            str += chunk;
-                }
-                else
-                    while (getline(cin, chunk) && chunk != "")
-                        str += chunk;
+				if (localFileName)
+				{
+					std::ifstream fin(localFileName);
+					if (fin)
+						while (getline(fin, chunk) && chunk != "")
+							str += chunk;
+					else
+						while (getline(cin, chunk) && chunk != "")
+							str += chunk;
+				}
+				else
+					while (getline(cin, chunk) && chunk != "")
+						str += chunk;
 #endif
-            }
-            Json::Reader reader;
-            Json::Value input;
-            reader.parse(str, input);
+			}
+			Json::Reader reader;
+			Json::Value input;
+			reader.parse(str, input);
 
-            int len = input["requests"].size();
+			int len = input["requests"].size();
 
-            // è¯»å–åœºåœ°é™æ€çŠ¶å†µ
-            Json::Value field = input["requests"][(Json::Value::UInt) 0],
-                staticField = field["static"], // å¢™é¢å’Œäº§ç”Ÿå™¨
-                contentField = field["content"]; // è±†å­å’Œç©å®¶
-            height = field["height"].asInt();
-            width = field["width"].asInt();
-            LARGE_FRUIT_DURATION = field["LARGE_FRUIT_DURATION"].asInt();
-            LARGE_FRUIT_ENHANCEMENT = field["LARGE_FRUIT_ENHANCEMENT"].asInt();
-            generatorTurnLeft = GENERATOR_INTERVAL = field["GENERATOR_INTERVAL"].asInt();
+			// ¶ÁÈ¡³¡µØ¾²Ì¬×´¿ö
+			Json::Value field = input["requests"][(Json::Value::UInt) 0],
+				staticField = field["static"], // Ç½ÃæºÍ²úÉúÆ÷
+				contentField = field["content"]; // ¶¹×ÓºÍÍæ¼Ò
+			height = field["height"].asInt();
+			width = field["width"].asInt();
+			LARGE_FRUIT_DURATION = field["LARGE_FRUIT_DURATION"].asInt();
+			LARGE_FRUIT_ENHANCEMENT = field["LARGE_FRUIT_ENHANCEMENT"].asInt();
+			generatorTurnLeft = GENERATOR_INTERVAL = field["GENERATOR_INTERVAL"].asInt();
 
-            PrepareInitialField(staticField, contentField);
+			PrepareInitialField(staticField, contentField);
 
-            MapAnalyze();
+			hasNext = true;
 
-            // æ ¹æ®å†å²æ¢å¤å±€é¢
-            for (int i = 1; i < len; i++)
-            {
-                Json::Value req = input["requests"][i];
-                for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                    if (!players[_].dead)
-                        actions[_] = (Direction)req[playerID2str[_]]["action"].asInt();
-                NextTurn();
-            }
+			MapAnalyze();
 
-            obtainedData = input["data"].asString();
-            obtainedGlobalData = input["globaldata"].asString();
+			// ¸ù¾İÀúÊ·»Ö¸´¾ÖÃæ
+			for (int i = 1; i < len; i++)
+			{
+				Json::Value req = input["requests"][i];
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+					if (!players[_].dead)
+						actions[_] = (Direction)req[playerID2str[_]]["action"].asInt();
+				NextTurn();
+			}
 
-            return field["id"].asInt();
-        }
+			obtainedData = input["data"].asString();
+			obtainedGlobalData = input["globaldata"].asString();
 
-        // æ ¹æ® static å’Œ content æ•°ç»„å‡†å¤‡åœºåœ°çš„åˆå§‹çŠ¶å†µ
-        void PrepareInitialField(const Json::Value &staticField, const Json::Value &contentField)
-        {
-            int r, c, gid = 0;
-            generatorCount = 0;
-            aliveCount = 0;
-            smallFruitCount = 0;
-            generatorTurnLeft = GENERATOR_INTERVAL;
-            for (r = 0; r < height; r++)
-                for (c = 0; c < width; c++)
-                {
-                    GridContentType &content = fieldContent[r][c] = (GridContentType)contentField[r][c].asInt();
-                    GridStaticType &s = fieldStatic[r][c] = (GridStaticType)staticField[r][c].asInt();
-                    if (s & generator)
-                    {
-                        generators[gid].row = r;
-                        generators[gid++].col = c;
-                        generatorCount++;
-                    }
-                    if (content & smallFruit)
-                        smallFruitCount++;
-                    for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                        if (content & playerID2Mask[_])
-                        {
-                            Player &p = players[_];
-                            p.col = c;
-                            p.row = r;
-                            p.powerUpLeft = 0;
-                            p.strength = 1;
-                            p.dead = false;
-                            aliveCount++;
-                        }
-                }
-        }
+			return field["id"].asInt();
+		}
 
-        // å®Œæˆå†³ç­–ï¼Œè¾“å‡ºç»“æœã€‚
-        // action è¡¨ç¤ºæœ¬å›åˆçš„ç§»åŠ¨æ–¹å‘ï¼Œstay ä¸ºä¸ç§»åŠ¨
-        // tauntText è¡¨ç¤ºæƒ³è¦å«åš£çš„è¨€è¯­ï¼Œå¯ä»¥æ˜¯ä»»æ„å­—ç¬¦ä¸²ï¼Œé™¤äº†æ˜¾ç¤ºåœ¨å±å¹•ä¸Šä¸ä¼šæœ‰ä»»ä½•ä½œç”¨ï¼Œç•™ç©ºè¡¨ç¤ºä¸å«åš£
-        // data è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä¸‹ä¸€å›åˆä½¿ç”¨çš„æ•°æ®ï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
-        // globalData è¡¨ç¤ºè‡ªå·±æƒ³å­˜å‚¨ä¾›ä»¥åä½¿ç”¨çš„æ•°æ®ï¼ˆæ›¿æ¢ï¼‰ï¼Œè¿™ä¸ªæ•°æ®å¯ä»¥è·¨å¯¹å±€ä½¿ç”¨ï¼Œä¼šä¸€ç›´ç»‘å®šåœ¨è¿™ä¸ª Bot ä¸Šï¼Œç•™ç©ºè¡¨ç¤ºåˆ é™¤
-        // Jet: debugDataä¸ºä¸€ä¸ªJsonå¯¹è±¡ï¼Œbotzoneä¸Šä¸æ‰“å°ï¼Œç”¨äºæœ¬åœ°è°ƒè¯•
-        void WriteOutput(Direction action, string tauntText = "", string data = "",
-                         string globalData = "", Json::Value debugData = "") const
-        {
-            debugData["seed"] = to_string(seed);
+		// ¸ù¾İ static ºÍ content Êı×é×¼±¸³¡µØµÄ³õÊ¼×´¿ö
+		void PrepareInitialField(const Json::Value &staticField, const Json::Value &contentField)
+		{
+			int r, c, gid = 0;
+			generatorCount = 0;
+			aliveCount = 0;
+			smallFruitCount = 0;
+			generatorTurnLeft = GENERATOR_INTERVAL;
+			for (r = 0; r < height; r++)
+				for (c = 0; c < width; c++)
+				{
+					GridContentType &content = fieldContent[r][c] = (GridContentType)contentField[r][c].asInt();
+					GridStaticType &s = fieldStatic[r][c] = (GridStaticType)staticField[r][c].asInt();
+					if (s & generator)
+					{
+						generators[gid].row = r;
+						generators[gid++].col = c;
+						generatorCount++;
+					}
+					if (content & smallFruit)
+						smallFruitCount++;
+					for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+						if (content & playerID2Mask[_])
+						{
+							Player &p = players[_];
+							p.col = c;
+							p.row = r;
+							p.powerUpLeft = 0;
+							p.strength = 1;
+							p.dead = false;
+							aliveCount++;
+						}
+				}
+		}
 
-            Json::Value ret;
-            ret["response"]["action"] = action;
-            ret["response"]["tauntText"] = tauntText;
-            ret["data"] = data;
-            ret["globaldata"] = globalData;
-            if (Debug::printInfo)
-                ret["debug"] = debugData;
+		// Íê³É¾ö²ß£¬Êä³ö½á¹û¡£
+		// action ±íÊ¾±¾»ØºÏµÄÒÆ¶¯·½Ïò£¬stay Îª²»ÒÆ¶¯
+		// tauntText ±íÊ¾ÏëÒª½ĞÏùµÄÑÔÓï£¬¿ÉÒÔÊÇÈÎÒâ×Ö·û´®£¬³ıÁËÏÔÊ¾ÔÚÆÁÄ»ÉÏ²»»áÓĞÈÎºÎ×÷ÓÃ£¬Áô¿Õ±íÊ¾²»½ĞÏù
+		// data ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÏÂÒ»»ØºÏÊ¹ÓÃµÄÊı¾İ£¬Áô¿Õ±íÊ¾É¾³ı
+		// globalData ±íÊ¾×Ô¼ºÏë´æ´¢¹©ÒÔºóÊ¹ÓÃµÄÊı¾İ£¨Ìæ»»£©£¬Õâ¸öÊı¾İ¿ÉÒÔ¿ç¶Ô¾ÖÊ¹ÓÃ£¬»áÒ»Ö±°ó¶¨ÔÚÕâ¸ö Bot ÉÏ£¬Áô¿Õ±íÊ¾É¾³ı
+		// Jet: debugDataÎªÒ»¸öJson¶ÔÏó£¬botzoneÉÏ²»´òÓ¡£¬ÓÃÓÚ±¾µØµ÷ÊÔ
+		void WriteOutput(Direction action, string tauntText = "", string data = "",
+			string globalData = "", Json::Value debugData = "") const
+		{
+			debugData["seed"] = to_string(seed);
+
+			Json::Value ret;
+			ret["response"]["action"] = action;
+			ret["response"]["tauntText"] = tauntText;
+			ret["data"] = data;
+			ret["globaldata"] = globalData;
+			if (Debug::printInfo)
+				ret["debug"] = debugData;
 
 #ifdef _BOTZONE_ONLINE
-            Json::FastWriter writer; // åœ¨çº¿è¯„æµ‹çš„è¯èƒ½ç”¨å°±è¡Œâ€¦â€¦
+			Json::FastWriter writer; // ÔÚÏßÆÀ²âµÄ»°ÄÜÓÃ¾ÍĞĞ¡­¡­
 #else
-            Json::StyledWriter writer; // æœ¬åœ°è°ƒè¯•è¿™æ ·å¥½çœ‹ > <
+			Json::StyledWriter writer; // ±¾µØµ÷ÊÔÕâÑùºÃ¿´ > <
 #endif
-            cout << writer.write(ret) << endl;
-        }
+			cout << writer.write(ret) << endl;
+		}
 
-        // ç”¨äºæ˜¾ç¤ºå½“å‰æ¸¸æˆçŠ¶æ€ï¼Œè°ƒè¯•ç”¨ã€‚
-        // æäº¤åˆ°å¹³å°åä¼šè¢«ä¼˜åŒ–æ‰ã€‚
-        inline void DebugPrint() const
-        {
+		// ÓÃÓÚÏÔÊ¾µ±Ç°ÓÎÏ·×´Ì¬£¬µ÷ÊÔÓÃ¡£
+		// Ìá½»µ½Æ½Ì¨ºó»á±»ÓÅ»¯µô¡£
+		inline void DebugPrint() const
+		{
 #ifndef _BOTZONE_ONLINE
-            printf("å›åˆå·ã€%dã€‘å­˜æ´»äººæ•°ã€%dã€‘| å›¾ä¾‹ äº§ç”Ÿå™¨[G] æœ‰ç©å®¶[0/1/2/3] å¤šä¸ªç©å®¶[*] å¤§è±†[o] å°è±†[.]\n", turnID, aliveCount);
-            for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                const Player &p = players[_];
-                printf("[ç©å®¶%d(%d, %d)|åŠ›é‡%d|åŠ æˆå‰©ä½™å›åˆ%d|%s]\n",
-                       _, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "æ­»äº¡" : "å­˜æ´»");
-            }
-            putchar(' ');
-            putchar(' ');
-            for (int c = 0; c < width; c++)
-                printf("  %d ", c);
-            putchar('\n');
-            for (int r = 0; r < height; r++)
-            {
-                putchar(' ');
-                putchar(' ');
-                for (int c = 0; c < width; c++)
-                {
-                    putchar(' ');
-                    printf((fieldStatic[r][c] & wallNorth) ? "---" : "   ");
-                }
-                printf("\n%d ", r);
-                for (int c = 0; c < width; c++)
-                {
-                    putchar((fieldStatic[r][c] & wallWest) ? '|' : ' ');
-                    putchar(' ');
-                    int hasPlayer = -1;
-                    for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-                        if (fieldContent[r][c] & playerID2Mask[_])
-                            if (hasPlayer == -1)
-                                hasPlayer = _;
-                            else
-                                hasPlayer = 4;
-                    if (hasPlayer == 4)
-                        putchar('*');
-                    else if (hasPlayer != -1)
-                        putchar('0' + hasPlayer);
-                    else if (fieldStatic[r][c] & generator)
-                        putchar('G');
-                    else if (fieldContent[r][c] & playerMask)
-                        putchar('*');
-                    else if (fieldContent[r][c] & smallFruit)
-                        putchar('.');
-                    else if (fieldContent[r][c] & largeFruit)
-                        putchar('o');
-                    else
-                        putchar(' ');
-                    putchar(' ');
-                }
-                putchar((fieldStatic[r][width - 1] & wallEast) ? '|' : ' ');
-                putchar('\n');
-            }
-            putchar(' ');
-            putchar(' ');
-            for (int c = 0; c < width; c++)
-            {
-                putchar(' ');
-                printf((fieldStatic[height - 1][c] & wallSouth) ? "---" : "   ");
-            }
-            putchar('\n');
+			printf("»ØºÏºÅ¡¾%d¡¿´æ»îÈËÊı¡¾%d¡¿| Í¼Àı ²úÉúÆ÷[G] ÓĞÍæ¼Ò[0/1/2/3] ¶à¸öÍæ¼Ò[*] ´ó¶¹[o] Ğ¡¶¹[.]\n", turnID, aliveCount);
+			for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				const Player &p = players[_];
+				printf("[Íæ¼Ò%d(%d, %d)|Á¦Á¿%d|¼Ó³ÉÊ£Óà»ØºÏ%d|%s]\n",
+					_, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "ËÀÍö" : "´æ»î");
+			}
+			putchar(' ');
+			putchar(' ');
+			for (int c = 0; c < width; c++)
+				printf("  %d ", c);
+			putchar('\n');
+			for (int r = 0; r < height; r++)
+			{
+				putchar(' ');
+				putchar(' ');
+				for (int c = 0; c < width; c++)
+				{
+					putchar(' ');
+					printf((fieldStatic[r][c] & wallNorth) ? "---" : "   ");
+				}
+				printf("\n%d ", r);
+				for (int c = 0; c < width; c++)
+				{
+					putchar((fieldStatic[r][c] & wallWest) ? '|' : ' ');
+					putchar(' ');
+					int hasPlayer = -1;
+					for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+						if (fieldContent[r][c] & playerID2Mask[_])
+							if (hasPlayer == -1)
+								hasPlayer = _;
+							else
+								hasPlayer = 4;
+					if (hasPlayer == 4)
+						putchar('*');
+					else if (hasPlayer != -1)
+						putchar('0' + hasPlayer);
+					else if (fieldStatic[r][c] & generator)
+						putchar('G');
+					else if (fieldContent[r][c] & playerMask)
+						putchar('*');
+					else if (fieldContent[r][c] & smallFruit)
+						putchar('.');
+					else if (fieldContent[r][c] & largeFruit)
+						putchar('o');
+					else
+						putchar(' ');
+					putchar(' ');
+				}
+				putchar((fieldStatic[r][width - 1] & wallEast) ? '|' : ' ');
+				putchar('\n');
+			}
+			putchar(' ');
+			putchar(' ');
+			for (int c = 0; c < width; c++)
+			{
+				putchar(' ');
+				printf((fieldStatic[height - 1][c] & wallSouth) ? "---" : "   ");
+			}
+			putchar('\n');
 #endif
-        }
+		}
 
-        Json::Value SerializeCurrentTurnChange()
-        {
-            Json::Value result;
-            TurnStateTransfer &bt = backtrack[turnID - 1];
-            for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-            {
-                result["actions"][_] = bt.actions[_];
-                result["strengthDelta"][_] = bt.strengthDelta[_];
-                result["change"][_] = bt.change[_];
-            }
-            return result;
-        }
+		Json::Value SerializeCurrentTurnChange()
+		{
+			Json::Value result;
+			TurnStateTransfer &bt = backtrack[turnID - 1];
+			for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+			{
+				result["actions"][_] = bt.actions[_];
+				result["strengthDelta"][_] = bt.strengthDelta[_];
+				result["change"][_] = bt.change[_];
+			}
+			return result;
+		}
 
-        // åˆå§‹åŒ–æ¸¸æˆç®¡ç†å™¨
-        GameField()
-        {
-            if (constructed)
-                throw runtime_error("è¯·ä¸è¦å†åˆ›å»º GameField å¯¹è±¡äº†ï¼Œæ•´ä¸ªç¨‹åºä¸­åªåº”è¯¥æœ‰ä¸€ä¸ªå¯¹è±¡");
-            constructed = true;
+		// ³õÊ¼»¯ÓÎÏ·¹ÜÀíÆ÷
+		GameField()
+		{
+			if (constructed)
+				throw runtime_error("Çë²»ÒªÔÙ´´½¨ GameField ¶ÔÏóÁË£¬Õû¸ö³ÌĞòÖĞÖ»Ó¦¸ÃÓĞÒ»¸ö¶ÔÏó");
+			constructed = true;
 
-            turnID = 0;
-        }
+			turnID = 0;
+		}
 
-        //GameField(const GameField &b) : GameField() { }
-    };
+		//GameField(const GameField &b) : GameField() { }
+	};
 
-    bool GameField::constructed = false;
+	bool GameField::constructed = false;
 }
 
-// ä¸€äº›è¾…åŠ©ç¨‹åº
+// Ò»Ğ©¸¨Öú³ÌĞò
 namespace Helpers
 {
-    using namespace EnumExt;
+	using namespace EnumExt;
 
-    class Solution: public std::pair<Pacman::Direction, int>
-    {
-    public:
-        Solution() {}
-        Solution(const std::pair<Pacman::Direction, int>& p): std::pair<Pacman::Direction, int>(p) {}
-        bool operator < (const Solution& o) { return second < o.second; }
-    };
+	class Solution : public std::pair<Pacman::Direction, int>
+	{
+	public:
+		Solution() {}
+		Solution(const std::pair<Pacman::Direction, int>& p) : std::pair<Pacman::Direction, int>(p) {}
+		bool operator < (const Solution& o) { return second < o.second; }
+	};
 
-    int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
-    int randomPlayCount = 0;
-    std::vector<string> jiangXuan = {
-        u8"èµ¶ç´§ç»­ä¸€ç§’ +1s",
-        u8"äººå¶å°±éƒ½ä¸çŸ¥é“",
-        u8"è‡ªå·±ä¸å¯ä»¥é¢„æ–™",
-        u8"ä¸€ä¸ªäººçš„å‘½è¿å•Š",
-        u8"å½“ç„¶è¦é è‡ªæˆ‘çš„å¥‹æ–—",
-        u8"ä¹Ÿè¦è€ƒè™‘å†å²çš„è¡Œç¨‹",
-        u8"ä½œä¸ºä¸€ä¸ªä¸Šæµ·å¸‚å§”ä¹¦è®°",
-        u8"æ€ä¹ˆå°±è¢«è°ƒåˆ°åŒ—äº¬å»äº†",
-        u8"æˆ‘è¯´å¦è¯·é«˜æ˜å§",
-        u8"æˆ‘å®åœ¨ä¹Ÿä¸æ˜¯è°¦è™š",
-        u8"ä¸­å¤®ç ”ç©¶éƒ½å†³å®šäº†",
-        u8"ä½ æ¥å½“æ€»ä¹¦è®°",
-        u8"å½“æ—¶æˆ‘å°±å¿µäº†ä¸¤å¥è¯—",
-        u8"è‹Ÿåˆ©å›½å®¶ç”Ÿæ­»ä»¥",
-        u8"å²‚å› ç¥¸ç¦é¿è¶‹ä¹‹",
-        u8"æˆ‘ä¸»è¦çš„å°±æ˜¯ä¸‰ä»¶äº‹æƒ…",
-        u8"å†›é˜Ÿä¸€å¾‹ä¸å¾—ç»å•†",
-        u8"è¿™å¯¹å†›é˜Ÿçš„å‘½è¿å¾ˆé‡è¦",
-        u8"å°±åšäº†ä¸€ç‚¹å¾®å°çš„å·¥ä½œ",
-        u8"å¾ˆæƒ­æ„§ï¼Œä½†æ˜¯Excited",
-        u8"å¼å•Š",
-        u8"è‘£å…ˆç”Ÿå¼ä¸å¼å•Š",
-        u8"æŒ‰ç…§åŸºæœ¬æ³•ï¼Œé€‰ä¸¾æ³•",
-        u8"æœ€è¿‘æ¬§ç›Ÿå‡ºäº†ä¸€ä»½æŠ¥å‘Š",
-        u8"å†…å®šï¼Œç¡¬ç‚¹çš„æ„Ÿè§‰",
-        u8"ä¸è¦è§å¾—é£å°±æ˜¯é›¨",
-        u8"è‡ªå·±ä¹Ÿè¦å­¦ä¼šåˆ¤æ–­",
-        u8"æ— ä¸­ç”Ÿæœ‰çš„ä¸œè¥¿",
-        u8"ä½ ä¹Ÿæœ‰è´£ä»»ï¼Œå¯¹å§",
-        u8"æ— å¯å¥‰å‘Šï¼",
-        u8"ä½ ä»¬åˆä¸é«˜å…´"
-        u8"ä¸æ˜¯æˆ‘è¦é’¦ç‚¹ä»–",
-        u8"ä½ é—®æˆ‘æ”¯æŒä¸æ”¯æŒ",
-        u8"æˆ‘æ˜ç¡®åœ°å‘Šè¯‰ä½ è¿™ä¸€ç‚¹",
-        u8"ä½ ä»¬æ–°é—»ç•Œè¿˜è¦å­¦ä¹ ",
-        u8"è¥¿æ–¹çš„é‚£ä¸€å¥—ç†è®º",
-        u8"ä½ ä»¬æ¯•ç«Ÿè¿˜too young",
-        u8"æˆ‘æ˜¯èº«ç»ç™¾æˆ˜å•¦",
-        u8"æˆ‘æ˜¯è§å¾—å¤šå•¦",
-        u8"è¥¿æ–¹å›½å®¶æˆ‘éƒ½å»è¿‡",
-        u8"ä¸çŸ¥é“é«˜åˆ°å“ªé‡Œå»å•¦",
-        u8"æˆ‘è·Ÿä»–è°ˆç¬‘é£ç”Ÿ",
-        u8"æé«˜è‡ªå·±çš„çŸ¥è¯†æ°´å¹³",
-        u8"è¯†å¾—å””è¯†å¾—å•Šï¼Ÿ",
-        u8"æˆ‘ä¹Ÿæ›¿ä½ ä»¬ç€æ€¥å•Š",
-        u8"ä½ ä»¬æœ‰ä¸€ä¸ªå¥½",
-        u8"è·‘å¾—æ¯”è¥¿æ–¹è®°è€…è¿˜å¿«",
-        u8"é—®æ¥é—®å»çš„é—®é¢˜å•Š",
-        u8"éƒ½too simple",
-        u8"sometimes naive",
-        u8"æˆ‘ä»Šå¤©æ˜¯ä½œä¸ºä¸€ä¸ªé•¿è€…",
-        u8"æˆ‘ä¸æ˜¯æ–°é—»å·¥ä½œè€…",
-        u8"ä½†æ˜¯æˆ‘è§å¾—å¤ªå¤šäº†",
-        u8"å‘Šè¯‰ä½ ä»¬äººç”Ÿçš„ç»éªŒ",
-        u8"é—·å£°å¤§å‘è´¢",
-        u8"ä»€ä¹ˆéƒ½ä¸è¯´æ˜¯å å¥½çš„",
-        u8"çœ‹åˆ°ä½ ä»¬è¿™æ ·çš„çƒ­æƒ…å•Š",
-        u8"ä¸€å¥è¯ä¸è¯´åˆä¸å¥½",
-        u8"æŠ¥é“åå·®ä½ ä»¬è¦è´Ÿè´£",
-        u8"æˆ‘æ²¡æœ‰è¯´è¦ç¡¬ç‚¹",
-        u8"æ²¡æœ‰ä»»ä½•è¿™ä¸ªæ„æ€",
-        u8"è¦è¦ï¼Œè¦è¦",
-        u8"æˆ‘ä»¬çš„å†³å®šæƒä¹Ÿå¾ˆé‡è¦",
-        u8"åˆ°é‚£æ—¶å€™æˆ‘ä»¬ä¼šè¡¨æ€",
-        u8"ä¸è¦æƒ³å–œæ¬¢å¼„ä¸ªå¤§æ–°é—»",
-        u8"å°±æŠŠæˆ‘æ‰¹åˆ¤ä¸€ç•ª",
-        u8"ä½ ä»¬å•Šï¼Œnaive",
-        u8"æˆ‘ä»Šå¤©ç®—æ˜¯å¾—ç½ªäº†ä½ ä»¬",
-        u8"I'm angry!",
-        /*"Congratulations! +1s",
-        "Congratulations! +2s",
-        "Congratulations! +5s",
-        "A man, He not knows",
-        "He can't predict",
-        "Fen Dou + History",
-        "I'm not being modest",
-        "I'm a Shanghai mayor",
-        "U ask other GAO MING",
-        "ZHONGYANG decided!",
-        "3 minor things",
-        "Army No Bussiness!",
-        "Micro work so CanKui!"
-        "This thing, Excited!"
-        "HO AH",
-        "HO BU HO AH?",
-        "ZHONGYANG supports!"
-        "Read The EU's report",
-        "Never heard of",
-        "No Feng Is Rain",
-        "Judge By Yourself!",
-        "You too have ZEREN!",
-        "NeiDing, QingDian",
-        "WU KE FENG GAOï¼",
-        "We talk, Wind blows",
-        "Level of Knowledge",
-        "I ZHAOJI FOR U!",
-        "U have One Ge good!",
-        "You Need Xue One Ge",
-        "Hum, Western Theory",
-        "You ï¼ŒNaiveï¼"
-        "I SHEN ME YE no say.",
-        "This is ZUI HAO DEï¼",
-        "No Any This Meaning",
-        "If U Have to ask me",
-        "I Will Biao Tai",
-        "wanna make BIG NEWS?",
-        "sound outta sin(x)?",
-        "I'll sing BJ opera",
-        "Two Ju Cantonese",
-        "I Drive Red Ferrari",
-        "YoYo! YoYo!",
-        "I'm healthier than u",
-        "U Young People",
-        "No Future For U"*/
-    };
+	int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
+	int randomPlayCount = 0;
+	std::vector<string> jiangXuan = {
+		u8"¸Ï½ôĞøÒ»Ãë +1s",
+		u8"ÈË…È¾Í¶¼²»ÖªµÀ",
+		u8"×Ô¼º²»¿ÉÒÔÔ¤ÁÏ",
+		u8"Ò»¸öÈËµÄÃüÔË°¡",
+		u8"µ±È»Òª¿¿×ÔÎÒµÄ·Ü¶·",
+		u8"Ò²Òª¿¼ÂÇÀúÊ·µÄĞĞ³Ì",
+		u8"×÷ÎªÒ»¸öÉÏº£ÊĞÎ¯Êé¼Ç",
+		u8"ÔõÃ´¾Í±»µ÷µ½±±¾©È¥ÁË",
+		u8"ÎÒËµÁíÇë¸ßÃ÷°É",
+		u8"ÎÒÊµÔÚÒ²²»ÊÇÇ«Ğé",
+		u8"ÖĞÑëÑĞ¾¿¶¼¾ö¶¨ÁË",
+		u8"ÄãÀ´µ±×ÜÊé¼Ç",
+		u8"µ±Ê±ÎÒ¾ÍÄîÁËÁ½¾äÊ«",
+		u8"¹¶Àû¹ú¼ÒÉúËÀÒÔ",
+		u8"ÆñÒò»ö¸£±ÜÇ÷Ö®",
+		u8"ÎÒÖ÷ÒªµÄ¾ÍÊÇÈı¼şÊÂÇé",
+		u8"¾ü¶ÓÒ»ÂÉ²»µÃ¾­ÉÌ",
+		u8"Õâ¶Ô¾ü¶ÓµÄÃüÔËºÜÖØÒª",
+		u8"¾Í×öÁËÒ»µãÎ¢Ğ¡µÄ¹¤×÷",
+		u8"ºÜ²ÑÀ¢£¬µ«ÊÇExcited",
+		u8"ºğ°¡",
+		u8"¶­ÏÈÉúºğ²»ºğ°¡",
+		u8"°´ÕÕ»ù±¾·¨£¬Ñ¡¾Ù·¨",
+		u8"×î½üÅ·ÃË³öÁËÒ»·İ±¨¸æ",
+		u8"ÄÚ¶¨£¬Ó²µãµÄ¸Ğ¾õ",
+		u8"²»Òª¼ûµÃ·ç¾ÍÊÇÓê",
+		u8"×Ô¼ºÒ²ÒªÑ§»áÅĞ¶Ï",
+		u8"ÎŞÖĞÉúÓĞµÄ¶«Î÷",
+		u8"ÄãÒ²ÓĞÔğÈÎ£¬¶Ô°É",
+		u8"ÎŞ¿É·î¸æ£¡",
+		u8"ÄãÃÇÓÖ²»¸ßĞË"
+		u8"²»ÊÇÎÒÒªÇÕµãËû",
+		u8"ÄãÎÊÎÒÖ§³Ö²»Ö§³Ö",
+		u8"ÎÒÃ÷È·µØ¸æËßÄãÕâÒ»µã",
+		u8"ÄãÃÇĞÂÎÅ½ç»¹ÒªÑ§Ï°",
+		u8"Î÷·½µÄÄÇÒ»Ì×ÀíÂÛ",
+		u8"ÄãÃÇ±Ï¾¹»¹too young",
+		u8"ÎÒÊÇÉí¾­°ÙÕ½À²",
+		u8"ÎÒÊÇ¼ûµÃ¶àÀ²",
+		u8"Î÷·½¹ú¼ÒÎÒ¶¼È¥¹ı",
+		u8"²»ÖªµÀ¸ßµ½ÄÄÀïÈ¥À²",
+		u8"ÎÒ¸úËûÌ¸Ğ¦·çÉú",
+		u8"Ìá¸ß×Ô¼ºµÄÖªÊ¶Ë®Æ½",
+		u8"Ê¶µÃßíÊ¶µÃ°¡£¿",
+		u8"ÎÒÒ²ÌæÄãÃÇ×Å¼±°¡",
+		u8"ÄãÃÇÓĞÒ»¸öºÃ",
+		u8"ÅÜµÃ±ÈÎ÷·½¼ÇÕß»¹¿ì",
+		u8"ÎÊÀ´ÎÊÈ¥µÄÎÊÌâ°¡",
+		u8"¶¼too simple",
+		u8"sometimes naive",
+		u8"ÎÒ½ñÌìÊÇ×÷ÎªÒ»¸ö³¤Õß",
+		u8"ÎÒ²»ÊÇĞÂÎÅ¹¤×÷Õß",
+		u8"µ«ÊÇÎÒ¼ûµÃÌ«¶àÁË",
+		u8"¸æËßÄãÃÇÈËÉúµÄ¾­Ñé",
+		u8"ÃÆÉù´ó·¢²Æ",
+		u8"Ê²Ã´¶¼²»ËµÊÇ×¹ºÃµÄ",
+		u8"¿´µ½ÄãÃÇÕâÑùµÄÈÈÇé°¡",
+		u8"Ò»¾ä»°²»ËµÓÖ²»ºÃ",
+		u8"±¨µÀÆ«²îÄãÃÇÒª¸ºÔğ",
+		u8"ÎÒÃ»ÓĞËµÒªÓ²µã",
+		u8"Ã»ÓĞÈÎºÎÕâ¸öÒâË¼",
+		u8"ÒªÒª£¬ÒªÒª",
+		u8"ÎÒÃÇµÄ¾ö¶¨È¨Ò²ºÜÖØÒª",
+		u8"µ½ÄÇÊ±ºòÎÒÃÇ»á±íÌ¬",
+		u8"²»ÒªÏëÏ²»¶Åª¸ö´óĞÂÎÅ",
+		u8"¾Í°ÑÎÒÅúÅĞÒ»·¬",
+		u8"ÄãÃÇ°¡£¬naive",
+		u8"ÎÒ½ñÌìËãÊÇµÃ×ïÁËÄãÃÇ",
+		u8"I'm angry!",
+		/*"Congratulations! +1s",
+		"Congratulations! +2s",
+		"Congratulations! +5s",
+		"A man, He not knows",
+		"He can't predict",
+		"Fen Dou + History",
+		"I'm not being modest",
+		"I'm a Shanghai mayor",
+		"U ask other GAO MING",
+		"ZHONGYANG decided!",
+		"3 minor things",
+		"Army No Bussiness!",
+		"Micro work so CanKui!"
+		"This thing, Excited!"
+		"HO AH",
+		"HO BU HO AH?",
+		"ZHONGYANG supports!"
+		"Read The EU's report",
+		"Never heard of",
+		"No Feng Is Rain",
+		"Judge By Yourself!",
+		"You too have ZEREN!",
+		"NeiDing, QingDian",
+		"WU KE FENG GAO£¡",
+		"We talk, Wind blows",
+		"Level of Knowledge",
+		"I ZHAOJI FOR U!",
+		"U have One Ge good!",
+		"You Need Xue One Ge",
+		"Hum, Western Theory",
+		"You £¬Naive£¡"
+		"I SHEN ME YE no say.",
+		"This is ZUI HAO DE£¡",
+		"No Any This Meaning",
+		"If U Have to ask me",
+		"I Will Biao Tai",
+		"wanna make BIG NEWS?",
+		"sound outta sin(x)?",
+		"I'll sing BJ opera",
+		"Two Ju Cantonese",
+		"I Drive Red Ferrari",
+		"YoYo! YoYo!",
+		"I'm healthier than u",
+		"U Young People",
+		"No Future For U"*/
+	};
 
 
-    inline int RandBetween(int a, int b)
-    {
-        if (a > b)
-            swap(a, b);
-        return rand() % (b - a) + a;
-    }
+	inline int RandBetween(int a, int b)
+	{
+		if (a > b)
+			swap(a, b);
+		return rand() % (b - a) + a;
+	}
 
-    inline int DeltaATK(const Pacman::GameField &gamefield, int id1, int id2)
-    {
-        return gamefield.players[id1].strength - gamefield.players[id2].strength;
-    }
+	inline int DeltaATK(const Pacman::GameField &gamefield, int id1, int id2)
+	{
+		return gamefield.players[id1].strength - gamefield.players[id2].strength;
+	}
 
-    inline string MoHa()
-    {
-        return jiangXuan[RandBetween(0, jiangXuan.size())];
-    }
+	inline string MoHa()
+	{
+		return jiangXuan[RandBetween(0, jiangXuan.size())];
+	}
 
     inline string KeepSilentMakeFortune()
     {
@@ -1114,138 +1120,138 @@ namespace Helpers
     }
 
 
-    // weaZen: åŒå‘
-    // Jet: ç”¨ccçš„æ”¹çš„
-    int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
-    {
-        clock_t startTime = clock();
+	// weaZen: Ë«Ïò
+	// Jet: ÓÃccµÄ¸ÄµÄ
+	int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
+	{
+		clock_t startTime = clock();
 
-        if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col];
-        if (startPos == endPos)
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
+		if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
+			return distance[startPos.row][startPos.col][endPos.row][endPos.col];
+		if (startPos == endPos)
+			return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
 
-        //åˆå§‹åŒ–å¹¿æœæ•°ç»„
-        int** step = new int*[gameField.height];
-        for (int i = 0; i < gameField.height; i++)
-        {
-            step[i] = new int[gameField.width];
-            for (int j = 0; j < gameField.width; j++)
-                step[i][j] = 0;
-        }
-        step[startPos.row][startPos.col] = 1;
-        step[endPos.row][endPos.col] = -1;
+		//³õÊ¼»¯¹ãËÑÊı×é
+		int** step = new int*[gameField.height];
+		for (int i = 0; i < gameField.height; i++)
+		{
+			step[i] = new int[gameField.width];
+			for (int j = 0; j < gameField.width; j++)
+				step[i][j] = 0;
+		}
+		step[startPos.row][startPos.col] = 1;
+		step[endPos.row][endPos.col] = -1;
 
-        //åˆå§‹åŒ–å¹¿æœé˜Ÿåˆ—
-        Pacman::FieldProp queue[QUEUE_MAX];
-        queue[0] = startPos;
-        queue[1] = endPos;
-        int nowFlag = 0, endFlag = 1;
-        bool hasFound = false;
-        int ret;
+		//³õÊ¼»¯¹ãËÑ¶ÓÁĞ
+		Pacman::FieldProp queue[QUEUE_MAX];
+		queue[0] = startPos;
+		queue[1] = endPos;
+		int nowFlag = 0, endFlag = 1;
+		bool hasFound = false;
+		int ret;
 
 
-        while (nowFlag <= endFlag && !hasFound)
-        {
-            const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-            for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
-            {
-                if (!(curGrid & Pacman::direction2OpposingWall[dir]))
-                {
-                    Pacman::FieldProp newPos = queue[nowFlag];
-                    newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
-                    newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
-                    if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
-                    {
-                        if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1 || step[newPos.row][newPos.col] == 0) //æ–°çš„ç‚¹æ˜¯å¥½çš„
-                        {
-                            step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
-                            distance[startPos.row][startPos.col][newPos.row][newPos.col] = step[newPos.row][newPos.col] - 1;
-                            queue[++endFlag] = newPos;
-                        }
-                        if (step[newPos.row][newPos.col] < 0)
-                        {
-                            hasFound = true;
-                            ret = step[queue[nowFlag].row][queue[nowFlag].col] - step[newPos.row][newPos.col] - 1;
-                        }
-                    }
-                    if (step[queue[nowFlag].row][queue[nowFlag].col] < 0)
-                    {
-                        if (step[newPos.row][newPos.col] < step[queue[nowFlag].row][queue[nowFlag].col] - 1 || step[newPos.row][newPos.col] == 0) //æ–°çš„ç‚¹æ˜¯å¥½çš„
-                        {
-                            step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] - 1;
-                            distance[endPos.row][endPos.col][newPos.row][newPos.col] = -step[newPos.row][newPos.col] - 1;
-                            queue[++endFlag] = newPos;
-                        }
-                        if (step[newPos.row][newPos.col] > 0)
-                        {
-                            hasFound = true;
-                            ret = -step[queue[nowFlag].row][queue[nowFlag].col] + step[newPos.row][newPos.col] - 1;
-                        }
-                    }
-                }
-            }
-            ++nowFlag;
-        }
+		while (nowFlag <= endFlag && !hasFound)
+		{
+			const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+			for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+			{
+				if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+				{
+					Pacman::FieldProp newPos = queue[nowFlag];
+					newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
+					newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
+					if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
+					{
+						if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1 || step[newPos.row][newPos.col] == 0) //ĞÂµÄµãÊÇºÃµÄ
+						{
+							step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
+							distance[startPos.row][startPos.col][newPos.row][newPos.col] = step[newPos.row][newPos.col] - 1;
+							queue[++endFlag] = newPos;
+						}
+						if (step[newPos.row][newPos.col] < 0)
+						{
+							hasFound = true;
+							ret = step[queue[nowFlag].row][queue[nowFlag].col] - step[newPos.row][newPos.col] - 1;
+						}
+					}
+					if (step[queue[nowFlag].row][queue[nowFlag].col] < 0)
+					{
+						if (step[newPos.row][newPos.col] < step[queue[nowFlag].row][queue[nowFlag].col] - 1 || step[newPos.row][newPos.col] == 0) //ĞÂµÄµãÊÇºÃµÄ
+						{
+							step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] - 1;
+							distance[endPos.row][endPos.col][newPos.row][newPos.col] = -step[newPos.row][newPos.col] - 1;
+							queue[++endFlag] = newPos;
+						}
+						if (step[newPos.row][newPos.col] > 0)
+						{
+							hasFound = true;
+							ret = -step[queue[nowFlag].row][queue[nowFlag].col] + step[newPos.row][newPos.col] - 1;
+						}
+					}
+				}
+			}
+			++nowFlag;
+		}
 
-        for (int i = 0; i < gameField.height; i++)
-            delete[]step[i];
-        delete[]step;
+		for (int i = 0; i < gameField.height; i++)
+			delete[]step[i];
+		delete[]step;
 
-        auto&& d = Debug::debugData["profiling"]["Distance()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+		auto&& d = Debug::debugData["profiling"]["Distance()"];
+		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
-        return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
-    }
+		return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
+	}
 
-    // Moriartycc: ç‰¢è®°ä½è¿ç®—ä¼˜å…ˆçº§
-    int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
-    {
-        return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
-    }
+	// Moriartycc: ÀÎ¼ÇÎ»ÔËËãÓÅÏÈ¼¶
+	int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
+	{
+		return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
+	}
 
-	// weaZen: è¿”å›distance<<3 + dir + 1ä»¥ä¾¿å†³ç­– forbiddenDirsä¸ºç¦æ­¢çš„æ–¹å‘ ä»ä½ä½åˆ°é«˜ä½ä¸ºstay, up, ... 1è¡¨ç¤ºç¦æ­¢
-	// Jet: æ”¹å†™äº†ä¸ªæ¨¡ç‰ˆ
+	// weaZen: ·µ»Ødistance<<3 + dir + 1ÒÔ±ã¾ö²ß
+	// Jet: ¸ÄĞ´ÁË¸öÄ£°æ
 	template <typename __Pred>
 	char GetTo(Pacman::GameField &gameField, int myID, __Pred pr, char forbiddenDirs = '\0')
 	{
 		clock_t startTime = clock();
 
 		Pacman::FieldProp startPos = gameField.players[myID];
-		if (pr(gameField, startPos) && !forbiddenDirs & 1)
+		if (pr(gameField, startPos) && !(forbiddenDirs & 1))
 			return 0;
 
-        //åˆå§‹åŒ–å¹¿æœæ•°ç»„
-        Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
-        for (int i = 0; i < gameField.height; i++)
-        {
-            dirInfo[i] = new Pacman::Direction[gameField.width];
-            for (int j = 0; j < gameField.width; j++)
-                dirInfo[i][j] = Pacman::Direction::stay;
-        }
-        char** step = new char*[gameField.height];
-        for (int i = 0; i < gameField.height; i++)
-        {
-            step[i] = new char[gameField.width];
-            for (int j = 0; j < gameField.width; j++)
-                step[i][j] = 31;
-        }
-        step[startPos.row][startPos.col] = 0;
+		//³õÊ¼»¯¹ãËÑÊı×é
+		Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
+		for (int i = 0; i < gameField.height; i++)
+		{
+			dirInfo[i] = new Pacman::Direction[gameField.width];
+			for (int j = 0; j < gameField.width; j++)
+				dirInfo[i][j] = Pacman::Direction::stay;
+		}
+		char** step = new char*[gameField.height];
+		for (int i = 0; i < gameField.height; i++)
+		{
+			step[i] = new char[gameField.width];
+			for (int j = 0; j < gameField.width; j++)
+				step[i][j] = 31;
+		}
+		step[startPos.row][startPos.col] = 0;
 
 
-        //åˆå§‹åŒ–å¹¿æœé˜Ÿåˆ—
-        Pacman::FieldProp queue[QUEUE_MAX];
-        queue[0] = startPos;
-        char nowFlag = 0, endFlag = 0;
-        char dis = 0;
-        bool hasEaten = false;
+		//³õÊ¼»¯¹ãËÑ¶ÓÁĞ
+		Pacman::FieldProp queue[QUEUE_MAX];
+		queue[0] = startPos;
+		char nowFlag = 0, endFlag = 0;
+		char dis = 0;
+		bool hasEaten = false;
 
-        //åˆå§‹åŒ–éšæœºæ–¹å‘
-        Pacman::Direction randomDir[4];
-        for (int i = 0; i < 4; ++i)
-            randomDir[i] = Pacman::Direction(i);
+		//³õÊ¼»¯Ëæ»ú·½Ïò
+		Pacman::Direction randomDir[4];
+		for (int i = 0; i < 4; ++i)
+			randomDir[i] = Pacman::Direction(i);
 
-		//ç¦æ­¢çš„æ–¹å‘è®¾ä¸ºå·²ç»è®¿é—®
+		//½ûÖ¹µÄ·½ÏòÉèÎªÒÑ¾­·ÃÎÊ
 		for (int i = 0; i < 4; ++i)
 		{
 			if (forbiddenDirs & (1 << (i + 1)))
@@ -1286,28 +1292,28 @@ namespace Helpers
 		if (!hasEaten)
 			return Pacman::Direction::ur + 1;
 
-        //cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
+		//cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
 
-        //å›æº¯
-        Pacman::Direction dir = Pacman::stay;
-        Pacman::FieldProp curPos = queue[endFlag];
-        while (curPos != startPos)
-        {
-            dir = dirInfo[curPos.row][curPos.col];
-            curPos.row = (curPos.row - Pacman::dy[dir] + gameField.height) % gameField.height;
-            curPos.col = (curPos.col - Pacman::dx[dir] + gameField.width) % gameField.width;
-        }
-        for (int i = 0; i < gameField.height; i++)
-            delete[]dirInfo[i];
-        delete[]dirInfo;
+		//»ØËİ
+		Pacman::Direction dir = Pacman::stay;
+		Pacman::FieldProp curPos = queue[endFlag];
+		while (curPos != startPos)
+		{
+			dir = dirInfo[curPos.row][curPos.col];
+			curPos.row = (curPos.row - Pacman::dy[dir] + gameField.height) % gameField.height;
+			curPos.col = (curPos.col - Pacman::dx[dir] + gameField.width) % gameField.width;
+		}
+		for (int i = 0; i < gameField.height; i++)
+			delete[]dirInfo[i];
+		delete[]dirInfo;
 
-        auto&& d = Debug::debugData["profiling"]["GetTo()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+		auto&& d = Debug::debugData["profiling"]["GetTo()"];
+		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
 
-        return (dis << 3) + dir + 1;
-    }
+		return (dis << 3) + dir + 1;
+	}
 
-	//weaZen:ç…§ç€ccçš„å¹¿æœå†™äº†ä¸ªå¯»æ‰¾æ–¹å‘ targetæ˜¯GridContentTypeé‡Œçš„ç»„åˆ å¯ä»¥è¯•ä¸€ä¸‹åƒäººäº†//Ï‰\\)
+	//weaZen:ÕÕ×ÅccµÄ¹ãËÑĞ´ÁË¸öÑ°ÕÒ·½Ïò targetÊÇGridContentTypeÀïµÄ×éºÏ ¿ÉÒÔÊÔÒ»ÏÂ³ÔÈËÁË//¦Ø\\)
 	char GetToTarget(Pacman::GameField &gameField, int myID, int target, char forbiddenDirs = '\0')
 	{
 		if (target == 0)
@@ -1317,57 +1323,57 @@ namespace Helpers
 		{ return gameField.fieldContent[pos.row][pos.col] & target; }, forbiddenDirs);
 	}
 
-    //weaZen: æŠŠåˆ¤æ–­æ˜¯ä¸æ˜¯åœ¨ç”Ÿæˆå™¨æ—è¾¹çš„å‡½æ•°å•ç‹¬æ‹¿å‡ºæ¥ æœç´¢æœ‰ç”¨
-    // Jet: æ²¡è±†å­åƒçš„æ—¶å€™å»ç”Ÿæˆå™¨æ—è¾¹ç­‰ç€
-    bool isBesideGenerator(const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
-    {
-        for (int i = 0; i < gameField.generatorCount; i++)
-            for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
-            {
-                int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
-                    c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
-                if (pos.row == r && pos.col == c)
-                    return true;
-            }
-        return false;
-    }
+	//weaZen: °ÑÅĞ¶ÏÊÇ²»ÊÇÔÚÉú³ÉÆ÷ÅÔ±ßµÄº¯Êıµ¥¶ÀÄÃ³öÀ´ ËÑË÷ÓĞÓÃ
+	// Jet: Ã»¶¹×Ó³ÔµÄÊ±ºòÈ¥Éú³ÉÆ÷ÅÔ±ßµÈ×Å
+	bool isBesideGenerator(const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
+	{
+		for (int i = 0; i < gameField.generatorCount; i++)
+			for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
+			{
+				int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
+					c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
+				if (pos.row == r && pos.col == c)
+					return true;
+			}
+		return false;
+	}
 
 	char GetToNearbyGenerator(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
 	{
 		return GetTo(gameField, myID, isBesideGenerator, forbiddenDirs);
 	}
 
-    // Jet: è¿‘ä¼¼ç®—ç›´çº¿è·ç¦»
-    inline int ApprDirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
-    {
-        return (abs(startPos.row - endPos.row) + abs(startPos.col - endPos.col) + 1) / 2;
-    }
+	// Jet: ½üËÆËãÖ±Ïß¾àÀë
+	inline int ApprDirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
+	{
+		return (abs(startPos.row - endPos.row) + abs(startPos.col - endPos.col) + 1) / 2;
+	}
 
-    // weaZen:ç®€å•çš„å±é™©åˆ¤æ–­
-    bool DangerJudge(const Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
-    {
-        const Pacman::Player & me = gameField.players[myID];
-        Pacman::FieldProp myPos;
-        if (myDir != Pacman::Direction::stay)
-        {
-            myPos.row = (me.row + Pacman::dy[myDir] + gameField.height) % gameField.height;
-            myPos.col = (me.col + Pacman::dx[myDir] + gameField.width) % gameField.width;
-        }
-        else
-            myPos = me;
-        for (int _ = 0; _ < 4; ++_)
-        {
-            if (DeltaATK(gameField, myID, _) < 0)
-            {
-                if (Helpers::Distance(gameField, myPos, gameField.players[_]) <= 1)
-                    return true;
-            }
-        }
-        return false;
-    }
+	// weaZen:¼òµ¥µÄÎ£ÏÕÅĞ¶Ï
+	bool DangerJudge(const Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
+	{
+		const Pacman::Player & me = gameField.players[myID];
+		Pacman::FieldProp myPos;
+		if (myDir != Pacman::Direction::stay)
+		{
+			myPos.row = (me.row + Pacman::dy[myDir] + gameField.height) % gameField.height;
+			myPos.col = (me.col + Pacman::dx[myDir] + gameField.width) % gameField.width;
+		}
+		else
+			myPos = me;
+		for (int _ = 0; _ < 4; ++_)
+		{
+			if (DeltaATK(gameField, myID, _) < 0)
+			{
+				if (Helpers::Distance(gameField, myPos, gameField.players[_]) <= 1)
+					return true;
+			}
+		}
+		return false;
+	}
 
-	//weaZen:éšä¾¿æ‰¾ä¸ªä¸è¢«åƒçš„æ–¹å‘(å¦‚æœå¯ä»¥)
-	//Jet:éœ€è¦è¿”å›éšæœºå€¼çš„æƒ…å†µå¤§å¤šå¯ä»¥è¿”å›AI::RandomAI()ä»£æ›¿
+	//weaZen:Ëæ±ãÕÒ¸ö²»±»³ÔµÄ·½Ïò(Èç¹û¿ÉÒÔ)
+	//Jet:ĞèÒª·µ»ØËæ»úÖµµÄÇé¿ö´ó¶à¿ÉÒÔ·µ»ØAI::RandomAI()´úÌæ
 	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
 	{
 		Pacman::Direction dir;
@@ -1381,38 +1387,38 @@ namespace Helpers
 		return dir;
 	}
 
-    Solution RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
-    {
-        randomPlayCount++;
-        int count = 0, myAct = -1;
-        while (true)
-        {
-            // å¯¹æ¯ä¸ªç©å®¶ç”Ÿæˆéšæœºçš„åˆæ³•åŠ¨ä½œ
-            for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-            {
-                if (gameField.players[i].dead)
-                    continue;
-                Pacman::Direction valid[5]{};
-                int vCount = 0;
-                for (Pacman::Direction d = Pacman::Direction(-1 + noStay); d < 4; ++d)
-                    if (gameField.ActionValid(i, d))
-                        valid[vCount++] = d;
-                gameField.actions[i] = valid[RandBetween(0, vCount)];
-            }
+	Solution RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
+	{
+		randomPlayCount++;
+		int count = 0, myAct = -1;
+		while (true)
+		{
+			// ¶ÔÃ¿¸öÍæ¼ÒÉú³ÉËæ»úµÄºÏ·¨¶¯×÷
+			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+			{
+				if (gameField.players[i].dead)
+					continue;
+				Pacman::Direction valid[5]{};
+				int vCount = 0;
+				for (Pacman::Direction d = Pacman::Direction(-1 + noStay); d < 4; ++d)
+					if (gameField.ActionValid(i, d))
+						valid[vCount++] = d;
+				gameField.actions[i] = valid[RandBetween(0, vCount)];
+			}
 
-            if (count == 0)
-                myAct = gameField.actions[myID];
+			if (count == 0)
+				myAct = gameField.actions[myID];
 
-            // æ¼”ç®—ä¸€æ­¥å±€é¢å˜åŒ–
-            // NextTurnè¿”å›trueè¡¨ç¤ºæ¸¸æˆæ²¡æœ‰ç»“æŸ
-            bool hasNext = gameField.NextTurn();
-            count++;
+			// ÑİËãÒ»²½¾ÖÃæ±ä»¯
+			// NextTurn·µ»Øtrue±íÊ¾ÓÎÏ·Ã»ÓĞ½áÊø
+			bool hasNext = gameField.NextTurn();
+			count++;
 
-            if (!hasNext)
-                break;
-        }
+			if (!hasNext)
+				break;
+		}
 
-        // è®¡ç®—åˆ†æ•°
+		// ¼ÆËã·ÖÊı
         int actionScore,
             total = 0;
         for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -1420,51 +1426,52 @@ namespace Helpers
 
         actionScore = (10000 * gameField.players[myID].strength / total) / 100;
 
-        // æ¢å¤æ¸¸æˆçŠ¶æ€åˆ°æœ¬å›åˆåˆ
-        gameField.RollBack(count);
+		// »Ö¸´ÓÎÏ·×´Ì¬µ½±¾»ØºÏ³õ
+		gameField.RollBack(count);
 
-        return std::make_pair(Pacman::Direction(myAct), actionScore);
-    }
+		return std::make_pair(Pacman::Direction(myAct), actionScore);
+	}
 
-    inline string depth2String(int depth)
-    {
-        string str = to_string(depth);
-        if (str.length() == 1)
-            str.insert(str.begin(), '0');
-        return "depth = " + str;
-    }
+	inline string depth2String(int depth)
+	{
+		string str = to_string(depth);
+		if (str.length() == 1)
+			str.insert(str.begin(), '0');
+		return "depth = " + str;
+	}
 }
 
 namespace AI
 {
-    using namespace EnumExt;
-    using Helpers::Solution;
-    int tmpEvals[5];
-    int averagedEvals[5];
+	using namespace EnumExt;
+	using Helpers::Solution;
+	int tmpEvals[5];
+	int averagedEvals[5];
 
-    int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false);
+	bool operator <(const Solution& a, const Solution& b) { return a.second < b.second; }
+	bool operator >(const Solution& a, const Solution& b) { return a.second > b.second; }
+	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false);
 
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
-        clock_t startTime = clock();
-        int actionScore[5]{};
-        while (Debug::TimeThrough(startTime) < timeOut)
-        {
-            Solution sol = Helpers::RandomPlay(gameField, myID, noStay);
-            actionScore[sol.first + 1] += sol.second;
-        }
+		clock_t startTime = clock();
+		int actionScore[5]{};
+		while (Debug::TimeThrough(startTime) < timeOut)
+		{
+			Solution sol = Helpers::RandomPlay(gameField, myID, noStay);
+			actionScore[sol.first + 1] += sol.second;
+		}
 
-        std::vector<Solution> solutions;
-        for (int d = 0; d < 5; d++)
-            solutions.push_back(std::make_pair(Pacman::Direction(d - 1), actionScore[d]));
-        sort(solutions.begin(), solutions.end());
+		std::vector<Solution> solutions;
+		for (int d = 0; d < 5; d++)
+			solutions.push_back(std::make_pair(Pacman::Direction(d - 1), actionScore[d]));
+		sort(solutions.begin(), solutions.end());
 
-        return solutions;
-    }
+		return solutions;
+	}
 
-	//weaZenï¼š åªä¼šæœ€åŸºæœ¬çš„å±é™©åˆ¤æ–­ï¼Œçƒ­çˆ±è¿›æ”»ï¼Œç”¨æ¥ç»™åˆ«çš„AIå›é¿æ­»äº¡
-	//weaZenï¼š ç°åœ¨ä»–åªä¼šæŠŠå¯èƒ½é€ƒä¸å‡ºæ­»è·¯çš„å€¼å¾—ä¸€åƒçš„ç©å®¶å’Œé™„è¿‘å¯èƒ½ä¼šèµ°è¿›æ­»è·¯çš„ç©å®¶åŠ å…¥æ”»å‡»èŒƒå›´
+	//weaZen£º ÏÖÔÚËûÖ»»á°Ñ¿ÉÄÜÌÓ²»³öËÀÂ·µÄÖµµÃÒ»³ÔµÄÍæ¼ÒºÍ¸½½ü¿ÉÄÜ»á×ß½øËÀÂ·µÄÍæ¼Ò¼ÓÈë¹¥»÷·¶Î§
 	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
 	{
 		char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
@@ -1491,11 +1498,12 @@ namespace AI
 				continue;
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
-				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse 
-                    && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
-				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit 
-                    && Helpers::Distance(gameField, myID, _) <= 2 
-                    && Helpers::DeltaATK(gameField, myID, _) > 2;
+				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
+					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
+					&& Helpers::Distance(gameField, myID, _) <= 2
+					&& Helpers::DeltaATK(gameField, myID, _) > 2;
+
 				if (preyFlag)
 				{
 					playerTarget |= Pacman::playerID2Mask[_];
@@ -1533,17 +1541,14 @@ namespace AI
 					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
 
 		if (dir != Pacman::Direction::stay)
-		return dir;
-
-        //double timeRemain = TIME_LIMIT - Debug::TimeThrough();
-		//ä¸ºäº†èƒ½å¤Ÿæœç´¢å‡å°‘è€—æ—¶ç›´æ¥éšæœº
-        //if (timeRemain < 0.15)
+			return dir;
+		//ÎªÁËÄÜ¹»ËÑË÷¼õÉÙºÄÊ±Ö±½ÓËæ»ú
 		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
+		//return MCTS_AI(gameField, myID);
+		//return MCTS_AI(gameField, myID, true);
+	}
 
-        //return MCTS_AI(gameField, myID, false, timeRemain / 4).back().first;
-    }
-
-	//weaZenï¼š ä¼šå›é¿æ­»äº¡çš„é«˜çº§AI
+	//weaZen£º »á»Ø±ÜËÀÍöµÄ¸ß¼¶AI
 	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
 	{
 		char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
@@ -1620,11 +1625,11 @@ namespace AI
 #ifdef DEBUG
 		//		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
-        fruitDirInfo = fruitInfo & 7;
-        playerDirInfo = playerInfo & 7;
-        tryPlayerDirInfo = tryPlayerInfo & 7;
+		fruitDirInfo = fruitInfo & 7;
+		playerDirInfo = playerInfo & 7;
+		tryPlayerDirInfo = tryPlayerInfo & 7;
 
-        int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
+		int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
 
 
 		if (info >= 4)
@@ -1641,57 +1646,58 @@ namespace AI
 		if (dir != Pacman::Direction::stay)
 			return dir;
 
-        return Helpers::SimpleRandom(gameField, myID);
-    }
+		return Helpers::SimpleRandom(gameField, myID);
+	}
 
-    int GreedyEval(const Pacman::GameField &gameField, int myID)
-    {
-        clock_t startTime = clock();
+	int GreedyEval(const Pacman::GameField &gameField, int myID)
+	{
+		clock_t startTime = clock();
 
-        int minGeneratorDis = 100;
-        int generatorDisSum = 0;
-        int strengthSum = 0;
-        if (gameField.players[myID].dead)
-            return DEATH_EVAL;
-        for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
-            strengthSum += gameField.players[i].strength;
+		int minGeneratorDis = 100;
+		int generatorDisSum = 0;
+		int strengthSum = 0;
+		if (gameField.players[myID].dead)
+			return DEATH_EVAL;
+		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+			strengthSum += gameField.players[i].strength;
 
 		if (!gameField.hasNext)
-			return 1000 * gameField.players[myID].strength / strengthSum - 250; 
+			return 1000 * gameField.players[myID].strength / strengthSum - 250;
 
-        int e = 0;
-        int tmp;
-
-        for (int i = 0; i < gameField.generatorCount; i++)
-        {
-            tmp = Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]);
-            generatorDisSum += tmp;
-            if (minGeneratorDis > tmp)
-                minGeneratorDis = tmp;
-        }
-        if (minGeneratorDis > gameField.generatorTurnLeft)
-            e -= minGeneratorDis - gameField.generatorTurnLeft;
-
-        int fruitEvalSum = 0;
-        for (int i = 0; i < gameField.height; i++)
-            for (int j = 0; j < gameField.width; j++)
-                if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
-
-        e -= (fruitEvalSum >> 4);
-        if (gameField.players[myID].powerUpLeft <= 0)
-            e += gameField.players[myID].strength;
-        else
-            e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
+		int e = 0;
+		int tmp;
 
 
-        auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+		for (int i = 0; i < gameField.generatorCount; i++)
+		{
+			tmp = Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]);
+			generatorDisSum += tmp;
+			if (minGeneratorDis > tmp)
+				minGeneratorDis = tmp;
+		}
+		if (minGeneratorDis > gameField.generatorTurnLeft)
+			e -= minGeneratorDis - gameField.generatorTurnLeft;
 
-        return e;
-    }
+		int fruitEvalSum = 0;
+		for (int i = 0; i < gameField.height; i++)
+			for (int j = 0; j < gameField.width; j++)
+				if ((tmp = gameField.GetFruitValue(i, j)) != 0)
+					fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
-	// weaZen:ç®€å•çš„æœç´¢ï¼Œè¿”å›æœ€é«˜ä¼°å€¼ è‹¥ä¸Šä¸€æ­¥é€ æˆåŠ›é‡å˜åŒ–åˆ™ä¸ç»™å‡ºlastDir ç¬¬ä¸€å±‚(top)æ›´æ–°averagedEvals
+		//e -= (fruitEvalSum >> 4);
+		if (gameField.players[myID].powerUpLeft <= 0)
+			e += gameField.players[myID].strength;
+		else
+			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
+
+
+		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
+		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+
+		return e;
+	}
+
+	// weaZen:¼òµ¥µÄËÑË÷£¬µ÷ÓÃ·µ»Ø×î¸ß¹ÀÖµ ÈôÉÏÒ»²½Ôì³ÉÁ¦Á¿±ä»¯Ôò²»¸ø³ölastDir
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir, bool top, bool rivalFlag)
 	{
 		int max = DEATH_EVAL;
@@ -1721,25 +1727,23 @@ namespace AI
 					continue;
 				}
 			}
-
-            if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir))
-                continue;
-            Pacman::FieldProp nextGrid;
-            nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
-            nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
-
-            //åŸºäºä»¥ä¸‹ä¸¤ç‚¹çŒœæµ‹å‡å°‘æœç´¢é‡
-            //1.æ²¡æœ‰åŠ›é‡å¢åŠ æˆ–é©±é€å¯¹æ‰‹å´å¾€åæ–¹å‘è·‘æ˜¯æ— æ„ä¹‰çš„
-            //2.ä¸åœ¨ç”Ÿæˆå™¨å‘¨å›´å´ä¸åŠ¨æ˜¯æ— æ„ä¹‰çš„
-            if (lastDir != Pacman::Direction::stay
-                && Pacman::dy[dir] + Pacman::dy[lastDir] == 0
-                && Pacman::dx[dir] + Pacman::dx[lastDir] == 0
-                && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
-                continue;
-            if (!top && dir == Pacman::Direction::stay
-                && (!Helpers::isBesideGenerator(gameField, gameField.players[myID])
-                    || gameField.generatorTurnLeft > 3))
-                continue;
+			if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir))
+				continue;
+			Pacman::FieldProp nextGrid;
+			nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
+			nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
+			//»ùÓÚÒÔÏÂÁ½µã²Â²â¼õÉÙËÑË÷Á¿
+			//1.Ã»ÓĞÁ¦Á¿Ôö¼Ó»òÇıÖğ¶ÔÊÖÈ´Íù·´·½ÏòÅÜÊÇÎŞÒâÒåµÄ
+			//2.²»ÔÚÉú³ÉÆ÷ÖÜÎ§È´²»¶¯ÊÇÎŞÒâÒåµÄ
+			if (lastDir != Pacman::Direction::stay
+				&& Pacman::dy[dir] + Pacman::dy[lastDir] == 0
+				&& Pacman::dx[dir] + Pacman::dx[lastDir] == 0
+				&& !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
+				continue;
+			if (!top && dir == Pacman::Direction::stay
+				&& (!Helpers::isBesideGenerator(gameField, gameField.players[myID])
+				|| gameField.generatorTurnLeft > 3))
+				continue;
 
 			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
 			{
@@ -1751,6 +1755,7 @@ namespace AI
 #ifdef DEBUG
 				if (top && !rivalFlag) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 #endif // DEBUG
+
 			}
 			gameField.actions[myID] = dir;
 
@@ -1765,7 +1770,7 @@ namespace AI
 			//			
 			//			for (int i = 0; i < 5; ++i)
 			//			{
-			//				cout << Pacman::dirStr[i] << '\t' << tmpEvals[i] << endl;
+			//				cout << Pacman::dirStr[i] << '\t' << score[i] << endl;
 			//			}
 			//
 			//			system("pause");
@@ -1773,7 +1778,7 @@ namespace AI
 			//#endif // DEBUG
 
 
-            gameField.NextTurn();
+			gameField.NextTurn();
 
 
 			if (gameField.players[myID].strength - strength == 0)
@@ -1783,20 +1788,19 @@ namespace AI
 				else
 					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir);
 			}
-			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);
+			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);// + depth;
 			if (tmp > 0) tmp += GreedyEval(gameField, myID);
 			if (tmp > 0 && dir == Pacman::Direction::stay) tmp = tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL);
 			if (top && !rivalFlag) tmpEvals[dir + 1] = tmp;
 			max = std::max(max, tmp);
 			gameField.RollBack(1);
 
-			// è¶…æ—¶å¤„ç†
+			// ³¬Ê±´¦Àí
 			if (Debug::TimeOut())
 				return max;
 		}
 		if (top && !rivalFlag)
 		{
-			//int maxD = 0;
 			for (int d = 0; d < 5; d++)
 			{
 				Debug::debugData[Helpers::depth2String(depth)][Pacman::dirStr[d]] = to_string(tmpEvals[d]);
@@ -1806,23 +1810,19 @@ namespace AI
 						averagedEvals[d] = tmpEvals[d];
 					else
 						averagedEvals[d] = (tmpEvals[d] + averagedEvals[d]) / 2;
-
-					//max = std::max(max, tmpEvals[d]);
 				}
-				//if (tmpEvals[d] >= tmpEvals[maxD])
-				//	maxD = d;
 			}
-			//if (tmpEvals[naiveDir + 1] == max)
-			//	return std::make_pair(naiveDir, max);
 		}
 		return max;
 	}
 
-	// Jet :è¿™æ˜¯ä¸€ä¸ªè€ƒè™‘è±†å­åˆ†å¸ƒæƒ…å†µè¿›è¡Œä¼°è®¡çš„AI
+	// Jet :ÕâÊÇÒ»¸ö¿¼ÂÇ¶¹×Ó·Ö²¼Çé¿ö½øĞĞ¹À¼ÆµÄAI
 	Solution GreedySearchAI(Pacman::GameField &gameField, int myID, int depth = DEFAULT_DEPTH)
 	{
 		int maxD = 0, max = INVALID_EVAL;
+		
 		SimpleSearch(gameField, myID, depth, NaiveThinkAI, Pacman::Direction::stay, true);
+
 		for (int i = 0; i < 5; ++i)
 		{
 			if (tmpEvals[i] >= max)
@@ -1832,30 +1832,31 @@ namespace AI
 			}
 		}
 		return std::make_pair(Pacman::Direction(maxD - 1), max);
-	}
 
-    Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
-    {
-        std::vector<Solution> solutions;
-        double max = -1e+07;
-        Pacman::Direction dir;
+}
 
-        for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
-        {
-            clock_t startTime = clock();
-            AI::Solution sol;
-            sol = GreedySearchAI(gameField, myID, depth);
-            if (Debug::TimeOut())
-            {
-                Debug::debugData[Helpers::depth2String(depth)]["*solution"]["notFinished"] = true;
-                break;
-            }
-            else
-                solutions.push_back(sol);
-            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
-            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["maxEval"] = solutions.back().second;
-            Debug::debugData[Helpers::depth2String(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
-        }
+	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
+	{
+		std::vector<Solution> solutions;
+		double max = -1e+07;
+		Pacman::Direction dir;
+
+		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
+		{
+			clock_t startTime = clock();
+			AI::Solution sol;
+			sol = GreedySearchAI(gameField, myID, depth);
+			if (Debug::TimeOut())
+			{
+				Debug::debugData[Helpers::depth2String(depth)]["*solution"]["notFinished"] = true;
+				break;
+			}
+			else
+				solutions.push_back(sol);
+			Debug::debugData[Helpers::depth2String(depth)]["*solution"]["direction"] = Pacman::dirStr[solutions.back().first + 1];
+			Debug::debugData[Helpers::depth2String(depth)]["*solution"]["maxEval"] = solutions.back().second;
+			Debug::debugData[Helpers::depth2String(depth)]["*solution"]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
+		}
 
 		for (int i = 0; i < 5; ++i)
 		{
@@ -1872,44 +1873,44 @@ namespace AI
 			return NaiveAttackAI(gameField, myID);
 		}
 
-        Debug::debugData["*choice"]["direction"] = Pacman::dirStr[dir + 1];
-        Debug::debugData["*choice"]["finalEval"] = max;
-        return dir;
-    }
-}
+		Debug::debugData["*choice"]["direction"] = Pacman::dirStr[dir + 1];
+		Debug::debugData["*choice"]["finalEval"] = max;
+		return dir;
+	}
+	}
 
 int main()
 {
-    auto AI = AI::IterativeGreedySearch;
-    auto TAUNT = Helpers::KeepSilentMakeFortune;
+	auto AI = AI::IterativeGreedySearch;
+	auto TAUNT = Helpers::KeepSilentMakeFortune;
 
-    Pacman::GameField mainGameField;
-    string data, globalData; // è¿™æ˜¯å›åˆä¹‹é—´å¯ä»¥ä¼ é€’çš„ä¿¡æ¯
-                             // å¦‚æœåœ¨æœ¬åœ°è°ƒè¯•ï¼Œæœ‰input.txtåˆ™ä¼šè¯»å–æ–‡ä»¶å†…å®¹ä½œä¸ºè¾“å…¥
-                             // å¦‚æœåœ¨å¹³å°ä¸Šï¼Œåˆ™ä¸ä¼šå»æ£€æŸ¥æœ‰æ— input.txt
+	Pacman::GameField mainGameField;
+	string data, globalData; // ÕâÊÇ»ØºÏÖ®¼ä¿ÉÒÔ´«µİµÄĞÅÏ¢
+							 // Èç¹ûÔÚ±¾µØµ÷ÊÔ£¬ÓĞinput.txtÔò»á¶ÁÈ¡ÎÄ¼şÄÚÈİ×÷ÎªÊäÈë
+							 // Èç¹ûÔÚÆ½Ì¨ÉÏ£¬Ôò²»»áÈ¥¼ì²éÓĞÎŞinput.txt
 #ifdef _BOTZONE_ONLINE
-    Debug::presetString.clear();
+	Debug::presetString.clear();
 #endif
-    int myID = mainGameField.ReadInput("input.txt", data, globalData); // è¾“å…¥ï¼Œå¹¶è·å¾—è‡ªå·±ID
-    srand(unsigned(Pacman::seed + myID));
+
+	int myID = mainGameField.ReadInput("input.txt", data, globalData); // ÊäÈë£¬²¢»ñµÃ×Ô¼ºID
+	srand(unsigned(Pacman::seed + myID));
 
 
-    // è¾“å‡ºå½“å‰æ¸¸æˆå±€é¢çŠ¶æ€ä»¥ä¾›æœ¬åœ°è°ƒè¯•ã€‚æ³¨æ„æäº¤åˆ°å¹³å°ä¸Šä¼šè‡ªåŠ¨ä¼˜åŒ–æ‰ï¼Œä¸å¿…æ‹…å¿ƒã€‚
-    mainGameField.DebugPrint();
+	// Êä³öµ±Ç°ÓÎÏ·¾ÖÃæ×´Ì¬ÒÔ¹©±¾µØµ÷ÊÔ¡£×¢ÒâÌá½»µ½Æ½Ì¨ÉÏ»á×Ô¶¯ÓÅ»¯µô£¬²»±Øµ£ĞÄ¡£
+	mainGameField.DebugPrint();
 
 #ifndef _BOTZONE_ONLINE
-    Debug::startTime = clock();
-    Debug::printInfo = true;
+	Debug::startTime = clock();
+	Debug::printInfo = true;
 #endif
 
-    // ä¸­å¤®å†³å®šä¸€å®šè¦å«åš£
-    Pacman::Direction choice = AI(mainGameField, myID);
-    Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
-    mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Debug::debugData);
-
+	// ÖĞÑë¾ö¶¨Ò»¶¨Òª½ĞÏù
+	Pacman::Direction choice = AI(mainGameField, myID);
+	Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
+	mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Debug::debugData);
 
 #ifndef _BOTZONE_ONLINE
-    system("pause");
+	system("pause");
 #endif
-    return 0;
+	return 0;
 }
