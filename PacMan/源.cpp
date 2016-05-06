@@ -1366,7 +1366,7 @@ namespace Helpers
 	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
 	{
 		Pacman::Direction dir;
-		int vCount = 1;
+		int vCount = 0;
 		Pacman::Direction valid[5];
 		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
 			if (gameField.ActionValid(myID, d) && !(forbiddenDirs & (1 << (d + 1))))
