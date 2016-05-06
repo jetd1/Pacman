@@ -95,9 +95,9 @@ namespace Debug
 
 	inline bool TimeOut()
 	{
-		//#ifdef DEBUG
-		//		return false;
-		//#endif // DEBUG
+		#ifdef DEBUG
+				return false;
+		#endif // DEBUG
 		if (timeOutFlag || TimeThrough() > TIME_LIMIT)
 		{
 			Debug::debugData["profiling"]["TimeOut"] = true;
@@ -403,7 +403,7 @@ namespace Pacman
 		}
 
 		// 判断指定玩家向指定方向移动是不是合法的（没有撞墙且没有踩到豆子产生器）
-		inline bool ActionValid(int playerID, Direction &dir) const
+		inline bool ActionValid(int playerID, const Direction &dir) const
 		{
 			if (dir == stay)
 				return true;
@@ -1199,15 +1199,15 @@ namespace Helpers
 		return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
 	}
 
-	// weaZen: 返回distance<<3 + dir + 1以便决策
+	// weaZen: 返回distance<<3 + dir + 1以便决策 forbiddenDirs为禁止的方向 从低位到高位为stay, up, ... 1表示禁止
 	// Jet: 改写了个模版
 	template <typename __Pred>
-	char GetTo(Pacman::GameField &gameField, int myID, __Pred pr)
+	char GetTo(Pacman::GameField &gameField, int myID, __Pred pr, char forbiddenDirs = '\0')
 	{
 		clock_t startTime = clock();
 
 		Pacman::FieldProp startPos = gameField.players[myID];
-		if (pr(gameField, startPos))
+		if (pr(gameField, startPos) && !forbiddenDirs & 1)
 			return 0;
 
 		//初始化广搜数组
@@ -1239,6 +1239,13 @@ namespace Helpers
 		Pacman::Direction randomDir[4];
 		for (int i = 0; i < 4; ++i)
 			randomDir[i] = Pacman::Direction(i);
+
+		//禁止的方向设为已经访问
+		for (int i = 0; i < 4; ++i)
+		{
+			if (forbiddenDirs & (1 << (i + 1)))
+				dirInfo[(startPos.row + Pacman::dy[i] + gameField.height) % gameField.height][(startPos.col + Pacman::dx[i] + gameField.width) % gameField.width] = Pacman::Direction::up;
+		}
 
 		while (nowFlag <= endFlag && !hasEaten)
 		{
@@ -1296,13 +1303,13 @@ namespace Helpers
 	}
 
 	//weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
-	char GetToTarget(Pacman::GameField &gameField, int myID, int target)
+	char GetToTarget(Pacman::GameField &gameField, int myID, int target, char forbiddenDirs = '\0')
 	{
 		if (target == 0)
 			return Pacman::Direction::ur + 1;
 		return GetTo(gameField, myID,
 			[target](const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
-		{ return gameField.fieldContent[pos.row][pos.col] & target; });
+		{ return gameField.fieldContent[pos.row][pos.col] & target; }, forbiddenDirs);
 	}
 
 	//weaZen: 把判断是不是在生成器旁边的函数单独拿出来 搜索有用
@@ -1320,9 +1327,9 @@ namespace Helpers
 		return false;
 	}
 
-	char GetToNearbyGenerator(Pacman::GameField &gameField, int myID)
+	char GetToNearbyGenerator(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
 	{
-		return GetTo(gameField, myID, isBesideGenerator);
+		return GetTo(gameField, myID, isBesideGenerator, forbiddenDirs);
 	}
 
 	// Jet: 近似算直线距离
@@ -1356,13 +1363,13 @@ namespace Helpers
 
 	//weaZen:随便找个不被吃的方向(如果可以)
 	//Jet:需要返回随机值的情况大多可以返回AI::RandomAI()代替
-	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID)
+	Pacman::Direction SimpleRandom(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
 	{
 		Pacman::Direction dir;
-		int vCount = 0;
+		int vCount = 1;
 		Pacman::Direction valid[5];
 		for (Pacman::Direction d = Pacman::stay; d < 4; ++d)
-			if (gameField.ActionValid(myID, d) && !DangerJudge(gameField, myID, d))
+			if (gameField.ActionValid(myID, d) && !(forbiddenDirs & (1 << (d + 1))))
 				valid[vCount++] = d;
 		if (vCount == 0) return Pacman::Direction::stay;
 		dir = valid[RandBetween(0, vCount)];
@@ -1439,6 +1446,8 @@ namespace AI
     typedef std::pair<Pacman::Direction, int> Solution;
     bool operator <(const Solution& a, const Solution& b) { return a.second < b.second; }
     bool operator >(const Solution& a, const Solution& b) { return a.second > b.second; }
+	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false);
+
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
@@ -1459,8 +1468,9 @@ namespace AI
 		return solutions;
 	}
 
+	//weaZen： 只会最基本的危险判断，热爱进攻，用来给别的AI回避死亡
 	//weaZen： 现在他只会把可能逃不出死路的值得一吃的玩家和附近可能会走进死路的玩家加入攻击范围
-	Pacman::Direction NaiveAI(Pacman::GameField &gameField, int myID)
+	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
 	{
 		char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
 		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
@@ -1468,7 +1478,16 @@ namespace AI
 		char tryPlayerTarget = 0;
 		int targetStrength = 0;
 		char fruitInfo, playerInfo, tryPlayerInfo;
+		char forbiddenDirs = '\0';
 		Pacman::Direction dir;
+
+		for (int i = -1; i < 4; ++i)
+		{
+			if (!gameField.ActionValid(myID, Pacman::Direction(i)))
+				continue;
+			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
+				forbiddenDirs |= 1 << (i + 1);
+		}
 
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 		{
@@ -1494,11 +1513,11 @@ namespace AI
 				}
 			}
 		}
-		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget);
-		playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget);
-		tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget);
+		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
+		playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget, forbiddenDirs);
+		tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
 #ifdef DEBUG
-		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
+//		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
 		fruitDirInfo = fruitInfo & 7;
 		playerDirInfo = playerInfo & 7;
@@ -1516,18 +1535,124 @@ namespace AI
 				if (info >= 1)
 					dir = Pacman::Direction(fruitDirInfo - 1);
 				else
-					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID) & 7) - 1);
+					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
 
-		if (dir != Pacman::Direction::stay && !Helpers::DangerJudge(gameField, myID, dir))
+		if (dir != Pacman::Direction::stay)
+		return dir;
+
+        //double timeRemain = TIME_LIMIT - Debug::TimeThrough();
+		//为了能够搜索减少耗时直接随机
+        //if (timeRemain < 0.15)
+		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
+
+        //return MCTS_AI(gameField, myID, false, timeRemain / 4).back().first;
+    }
+
+	//weaZen： 会回避死亡的高级AI
+	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
+	{
+		char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
+		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
+		char playerTarget = 0;
+		char tryPlayerTarget = 0;
+		int targetStrength = 0;
+		char fruitInfo, playerInfo, tryPlayerInfo;
+		char forbiddenDirs = '\0';
+		Pacman::Direction dir;
+
+		for (int i = -1; i < 4; ++i)
+		{
+			dir = Pacman::Direction(i);
+			Pacman::FieldProp nextGrid;
+			if (!gameField.ActionValid(myID, Pacman::Direction(i)))
+				continue;
+			if (i != -1)
+			{
+				nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
+				nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
+			}
+			else
+			{
+				nextGrid = gameField.players[myID];
+			}
+			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
+				forbiddenDirs |= 1 << (i + 1);
+			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
+			{
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+				{
+					if (_ == myID)
+						continue;
+					if (gameField.players[_].dead)
+						continue;
+					gameField.actions[_] = NaiveAttackAI(gameField, _);
+				}
+				gameField.actions[myID] = dir;
+				gameField.NextTurn();
+				if (SimpleSearch(gameField, myID, 3, NaiveAttackAI, dir, true, true) <= DEATH_EVAL)
+					forbiddenDirs |= 1 << (i + 1);
+				gameField.RollBack(1);
+			}
+		}
+
+		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+		{
+			Pacman::Player & rival = gameField.players[_];
+			if (rival.dead || _ == myID)
+				continue;
+			if (Helpers::DeltaATK(gameField, myID, _) > 0)
+			{
+				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
+					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
+					&& Helpers::Distance(gameField, myID, _) <= 2
+					&& Helpers::DeltaATK(gameField, myID, _) > 2;
+				if (preyFlag)
+				{
+					playerTarget |= Pacman::playerID2Mask[_];
+					targetStrength = std::max(targetStrength, gameField.players[_].strength);
+				}
+				if (tryPreyFlag)
+				{
+					tryPlayerTarget |= Pacman::playerID2Mask[_];
+					targetStrength = std::max(targetStrength, gameField.players[_].strength);
+				}
+			}
+		}
+		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
+		playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget, forbiddenDirs);
+		tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
+#ifdef DEBUG
+		//		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
+#endif // DEBUG
+		fruitDirInfo = fruitInfo & 7;
+		playerDirInfo = playerInfo & 7;
+		tryPlayerDirInfo = tryPlayerInfo & 7;
+
+		int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
+
+
+		if (info >= 4)
+			dir = Pacman::Direction(playerDirInfo - 1);
+		else
+			if (info >= 2)
+				dir = Pacman::Direction(tryPlayerDirInfo - 1);
+			else
+				if (info >= 1)
+					dir = Pacman::Direction(fruitDirInfo - 1);
+				else
+					dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
+
+		if (dir != Pacman::Direction::stay)
 			return dir;
 
-        double timeRemain = TIME_LIMIT - Debug::TimeThrough();
+		//double timeRemain = TIME_LIMIT - Debug::TimeThrough();
 		//为了能够搜索减少耗时直接随机
-        if (timeRemain < 0.15)
-		    return Helpers::SimpleRandom(gameField, myID);
+		//if (timeRemain < 0.15)
+		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 
-        return MCTS_AI(gameField, myID, false, timeRemain / 4).back().first;
-    }
+
+		}
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
 	{
@@ -1544,7 +1669,7 @@ namespace AI
 		}
 
 		if (!gameField.hasNext)
-			return 1000 * gameField.players[myID].strength / strengthSum;
+			return 1000 * gameField.players[myID].strength / strengthSum - 250; 
 
 		int e = 0;
 		int tmp;
@@ -1570,7 +1695,7 @@ namespace AI
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
-			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
+			e += gameField.players[myID].strength - 10 + gameField.players[myID].powerUpLeft;
 
 
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
@@ -1579,8 +1704,8 @@ namespace AI
 		return e;
 	}
 
-	// weaZen:简单的搜索，非第一层(top)返回最高估值 若上一步造成力量变化则不给出lastDir 第一层(top)更新averagedEvals并返回最佳选择
-	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false)
+	// weaZen:简单的搜索，返回最高估值 若上一步造成力量变化则不给出lastDir 第一层(top)更新averagedEvals
+	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir, bool top, bool rivalFlag)
 	{
 		int max = DEATH_EVAL;
 		int tmp;
@@ -1591,7 +1716,7 @@ namespace AI
 			return GreedyEval(gameField, myID);
 		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
-			if (top)
+			if (top && !rivalFlag)
 			{
 				if (averagedEvals[dir + 1] <= DEATH_EVAL)
 				{
@@ -1630,7 +1755,10 @@ namespace AI
 					continue;
 				if (gameField.players[i].dead)
 					continue;
-				gameField.actions[i] = NaiveAI(gameField, i);
+				gameField.actions[i] = rivalAI(gameField, i);
+#ifdef DEBUG
+				if (top && !rivalFlag) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
+#endif // DEBUG
 			}
 			gameField.actions[myID] = dir;
 
@@ -1645,7 +1773,7 @@ namespace AI
 			//			
 			//			for (int i = 0; i < 5; ++i)
 			//			{
-			//				cout << Pacman::dirStr[i] << '\t' << score[i] << endl;
+			//				cout << Pacman::dirStr[i] << '\t' << tmpEvals[i] << endl;
 			//			}
 			//
 			//			system("pause");
@@ -1659,13 +1787,14 @@ namespace AI
 			if (gameField.players[myID].strength - strength == 0)
 			{
 				if (dir == Pacman::Direction::stay)
-					tmp = SimpleSearch(gameField, myID, depth - 1, lastDir);
+					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, lastDir);
 				else
-					tmp = SimpleSearch(gameField, myID, depth - 1, dir);
+					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir);
 			}
-			else tmp = SimpleSearch(gameField, myID, depth - 1);
+			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);
 			if (tmp > 0) tmp += GreedyEval(gameField, myID);
-			if (top) tmpEvals[dir + 1] = tmp;
+			if (tmp > 0 && dir == Pacman::Direction::stay) tmp = tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL);
+			if (top && !rivalFlag) tmpEvals[dir + 1] = tmp;
 			max = std::max(max, tmp);
 			gameField.RollBack(1);
 
@@ -1673,28 +1802,26 @@ namespace AI
 			if (Debug::TimeOut())
 				return max;
 		}
-		if (top)
+		if (top && !rivalFlag)
 		{
-			int maxD = 0;
+			//int maxD = 0;
 			for (int d = 0; d < 5; d++)
 			{
 				Debug::debugData[Helpers::depth2String(depth)][Pacman::dirStr[d]] = to_string(tmpEvals[d]);
-				if (!Debug::TimeOut() && !rivalFlag)
+				if (!Debug::TimeOut())
 				{
 					if (depth == DEFAULT_DEPTH || tmpEvals[d] <= DEATH_EVAL)
 						averagedEvals[d] = tmpEvals[d];
 					else
 						averagedEvals[d] = (tmpEvals[d] + averagedEvals[d]) / 2;
 
-					max = std::max(max, tmpEvals[d]);
+					//max = std::max(max, tmpEvals[d]);
 				}
-				if (tmpEvals[d] >= tmpEvals[maxD])
-					maxD = d;
+				//if (tmpEvals[d] >= tmpEvals[maxD])
+				//	maxD = d;
 			}
 			//if (tmpEvals[naiveDir + 1] == max)
 			//	return std::make_pair(naiveDir, max);
-			max = tmpEvals[maxD];
-			return maxD - 1;
 		}
 		return max;
 	}
@@ -1703,7 +1830,7 @@ namespace AI
 	Solution GreedySearchAI(Pacman::GameField &gameField, int myID, int depth = DEFAULT_DEPTH)
 	{
 		int maxD = 0, max = INVALID_EVAL;
-		SimpleSearch(gameField, myID, depth, Pacman::Direction::stay, true);
+		SimpleSearch(gameField, myID, depth, NaiveThinkAI, Pacman::Direction::stay, true);
 		for (int i = 0; i < 5; ++i)
 		{
 			if (tmpEvals[i] >= max)
@@ -1750,7 +1877,7 @@ namespace AI
 		if (solutions.size() == 0)
 		{
 			Debug::debugData["*choice"]["NAIVE"] = true;
-			return NaiveAI(gameField, myID);
+			return NaiveAttackAI(gameField, myID);
 		}
 
 		Debug::debugData["*choice"]["direction"] = Pacman::dirStr[dir + 1];
@@ -1784,6 +1911,7 @@ int main()
 	Pacman::Direction choice = AI(mainGameField, myID);
 	Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
 	mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Debug::debugData);
+
 
 #ifndef _BOTZONE_ONLINE
 	system("pause");
