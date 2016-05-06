@@ -68,7 +68,7 @@
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
-//#define DEBUG
+#define DEBUG
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
@@ -97,9 +97,9 @@ namespace Debug
 
 	inline bool TimeOut()
 	{
-		//#ifdef DEBUG
-		//		return false;
-		//#endif // DEBUG
+		#ifdef DEBUG
+				return false;
+		#endif // DEBUG
 		if (timeOutFlag || TimeThrough() > TIME_LIMIT)
 		{
 			Debug::debugData["profiling"]["TimeOut"] = true;
@@ -1579,6 +1579,12 @@ namespace AI
 				forbiddenDirs |= 1 << (i + 1);
 			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
 			{
+				//注意只有一个gamefield 模拟其他AI时注意action的还原
+				Pacman::Direction tmpDir[MAX_PLAYER_COUNT];
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+				{
+					tmpDir[_] = gameField.actions[_];
+				}
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 				{
 					if (_ == myID)
@@ -1589,9 +1595,13 @@ namespace AI
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
-				if (SimpleSearch(gameField, myID, 3, NaiveAttackAI, dir, true, true) <= DEATH_EVAL)
+				if (SimpleSearch(gameField, myID, 3, NaiveAttackAI, Pacman::Direction::stay, false, true) <= DEATH_EVAL)
 					forbiddenDirs |= 1 << (i + 1);
 				gameField.RollBack(1);
+				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
+				{
+					gameField.actions[_] = tmpDir[_];
+				}
 			}
 		}
 
@@ -1646,7 +1656,7 @@ namespace AI
 		if (dir != Pacman::Direction::stay)
 			return dir;
 
-		return Helpers::SimpleRandom(gameField, myID);
+		return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
 	int GreedyEval(const Pacman::GameField &gameField, int myID)
@@ -1768,11 +1778,6 @@ namespace AI
 			//				cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 			//			}
 			//			
-			//			for (int i = 0; i < 5; ++i)
-			//			{
-			//				cout << Pacman::dirStr[i] << '\t' << score[i] << endl;
-			//			}
-			//
 			//			system("pause");
 			//			//system("cls");
 			//#endif // DEBUG
@@ -1780,19 +1785,20 @@ namespace AI
 
 			gameField.NextTurn();
 
-
-			if (gameField.players[myID].strength - strength == 0)
+			//多个玩家重叠在果子上允许返回
+			if (gameField.players[myID].strength - strength == 0 && !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
 			{
 				if (dir == Pacman::Direction::stay)
 					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, lastDir);
 				else
 					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir);
 			}
-			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);// + depth;
+			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);
 			if (tmp > 0) tmp += GreedyEval(gameField, myID);
 			if (tmp > 0 && dir == Pacman::Direction::stay) tmp = tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL);
 			if (top && !rivalFlag) tmpEvals[dir + 1] = tmp;
 			max = std::max(max, tmp);
+
 			gameField.RollBack(1);
 
 			// 超时处理
