@@ -1442,10 +1442,7 @@ namespace AI
     int tmpEvals[5];
     int averagedEvals[5];
 
-    typedef std::pair<Pacman::Direction, int> Solution;
-    bool operator <(const Solution& a, const Solution& b) { return a.second < b.second; }
-    bool operator >(const Solution& a, const Solution& b) { return a.second > b.second; }
-	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false);
+    int SimpleSearch(Pacman::GameField &gameField, int myID, int depth, Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::Direction::stay, bool top = false, bool rivalFlag = false);
 
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
