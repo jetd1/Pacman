@@ -1779,9 +1779,12 @@ namespace AI
                     tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir);
             }
             else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);
-            if (tmp > 0) tmp += GreedyEval(gameField, myID);
-            if (tmp > 0 && dir == Pacman::Direction::stay) tmp = tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL);
-            if (top && !rivalFlag) tmpEvals[dir + 1] = tmp;
+            if (tmp > 0) 
+                tmp += GreedyEval(gameField, myID);
+            if (tmp > 0 && dir == Pacman::Direction::stay) 
+                tmp = int(tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
+            if (top && !rivalFlag) 
+                tmpEvals[dir + 1] = tmp;
             max = std::max(max, tmp);
 
             gameField.RollBack(1);
@@ -1894,8 +1897,7 @@ int main()
 #endif
 
     // 中央决定一定要叫嚣
-    Pacman::Direction choice = AI(mainGameField, myID);
-    Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
+    Pacman::Direction choice = AI(mainGameField, myID); Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
     mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Debug::debugData);
 
 #ifndef _BOTZONE_ONLINE
