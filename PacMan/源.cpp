@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <cstdio>
+#include <cstring>
 #include <ctime>
 #include <iostream>
 #include <algorithm>
@@ -123,7 +124,7 @@ namespace Pacman
 {
     using namespace EnumExt;
 
-    const time_t seed = time(nullptr);
+    const auto seed = time(nullptr);
     const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
     const string dirStr[] = {"stay" ,"up","right","down","left","ur","dr","dl","ul"};
 
@@ -180,14 +181,8 @@ namespace Pacman
     {
         int row, col;
         FieldProp(int i = 0, int j = 0): row(i), col(j) {}
-        inline bool operator==(const FieldProp &a)const
-        {
-            return (row == a.row && col == a.col);
-        }
-        inline bool operator!=(const FieldProp &a)const
-        {
-            return (row != a.row || col != a.col);
-        }
+        bool operator==(const FieldProp &a)const { return (row == a.row && col == a.col); }
+        bool operator!=(const FieldProp &a)const { return (row != a.row || col != a.col); }
     };
 
     struct PathInfoType: FieldProp
@@ -241,9 +236,7 @@ namespace Pacman
     // 游戏主要逻辑处理类，包括输入输出、回合演算、状态转移，全局唯一
     class GameField
     {
-    private:
         // 为了方便，大多数属性都不是private的
-
         // 记录每回合的变化（栈）
         TurnStateTransfer backtrack[MAX_TURN];
 
@@ -269,13 +262,9 @@ namespace Pacman
         int smallFruitCount;
         FieldProp generators[MAX_GENERATOR_COUNT]; // 有哪些豆子产生器
         Player players[MAX_PLAYER_COUNT]; // 有哪些玩家
-
         int turnID;
-        // 玩家选定的动作
-        Direction actions[MAX_PLAYER_COUNT];
-
-        // weaZen：省得每次查一遍
-        bool hasNext;
+        Direction actions[MAX_PLAYER_COUNT]; // 玩家选定的动作
+        bool hasNext; // weaZen：省得每次查一遍
 
         // 恢复到上次场地状态。可以一路恢复到最开始。
         // 恢复失败（没有状态可恢复）返回false
@@ -435,8 +424,8 @@ namespace Pacman
             // 1. 位置变化
             for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                auto &_p = players[playerID];
-                if (_p.dead)
+                auto &player = players[playerID];
+                if (player.dead)
                     continue;
 
                 bt.actions[playerID] = actions[playerID];
@@ -445,10 +434,10 @@ namespace Pacman
                     continue;
 
                 // 移动
-                fieldContent[_p.row][_p.col] &= ~playerID2Mask[playerID];
-                _p.row = (_p.row + dy[actions[playerID]] + height) % height;
-                _p.col = (_p.col + dx[actions[playerID]] + width) % width;
-                fieldContent[_p.row][_p.col] |= playerID2Mask[playerID];
+                fieldContent[player.row][player.col] &= ~playerID2Mask[playerID];
+                player.row = (player.row + dy[actions[playerID]] + height) % height;
+                player.col = (player.col + dx[actions[playerID]] + width) % width;
+                fieldContent[player.row][player.col] |= playerID2Mask[playerID];
             }
 
             // 2. 玩家互殴
