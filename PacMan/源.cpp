@@ -33,7 +33,10 @@
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
+#ifndef _BOTZONE_ONLINE
 //#define DEBUG
+//#define PROFILING
+#endif
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
@@ -48,28 +51,31 @@ using std::runtime_error;
 // 用于调试
 namespace Debug
 {
-    bool printInfo = false;
+    auto printInfo = false;
 	string presetString;
 #ifdef DEBUG
 	presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,32,0,16,0,32,16,16,0],[0,0,1,0,0,0,0,0,2,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,16,0,0,0,0,0,16,0,0],[16,16,0,0,0,0,0,0,0,16,16],[16,16,0,0,0,0,0,0,0,16,16],[0,0,16,0,0,0,0,0,16,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,4,0,0,0,0,0,8,0,0],[0,16,16,32,0,16,0,32,16,16,0]],"height":10,"id":3,"seed":1462548363,"static":[[2,10,13,5,5,1,5,5,7,10,8],[8,6,9,5,1,4,1,5,3,12,2],[4,5,6,9,6,31,12,3,12,5,4],[1,7,9,6,13,1,7,12,3,13,1],[8,5,0,1,5,4,5,1,0,5,2],[8,5,0,4,5,1,5,4,0,5,2],[4,7,12,3,13,4,7,9,6,13,4],[1,5,3,12,3,31,9,6,9,5,1],[8,3,12,5,4,1,4,5,6,9,2],[2,10,13,5,5,4,5,5,7,10,8]],"width":11},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":3}}],"responses":[{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""}]})*";
-#endif // DEBUG
-    Json::Value debugData;
-    bool timeOutFlag = false;
-    clock_t startTime = clock();
+#endif
 
-    inline double TimeThrough(clock_t startTime = Debug::startTime)
+    Json::Value debugData;
+    auto timeOutFlag = false;
+    auto startTime = clock();
+
+    inline double TimeThrough(clock_t stt = startTime)
     {
-        return double(clock() - startTime) / CLOCKS_PER_SEC;
+        return double(clock() - stt) / CLOCKS_PER_SEC;
     }
 
     inline bool TimeOut()
     {
 #ifdef DEBUG
         return false;
-#endif // DEBUG
-        if (timeOutFlag || TimeThrough() > TIME_LIMIT)
+#endif
+        if (timeOutFlag)
+            return true;
+        if (TimeThrough() > TIME_LIMIT)
         {
-            Debug::debugData["profiling"]["TimeOut"] = true;
+            debugData["profiling"]["TimeOut"] = true;
             return timeOutFlag = true;
         }
         return false;
@@ -174,11 +180,11 @@ namespace Pacman
     {
         int row, col;
         FieldProp(int i = 0, int j = 0): row(i), col(j) {}
-        inline bool operator==(const FieldProp &a)
+        inline bool operator==(const FieldProp &a)const
         {
             return (row == a.row && col == a.col);
         }
-        inline bool operator!=(const FieldProp &a)
+        inline bool operator!=(const FieldProp &a)const
         {
             return (row != a.row || col != a.col);
         }
@@ -190,7 +196,7 @@ namespace Pacman
         bool isExit;
         int fleeLength;//到死路出口的距离
         PathInfoType * pExit;
-        PathInfoType(int y = 0, int x = 0): FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(NULL) {}
+        PathInfoType(int y = 0, int x = 0): FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(nullptr) {}
     };
 
     // 场地上的玩家
@@ -279,22 +285,20 @@ namespace Pacman
             if (turnID <= 0)
                 return false;
 
-            const TurnStateTransfer &bt = backtrack[--turnID];
-            int i, _;
+            const auto &bt = backtrack[--turnID];
 
             // 倒着来恢复状态
-
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &_p = players[_];
-                GridContentType &content = fieldContent[_p.row][_p.col];
-                TurnStateTransfer::StatusChange change = bt.change[_];
+                auto &player = players[playerID];
+                auto &content = fieldContent[player.row][player.col];
+                auto change = bt.change[playerID];
 
-                if (!_p.dead)
+                if (!player.dead)
                 {
                     // 5. 大豆回合恢复
-                    if (_p.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
-                        _p.powerUpLeft++;
+                    if (player.powerUpLeft || change & TurnStateTransfer::powerUpCancel)
+                        player.powerUpLeft++;
 
                     // 4. 吐出豆子
                     if (change & TurnStateTransfer::ateSmall)
@@ -305,46 +309,46 @@ namespace Pacman
                     else if (change & TurnStateTransfer::ateLarge)
                     {
                         content |= largeFruit;
-                        _p.powerUpLeft -= LARGE_FRUIT_DURATION;
+                        player.powerUpLeft -= LARGE_FRUIT_DURATION;
                     }
                 }
 
                 // 2. 魂兮归来
                 if (change & TurnStateTransfer::die)
                 {
-                    _p.dead = false;
+                    player.dead = false;
                     aliveCount++;
-                    content |= playerID2Mask[_];
+                    content |= playerID2Mask[playerID];
                 }
 
                 // 1. 移形换影
-                if (!_p.dead && bt.actions[_] != stay)
+                if (!player.dead && bt.actions[playerID] != stay)
                 {
-                    fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                    _p.row = (_p.row - dy[bt.actions[_]] + height) % height;
-                    _p.col = (_p.col - dx[bt.actions[_]] + width) % width;
-                    fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+                    fieldContent[player.row][player.col] &= ~playerID2Mask[playerID];
+                    player.row = (player.row - dy[bt.actions[playerID]] + height) % height;
+                    player.col = (player.col - dx[bt.actions[playerID]] + width) % width;
+                    fieldContent[player.row][player.col] |= playerID2Mask[playerID];
                 }
 
                 // 0. 救赎不合法的灵魂
                 if (change & TurnStateTransfer::error)
                 {
-                    _p.dead = false;
+                    player.dead = false;
                     aliveCount++;
-                    content |= playerID2Mask[_];
+                    content |= playerID2Mask[playerID];
                 }
 
                 // *. 恢复力量
-                if (!_p.dead)
-                    _p.strength -= bt.strengthDelta[_];
+                if (!player.dead)
+                    player.strength -= bt.strengthDelta[playerID];
             }
 
             // 3. 收回豆子
             if (generatorTurnLeft == GENERATOR_INTERVAL)
             {
                 generatorTurnLeft = 1;
-                NewFruits &fruits = newFruits[--newFruitsCount];
-                for (i = 0; i < fruits.newFruitCount; i++)
+                auto &fruits = newFruits[--newFruitsCount];
+                for (int i = 0; i < fruits.newFruitCount; i++)
                 {
                     fieldContent[fruits.newFruits[i].row][fruits.newFruits[i].col] &= ~smallFruit;
                     smallFruitCount--;
@@ -359,7 +363,9 @@ namespace Pacman
         // Jet:把PopState包装了一下 方便一些
         void RollBack(int turnCount = -1)
         {
-            clock_t startTime = clock();
+#ifdef PROFILING
+            auto startTime = clock();
+#endif
             if (turnCount < 0)
             // ReSharper disable once CppPossiblyErroneousEmptyStatements
                 while (PopState());
@@ -367,9 +373,10 @@ namespace Pacman
                 for (int i = 0; i < turnCount; i++)
                     if (!PopState())
                         break;
-
-            auto&& d = Debug::debugData["profiling"]["RollBack()"];
+#ifdef PROFILING
+            auto& d = Debug::debugData["profiling"]["RollBack()"];
             d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif
         }
 
         // 判断指定玩家向指定方向移动是不是合法的（没有撞墙且没有踩到豆子产生器）
@@ -377,8 +384,8 @@ namespace Pacman
         {
             if (dir == stay)
                 return true;
-            const Player &p = players[playerID];
-            const GridStaticType &s = fieldStatic[p.row][p.col];
+            const auto &p = players[playerID];
+            const auto &s = fieldStatic[p.row][p.col];
             return dir >= -1 && dir < 4 && !(s & direction2OpposingWall[dir]);
         }
 
@@ -386,69 +393,68 @@ namespace Pacman
         // 是终局的话就返回false
         bool NextTurn()
         {
-            clock_t startTime = clock();
-
-            int _, i, j;
-
-            TurnStateTransfer &bt = backtrack[turnID];
-            memset(&bt, 0, sizeof(bt));
+#ifdef PROFILING
+            auto startTime = clock();
+#endif
+            auto &bt = backtrack[turnID];
+            memset(&bt, 0, sizeof bt);
 
             // 0. 杀死不合法输入
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &p = players[_];
-                if (!p.dead)
+                auto &player = players[playerID];
+                if (!player.dead)
                 {
-                    Direction &action = actions[_];
+                    auto &action = actions[playerID];
                     if (action == stay)
                         continue;
 
-                    if (!ActionValid(_, action))
+                    if (!ActionValid(playerID, action))
                     {
-                        bt.strengthDelta[_] += -p.strength;
-                        bt.change[_] = TurnStateTransfer::error;
-                        fieldContent[p.row][p.col] &= ~playerID2Mask[_];
-                        p.strength = 0;
-                        p.dead = true;
+                        bt.strengthDelta[playerID] += -player.strength;
+                        bt.change[playerID] = TurnStateTransfer::error;
+                        fieldContent[player.row][player.col] &= ~playerID2Mask[playerID];
+                        player.strength = 0;
+                        player.dead = true;
                         aliveCount--;
                     }
                     else
                     {
                         // 遇到比自己强♂壮的玩家是不能前进的
-                        GridContentType target = fieldContent
-                            [(p.row + dy[action] + height) % height]
-                        [(p.col + dx[action] + width) % width];
+                        const auto& target = fieldContent
+                            [(player.row + dy[action] + height) % height]
+                            [(player.col + dx[action] + width) % width];
                         if (target & playerMask)
-                            for (i = 0; i < MAX_PLAYER_COUNT; i++)
-                                if (target & playerID2Mask[i] && players[i].strength > p.strength)
+                            for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+                                if (target & playerID2Mask[i] && players[i].strength > player.strength)
                                     action = stay;
                     }
                 }
             }
 
             // 1. 位置变化
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &_p = players[_];
+                auto &_p = players[playerID];
                 if (_p.dead)
                     continue;
 
-                bt.actions[_] = actions[_];
+                bt.actions[playerID] = actions[playerID];
 
-                if (actions[_] == stay)
+                if (actions[playerID] == stay)
                     continue;
 
                 // 移动
-                fieldContent[_p.row][_p.col] &= ~playerID2Mask[_];
-                _p.row = (_p.row + dy[actions[_]] + height) % height;
-                _p.col = (_p.col + dx[actions[_]] + width) % width;
-                fieldContent[_p.row][_p.col] |= playerID2Mask[_];
+                fieldContent[_p.row][_p.col] &= ~playerID2Mask[playerID];
+                _p.row = (_p.row + dy[actions[playerID]] + height) % height;
+                _p.col = (_p.col + dx[actions[playerID]] + width) % width;
+                fieldContent[_p.row][_p.col] |= playerID2Mask[playerID];
             }
 
             // 2. 玩家互殴
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &_p = players[_];
+                auto &_p = players[playerID];
                 if (_p.dead)
                     continue;
 
@@ -462,8 +468,8 @@ namespace Pacman
                 if (containedCount > 1)
                 {
                     // NAIVE
-                    for (i = 0; i < containedCount; i++)
-                        for (j = 0; j < containedCount - i - 1; j++)
+                    for (int i = 0; i < containedCount; i++)
+                        for (int j = 0; j < containedCount - i - 1; j++)
                             if (players[containedPlayers[j]].strength < players[containedPlayers[j + 1]].strength)
                                 swap(containedPlayers[j], containedPlayers[j + 1]);
 
@@ -474,7 +480,7 @@ namespace Pacman
 
                     // 这些玩家将会被杀死
                     int lootedStrength = 0;
-                    for (i = begin; i < containedCount; i++)
+                    for (int i = begin; i < containedCount; i++)
                     {
                         int id = containedPlayers[i];
                         Player &p = players[id];
@@ -491,11 +497,11 @@ namespace Pacman
                     }
 
                     // 分配给其他玩家
-                    int inc = lootedStrength / begin;
-                    for (i = 0; i < begin; i++)
+                    auto inc = lootedStrength / begin;
+                    for (int i = 0; i < begin; i++)
                     {
-                        int id = containedPlayers[i];
-                        Player &p = players[id];
+                        auto id = containedPlayers[i];
+                        auto &p = players[id];
                         bt.strengthDelta[id] += inc;
                         p.strength += inc;
                     }
@@ -506,10 +512,10 @@ namespace Pacman
             if (--generatorTurnLeft == 0)
             {
                 generatorTurnLeft = GENERATOR_INTERVAL;
-                NewFruits &fruits = newFruits[newFruitsCount++];
+                auto &fruits = newFruits[newFruitsCount++];
                 fruits.newFruitCount = 0;
-                for (i = 0; i < generatorCount; i++)
-                    for (Direction d = up; d < 8; ++d)
+                for (int i = 0; i < generatorCount; i++)
+                    for (auto d = up; d < 8; ++d)
                     {
                         // 取余，穿过场地边界
                         int r = (generators[i].row + dy[d] + height) % height, c = (generators[i].col + dx[d] + width) % width;
@@ -523,67 +529,67 @@ namespace Pacman
             }
 
             // 4. 吃掉豆子
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &_p = players[_];
-                if (_p.dead)
+                auto &player = players[playerID];
+                if (player.dead)
                     continue;
 
-                GridContentType &content = fieldContent[_p.row][_p.col];
+                auto &content = fieldContent[player.row][player.col];
 
                 // 只有在格子上只有自己的时候才能吃掉豆子
-                if (content & playerMask & ~playerID2Mask[_])
+                if (content & playerMask & ~playerID2Mask[playerID])
                     continue;
 
                 if (content & smallFruit)
                 {
                     content &= ~smallFruit;
-                    _p.strength++;
-                    bt.strengthDelta[_]++;
+                    player.strength++;
+                    bt.strengthDelta[playerID]++;
                     smallFruitCount--;
-                    bt.change[_] |= TurnStateTransfer::ateSmall;
+                    bt.change[playerID] |= TurnStateTransfer::ateSmall;
                 }
                 else if (content & largeFruit)
                 {
                     content &= ~largeFruit;
-                    if (_p.powerUpLeft == 0)
+                    if (player.powerUpLeft == 0)
                     {
-                        _p.strength += LARGE_FRUIT_ENHANCEMENT;
-                        bt.strengthDelta[_] += LARGE_FRUIT_ENHANCEMENT;
+                        player.strength += LARGE_FRUIT_ENHANCEMENT;
+                        bt.strengthDelta[playerID] += LARGE_FRUIT_ENHANCEMENT;
                     }
-                    _p.powerUpLeft += LARGE_FRUIT_DURATION;
-                    bt.change[_] |= TurnStateTransfer::ateLarge;
+                    player.powerUpLeft += LARGE_FRUIT_DURATION;
+                    bt.change[playerID] |= TurnStateTransfer::ateLarge;
                 }
             }
 
             // 5. 大豆回合减少
-            for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
+            for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                Player &_p = players[_];
-                if (_p.dead)
+                auto &player = players[playerID];
+                if (player.dead)
                     continue;
 
-                if (_p.powerUpLeft > 0 && --_p.powerUpLeft == 0)
+                if (player.powerUpLeft > 0 && --player.powerUpLeft == 0)
                 {
-                    _p.strength -= LARGE_FRUIT_ENHANCEMENT;
-                    bt.change[_] |= TurnStateTransfer::powerUpCancel;
-                    bt.strengthDelta[_] += -LARGE_FRUIT_ENHANCEMENT;
+                    player.strength -= LARGE_FRUIT_ENHANCEMENT;
+                    bt.change[playerID] |= TurnStateTransfer::powerUpCancel;
+                    bt.strengthDelta[playerID] += -LARGE_FRUIT_ENHANCEMENT;
                 }
             }
 
             ++turnID;
-
+#ifdef PROFILING
             auto&& d = Debug::debugData["profiling"]["NextTurn()"];
             d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-
+#endif
             // 是否只剩一人？
             if (aliveCount <= 1)
             {
-                for (_ = 0; _ < MAX_PLAYER_COUNT; _++)
-                    if (!players[_].dead)
+                for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
+                    if (!players[playerID].dead)
                     {
-                        bt.strengthDelta[_] += smallFruitCount;
-                        players[_].strength += smallFruitCount;
+                        bt.strengthDelta[playerID] += smallFruitCount;
+                        players[playerID].strength += smallFruitCount;
                     }
                 return hasNext = false;
             }
@@ -591,7 +597,6 @@ namespace Pacman
             // 是否回合超限？
             if (turnID >= 100)
                 return hasNext = false;
-
             return hasNext = true;
         }
 
@@ -614,7 +619,9 @@ namespace Pacman
         //weaZen: 地图分析
         void MapAnalyze()
         {
-            clock_t startTime = clock();
+#ifdef PROFILING
+            auto startTime = clock();
+#endif
 
             FieldProp deadSpot[40];
             int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
@@ -694,9 +701,10 @@ namespace Pacman
                     }
                 }
             }
-
-            auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
-            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#ifdef PROFILING
+        auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
+        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif 
         }
 
         // 读取并解析程序输入，本地调试或提交平台使用都可以。
@@ -739,7 +747,7 @@ namespace Pacman
             int len = input["requests"].size();
 
             // 读取场地静态状况
-            Json::Value field = input["requests"][(Json::Value::UInt) 0],
+            Json::Value field = input["requests"][Json::Value::UInt(0)],
                 staticField = field["static"], // 墙面和产生器
                 contentField = field["content"]; // 豆子和玩家
             height = field["height"].asInt();
@@ -755,12 +763,13 @@ namespace Pacman
             MapAnalyze();
 
             // 根据历史恢复局面
+            Json::Value req;
             for (int i = 1; i < len; i++)
             {
-                Json::Value req = input["requests"][i];
+                req = input["requests"][i];
                 for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
                     if (!players[_].dead)
-                        actions[_] = (Direction)req[playerID2str[_]]["action"].asInt();
+                        actions[_] = Direction(req[playerID2str[_]]["action"].asInt());
                 NextTurn();
             }
 
@@ -781,8 +790,8 @@ namespace Pacman
             for (r = 0; r < height; r++)
                 for (c = 0; c < width; c++)
                 {
-                    GridContentType &content = fieldContent[r][c] = (GridContentType)contentField[r][c].asInt();
-                    GridStaticType &s = fieldStatic[r][c] = (GridStaticType)staticField[r][c].asInt();
+                    GridContentType &content = fieldContent[r][c] = GridContentType(contentField[r][c].asInt());
+                    GridStaticType &s = fieldStatic[r][c] = GridStaticType(staticField[r][c].asInt());
                     if (s & generator)
                     {
                         generators[gid].row = r;
@@ -840,7 +849,7 @@ namespace Pacman
             printf("回合号【%d】存活人数【%d】| 图例 产生器[G] 有玩家[0/1/2/3] 多个玩家[*] 大豆[o] 小豆[.]\n", turnID, aliveCount);
             for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
             {
-                const Player &p = players[_];
+                auto& p = players[_];
                 printf("[玩家%d(%d, %d)|力量%d|加成剩余回合%d|%s]\n",
                        _, p.row, p.col, p.strength, p.powerUpLeft, p.dead ? "死亡" : "存活");
             }
@@ -939,7 +948,7 @@ namespace Helpers
     public:
         Solution() {}
         Solution(const std::pair<Pacman::Direction, int>& p): std::pair<Pacman::Direction, int>(p) {}
-        bool operator < (const Solution& o) { return second < o.second; }
+        bool operator < (const Solution& o)const { return second < o.second; }
     };
 
     int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
@@ -1087,7 +1096,9 @@ namespace Helpers
     // Jet: 用cc的改的
     int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
-        clock_t startTime = clock();
+#ifdef PROFILING
+        auto startTime = clock();
+#endif
 
         if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
             return distance[startPos.row][startPos.col][endPos.row][endPos.col];
@@ -1159,10 +1170,10 @@ namespace Helpers
         for (int i = 0; i < gameField.height; i++)
             delete[]step[i];
         delete[]step;
-
+#ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["Distance()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-
+#endif
         return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
     }
 
@@ -1177,7 +1188,9 @@ namespace Helpers
     template <typename __Pred>
     char GetTo(Pacman::GameField &gameField, int myID, __Pred pr, char forbiddenDirs = '\0')
     {
+#ifdef PROFILING
         clock_t startTime = clock();
+#endif
 
         Pacman::FieldProp startPos = gameField.players[myID];
         if (pr(gameField, startPos) && !(forbiddenDirs & 1))
@@ -1267,9 +1280,10 @@ namespace Helpers
         for (int i = 0; i < gameField.height; i++)
             delete[]dirInfo[i];
         delete[]dirInfo;
-
+#ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["GetTo()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif
 
         return (dis << 3) + dir + 1;
     }
@@ -1653,8 +1667,9 @@ namespace AI
 
     int GreedyEval(const Pacman::GameField &gameField, int myID)
     {
-        clock_t startTime = clock();
-
+#ifdef PROFILING
+        auto startTime = clock();
+#endif
         int minGeneratorDis = 100;
         int generatorDisSum = 0;
         int strengthSum = 0;
@@ -1690,10 +1705,10 @@ namespace AI
 			e += gameField.players[myID].strength;
 		else
 			e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
-
+#ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-
+#endif
         return e;
     }
 
@@ -1789,7 +1804,7 @@ namespace AI
 				&& dir == Pacman::Direction::stay
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
 				&& gameField.players[myID].strength - strength == 0)
-                tmp = int(tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
+                tmp = int(tmp * (1 - float(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
             if (top && !rivalFlag) 
                 tmpEvals[dir + 1] = tmp;
             max = std::max(max, tmp);
