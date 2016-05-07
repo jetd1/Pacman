@@ -1826,7 +1826,7 @@ namespace AI
 				&& tmp > 0
 				&& dir == Pacman::Direction::stay
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
-				&& gameField.players[myID].strength - strength != 0)
+				&& gameField.players[myID].strength - strength == 0)
                 tmp = int(tmp * (1 - (float)(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
             if (top && !rivalFlag) 
                 tmpEvals[dir + 1] = tmp;
