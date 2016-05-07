@@ -1439,7 +1439,6 @@ namespace AI
         char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         char playerTarget = 0;
         char tryPlayerTarget = 0;
-        int targetStrength = 0;
         char fruitInfo, playerInfo, tryPlayerInfo;
         char forbiddenDirs = '\0';
         Pacman::Direction dir;
@@ -1454,6 +1453,9 @@ namespace AI
 			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
 				forbiddenDirs |= 1 << (i + 1);
 		}
+		if (forbiddenDirs == 31)//（基本）必死无疑
+			return Helpers::SimpleRandom(gameField, myID);
+
 
         for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
         {
@@ -1467,17 +1469,38 @@ namespace AI
                 bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
                     && Helpers::Distance(gameField, myID, _) <= 2
                     && Helpers::DeltaATK(gameField, myID, _) > 2;
-
+				//夹道里被追击的弱AI
+				if (!preyFlag && !tryPreyFlag)
+				{
+					int dirCount = 4;
+					for (int i = 0; i < 4; ++i)
+					{
+						if (gameField.fieldStatic[rival.row][rival.col] & Pacman::direction2OpposingWall[i])
+						{
+							--dirCount;
+							continue;
+						}
+						Pacman::FieldProp checkPos;
+						checkPos.row = (rival.row + Pacman::dy[i] + gameField.height) % gameField.height;
+						checkPos.col = (rival.col + Pacman::dx[i] + gameField.width) % gameField.width;
+						if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerMask)
+							for (int checkID = 0; checkID < 4; ++checkID)
+							{
+								if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerID2Mask[checkID]
+									&& gameField.players[checkID].strength > rival.strength)
+									{
+										--dirCount;
+										break;
+									}
+							}
+					}
+					if (dirCount == 1 && Helpers::Distance(gameField, myID, _) <= 2)
+						tryPreyFlag = true;
+				}
                 if (preyFlag)
-                {
                     playerTarget |= Pacman::playerID2Mask[_];
-                    targetStrength = std::max(targetStrength, gameField.players[_].strength);
-                }
                 if (tryPreyFlag)
-                {
                     tryPlayerTarget |= Pacman::playerID2Mask[_];
-                    targetStrength = std::max(targetStrength, gameField.players[_].strength);
-                }
             }
         }
         fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
@@ -1509,16 +1532,12 @@ namespace AI
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
 		//为了能够搜索减少耗时直接随机
-		if (forbiddenDirs == 31)//（基本）必死无疑
-			return Helpers::SimpleRandom(gameField, myID);
+		if (Helpers::RandBetween(0, 4) <= 2 && dir == Pacman::Direction::stay)
+			return dir;
 		else
-		{
-			if (Helpers::RandBetween(0, 4) <= 2 && dir == Pacman::Direction::stay)
-				return dir;
-			else
-				return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
-		}
+			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
+
 
     //weaZen： 会回避死亡的高级AI
     Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
@@ -1527,7 +1546,6 @@ namespace AI
         char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         char playerTarget = 0;
         char tryPlayerTarget = 0;
-        int targetStrength = 0;
         char fruitInfo, playerInfo, tryPlayerInfo;
         char forbiddenDirs = '\0';
         Pacman::Direction dir;
@@ -1590,6 +1608,10 @@ namespace AI
 			}
 		}
 
+		if (forbiddenDirs == 31)//（基本）必死无疑
+			return Helpers::SimpleRandom(gameField, myID);
+
+
 		
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 		{
@@ -1603,16 +1625,38 @@ namespace AI
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& Helpers::Distance(gameField, myID, _) <= 2
 					&& Helpers::DeltaATK(gameField, myID, _) > 2;
+				//夹道里被追击的弱AI
+				if (!preyFlag && !tryPreyFlag)
+				{
+					int dirCount = 4;
+					for (int i = 0; i < 4; ++i)
+					{
+						if (gameField.fieldStatic[rival.row][rival.col] & Pacman::direction2OpposingWall[i])
+						{
+							--dirCount;
+							continue;
+						}
+						Pacman::FieldProp checkPos;
+						checkPos.row = (rival.row + Pacman::dy[i] + gameField.height) % gameField.height;
+						checkPos.col = (rival.col + Pacman::dx[i] + gameField.width) % gameField.width;
+						if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerMask)
+							for (int checkID = 0; checkID < 4; ++checkID)
+							{
+								if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerID2Mask[checkID]
+									&& gameField.players[checkID].strength > rival.strength)
+								{
+									--dirCount;
+									break;
+								}
+							}
+					}
+					if (dirCount == 1 && Helpers::Distance(gameField, myID, _) <= 2)
+						tryPreyFlag = true;
+				}
 				if (preyFlag)
-				{
 					playerTarget |= Pacman::playerID2Mask[_];
-					targetStrength = std::max(targetStrength, gameField.players[_].strength);
-				}
 				if (tryPreyFlag)
-				{
 					tryPlayerTarget |= Pacman::playerID2Mask[_];
-					targetStrength = std::max(targetStrength, gameField.players[_].strength);
-				}
 			}
 		}
 		fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
@@ -1643,15 +1687,10 @@ namespace AI
 
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
-		if (forbiddenDirs == 31)//（基本）必死无疑
-			return Helpers::SimpleRandom(gameField, myID);
+		if (Helpers::RandBetween(0, 4) <= 2 && dir == Pacman::Direction::stay)
+			return dir;
 		else
-		{
-			if (Helpers::RandBetween(0, 4) <= 2 && dir == Pacman::Direction::stay)
-				return dir;
-			else
-				return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
-		}
+			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
     int GreedyEval(const Pacman::GameField &gameField, int myID)
