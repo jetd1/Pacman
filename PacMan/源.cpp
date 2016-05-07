@@ -2,56 +2,22 @@
 * Edited By Jet, Moriarty, weaZen
 * 2016/05/05 00:31
 * AI XXXXX
-*/
-
-/*
+*
 * Pacman 样例程序
 * 作者：zhouhy
 * 时间：2016/3/22 15:32:51
 * 最后更新：2016/4/22 16:18
-* 【更新内容】
-* 修复了文件不存在时不能通过控制台输入的Bug……
-* 修改的部位：包含了fstream库、ReadInput的函数体中前几行发生了变化，不使用freopen了。
-*
-* 【命名惯例】
-*  r/R/y/Y：Row，行，纵坐标
-*  c/C/x/X：Column，列，横坐标
-*  数组的下标都是[y][x]或[r][c]的顺序
-*  玩家编号0123
-*
-* 【坐标系】
-*   0 1 2 3 4 5 6 7 8
-* 0 +----------------> x
-* 1 |
-* 2 |
-* 3 |
-* 4 |
-* 5 |
-* 6 |
-* 7 |
-* 8 |
-*   v y
-*
-* 【提示】你可以使用
-* #ifndef _BOTZONE_ONLINE
-* 这样的预编译指令来区分在线评测和本地评测
-*
-* 【提示】一般的文本编辑器都会支持将代码块折叠起来
-* 如果你觉得自带代码太过冗长，可以考虑将整个namespace折叠
 */
 
 #include <fstream>
 #include <cstdio>
-#include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <cstring>
 #include <stack>
 #include <stdexcept>
 #include <vector>
-#include <climits>
 #include "jsoncpp/json.h"
 
 #define FIELD_MAX_HEIGHT 20
@@ -151,7 +117,7 @@ namespace Pacman
 {
     using namespace EnumExt;
 
-    const time_t seed = time(0);
+    const time_t seed = time(nullptr);
     const int dx[] = {0, 1, 0, -1, 1, 1, -1, -1}, dy[] = {-1, 0, 1, 0, -1, 1, 1, -1};
     const string dirStr[] = {"stay" ,"up","right","down","left","ur","dr","dl","ul"};
 
@@ -395,6 +361,7 @@ namespace Pacman
         {
             clock_t startTime = clock();
             if (turnCount < 0)
+            // ReSharper disable once CppPossiblyErroneousEmptyStatements
                 while (PopState());
             else
                 for (int i = 0; i < turnCount; i++)
@@ -653,7 +620,7 @@ namespace Pacman
             int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
             int dCount = 0;
             PathInfoType * ptmpExit;
-            ptmpExit = NULL;
+            ptmpExit = nullptr;
 
             for (int y = 0; y < height; ++y)
             {
@@ -684,7 +651,6 @@ namespace Pacman
                 {
                     const Pacman::GridStaticType &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
                     for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
-                    {
                         if (!(curGrid & Pacman::direction2OpposingWall[dir]))
                         {
                             Pacman::FieldProp newPos = queue[nowFlag];
@@ -704,13 +670,12 @@ namespace Pacman
                                 pathInfo[newPos.row][newPos.col].fleeLength = 0;
                             }
                         }
-                    }
                     ++nowFlag;
                 }
-                for (int i = 0; i <= endFlag; ++i)
+                for (int j = 0; j <= endFlag; ++j)
                 {
-                    pathInfo[queue[i].row][queue[i].col].fleeLength = endFlag - i + 1;
-                    pathInfo[queue[i].row][queue[i].col].pExit = ptmpExit;
+                    pathInfo[queue[j].row][queue[j].col].fleeLength = endFlag - j + 1;
+                    pathInfo[queue[j].row][queue[j].col].pExit = ptmpExit;
                 }
             }
             for (int y = 0; y < height; ++y)
@@ -1146,7 +1111,7 @@ namespace Helpers
         queue[1] = endPos;
         int nowFlag = 0, endFlag = 1;
         bool hasFound = false;
-        int ret;
+        int ret = 0;
 
         while (nowFlag <= endFlag && !hasFound)
         {
@@ -1360,10 +1325,8 @@ namespace Helpers
         for (int _ = 0; _ < 4; ++_)
         {
             if (DeltaATK(gameField, myID, _) < 0)
-            {
                 if (Helpers::Distance(gameField, myPos, gameField.players[_]) <= 1)
                     return true;
-            }
         }
         return false;
     }
@@ -1581,9 +1544,8 @@ namespace AI
 				nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
 			}
 			else
-			{
 				nextGrid = gameField.players[myID];
-			}
+
 			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
 				forbiddenDirs |= 1 << (i + 1);
 			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
@@ -1634,7 +1596,7 @@ namespace AI
 			if (Helpers::DeltaATK(gameField, myID, _) > 0)
 			{
 				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
-					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+					&& (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& Helpers::Distance(gameField, myID, _) <= 2
 					&& Helpers::DeltaATK(gameField, myID, _) > 2;
@@ -1877,7 +1839,7 @@ namespace AI
     {
         std::vector<Solution> solutions;
         double max = -1e+07;
-        Pacman::Direction dir;
+        Pacman::Direction dir = {};
 
         for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
         {
