@@ -1772,15 +1772,15 @@ namespace AI
             nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
             //基于以下两点猜测减少搜索量
             //1.没有力量增加或驱逐对手却往反方向跑是无意义的
-            //2.不在生成器周围却不动是无意义的
+            //2.不在生成器周围或当前位置没有果子却不动是无意义的
             if (lastDir != Pacman::Direction::stay
                 && Pacman::dy[dir] + Pacman::dy[lastDir] == 0
                 && Pacman::dx[dir] + Pacman::dx[lastDir] == 0
                 && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
                 continue;
             if (!top && dir == Pacman::Direction::stay
-                && (!Helpers::isBesideGenerator(gameField, gameField.players[myID])
-                    || gameField.generatorTurnLeft > 3))
+                && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) || gameField.generatorTurnLeft > 3)
+				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
                 continue;
 
             for (int i = 0; i < MAX_PLAYER_COUNT; i++)
