@@ -26,7 +26,7 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.98
+#define TIME_LIMIT 0.975
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 6
@@ -1626,7 +1626,7 @@ namespace AI
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
-				if (SimpleSearch(gameField, myID, 4, NaiveAttackAI, Pacman::Direction::stay, true, true) <= DEATH_EVAL)
+				if (SimpleSearch(gameField, myID, 5, NaiveAttackAI, Pacman::Direction::stay, true, true) <= DEATH_EVAL)
 					forbiddenDirs |= 1 << (i + 1);
 				gameField.RollBack(1);
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
