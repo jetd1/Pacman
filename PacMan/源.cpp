@@ -443,16 +443,16 @@ namespace Pacman
             // 2. 玩家互殴
             for (int playerID = 0; playerID < MAX_PLAYER_COUNT; playerID++)
             {
-                auto &_p = players[playerID];
-                if (_p.dead)
+                auto &player = players[playerID];
+                if (player.dead)
                     continue;
 
                 // 判断是否有玩家在一起
-                int player, containedCount = 0;
+                int containedCount = 0;
                 int containedPlayers[MAX_PLAYER_COUNT];
-                for (player = 0; player < MAX_PLAYER_COUNT; player++)
-                    if (fieldContent[_p.row][_p.col] & playerID2Mask[player])
-                        containedPlayers[containedCount++] = player;
+                for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+                    if (fieldContent[player.row][player.col] & playerID2Mask[i])
+                        containedPlayers[containedCount++] = i;
 
                 if (containedCount > 1)
                 {
