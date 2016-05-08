@@ -36,7 +36,7 @@
 
 #ifndef _BOTZONE_ONLINE
 //#define DEBUG
-//#define PROFILING
+#define PROFILING
 #endif
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -809,8 +809,8 @@ namespace Pacman
         // data 表示自己想存储供下一回合使用的数据，留空表示删除
         // globalData 表示自己想存储供以后使用的数据（替换），这个数据可以跨对局使用，会一直绑定在这个 Bot 上，留空表示删除
         // Jet: debugData为一个Json对象，botzone上不打印，用于本地调试
-        void WriteOutput(Direction action, string tauntText = "", string data = "",
-                         string globalData = "", Json::Value debugData = "") const
+        void WriteOutput(Direction action, string& tauntText, Json::Value& data,
+                        Json::Value& globalData, Json::Value& debugData) const
         {
             debugData["seed"] = to_string(seed);
 
@@ -1088,11 +1088,12 @@ namespace Helpers
 #ifdef PROFILING
         auto startTime = clock();
 #endif
+        if (startPos == endPos)
+            return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
 
         if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
             return distance[startPos.row][startPos.col][endPos.row][endPos.col];
-        if (startPos == endPos)
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
+        
 
         //初始化广搜数组
         int** step = new int*[gameField.height];
