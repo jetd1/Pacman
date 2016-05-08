@@ -36,8 +36,10 @@
 
 #ifndef _BOTZONE_ONLINE
 //#define DEBUG
-#define PROFILING
+//#define PROFILING
 #endif
+
+//#define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
@@ -48,6 +50,8 @@ using std::string;
 using std::getline;
 using std::to_string;
 using std::runtime_error;
+
+int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
 
 // 用于调试
 namespace Debug
@@ -703,7 +707,7 @@ namespace Pacman
         // obtainedData 会输出自己上回合存储供本回合使用的数据
         // obtainedGlobalData 会输出自己的 Bot 上以前存储的数据
         // 返回值是自己的 playerID
-        int ReadInput(const char *localFileName, string &obtainedData, string &obtainedGlobalData)
+        int ReadInput(const char *localFileName, Json::Value &obtainedData, Json::Value &obtainedGlobalData)
         {
             string str, chunk;
             if (!Debug::presetString.empty())
@@ -729,6 +733,7 @@ namespace Pacman
                         str += chunk;
 #endif
             }
+
             Json::Reader reader;
             Json::Value input;
             reader.parse(str, input);
@@ -736,7 +741,7 @@ namespace Pacman
             int len = input["requests"].size();
 
             // 读取场地静态状况
-            Json::Value field = input["requests"][Json::Value::UInt(0)],
+            auto field = input["requests"][Json::Value::UInt(0)],
                 staticField = field["static"], // 墙面和产生器
                 contentField = field["content"]; // 豆子和玩家
             height = field["height"].asInt();
@@ -748,22 +753,29 @@ namespace Pacman
             PrepareInitialField(staticField, contentField);
 
             hasNext = true;
-
+            
             MapAnalyze();
 
             // 根据历史恢复局面
-            Json::Value req;
             for (int i = 1; i < len; i++)
             {
-                req = input["requests"][i];
                 for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
                     if (!players[_].dead)
-                        actions[_] = Direction(req[playerID2str[_]]["action"].asInt());
+                        actions[_] = Direction(input["requests"][i][playerID2str[_]]["action"].asInt());
                 NextTurn();
             }
 
-            obtainedData = input["data"].asString();
-            obtainedGlobalData = input["globaldata"].asString();
+            obtainedData = input["data"];
+            obtainedGlobalData = input["globaldata"];
+
+#ifdef SAVEDATA
+            int ind = 0;
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    for (int k = 0; k < height; k++)
+                        for (int l = 0; l < width; l++)
+                            distance[i][j][k][l] = input["distance"][ind++].asInt();
+#endif
 
             return field["id"].asInt();
         }
@@ -809,10 +821,27 @@ namespace Pacman
         // data 表示自己想存储供下一回合使用的数据，留空表示删除
         // globalData 表示自己想存储供以后使用的数据（替换），这个数据可以跨对局使用，会一直绑定在这个 Bot 上，留空表示删除
         // Jet: debugData为一个Json对象，botzone上不打印，用于本地调试
-        void WriteOutput(Direction action, string& tauntText, Json::Value& data,
-                        Json::Value& globalData, Json::Value& debugData) const
+        void WriteOutput(Direction action, string& tauntText, 
+                         Json::Value& data, Json::Value& globalData, Json::Value& debugData) const
         {
+#ifdef PROFILING
+            auto startTime = clock();
+#endif
+
+#ifdef SAVEDATA
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    for (int k = 0; k < height; k++)
+                        for (int l = 0; l < width; l++)
+                            data["distance"].append(distance[i][j][k][l]);
+#endif
+
             debugData["seed"] = to_string(seed);
+
+#ifdef PROFILING
+            auto&& d = Debug::debugData["profiling"]["WriteOutput()"];
+            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif 
 
             Json::Value ret;
             ret["response"]["action"] = action;
@@ -940,7 +969,6 @@ namespace Helpers
         bool operator < (const Solution& o)const { return second < o.second; }
     };
 
-    int distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
     int randomPlayCount = 0;
     std::vector<string> jiangXuan = {
         u8"赶紧续一秒 +1s",
@@ -1922,7 +1950,7 @@ int main()
     auto TAUNT = Helpers::KeepSilentMakeFortune;
 
     Pacman::GameField mainGameField;
-    string data, globalData; // 这是回合之间可以传递的信息
+    Json::Value data, globalData; // 这是回合之间可以传递的信息
                              // 如果在本地调试，有input.txt则会读取文件内容作为输入
                              // 如果在平台上，则不会去检查有无input.txt
 #ifdef _BOTZONE_ONLINE
