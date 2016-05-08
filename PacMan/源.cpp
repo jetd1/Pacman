@@ -1634,6 +1634,7 @@ namespace AI
 			}
 		}
 
+
 		if (forbiddenDirs == 31)//（基本）必死无疑
 			return Helpers::SimpleRandom(gameField, myID);
 
@@ -1692,7 +1693,7 @@ namespace AI
 		if (fruitInfo == '\0' && Helpers::RandBetween(0, 2) == 0)
 			fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
-        //		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
+        		//cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
         fruitDirInfo = fruitInfo & 7;
         playerDirInfo = playerInfo & 7;
@@ -1889,15 +1890,17 @@ namespace AI
 
         SimpleSearch(gameField, myID, depth, NaiveThinkAI, Pacman::Direction::stay, true);
 
-        for (int i = 0; i < 5; ++i)
+		for (int i = 0; i < 5; ++i)
         {
-            if (tmpEvals[i] >= max)
+            if (tmpEvals[i] > max)
             {
                 max = tmpEvals[i];
                 maxD = i;
             }
+			if (tmpEvals[i] == max && Helpers::RandBetween(0, 2))
+				maxD = i;
         }
-        return std::make_pair(Pacman::Direction(maxD - 1), max);
+		return std::make_pair(Pacman::Direction(maxD - 1), max);
     }
 
     Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
@@ -1930,6 +1933,8 @@ namespace AI
                 max = averagedEvals[i];
                 dir = Pacman::Direction(i - 1);
             }
+			if (max == averagedEvals[i] && Helpers::RandBetween(0, 2))
+				dir = Pacman::Direction(i - 1);
         }
         cout << endl;
         if (solutions.size() == 0)
