@@ -1975,7 +1975,8 @@ int main()
 
     // 中央决定一定要叫嚣
     Pacman::Direction choice = AI(mainGameField, myID); Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
-    mainGameField.WriteOutput(choice, TAUNT(), data, globalData, Debug::debugData);
+    string&& taunt = TAUNT();
+    mainGameField.WriteOutput(choice, taunt, data, globalData, Debug::debugData);
 
 #ifndef _BOTZONE_ONLINE
     system("pause");
