@@ -55,7 +55,7 @@ namespace Debug
     auto printInfo = false;
 	string presetString;
 #ifdef DEBUG
-	presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,32,0,16,0,32,16,16,0],[0,0,1,0,0,0,0,0,2,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,16,0,0,0,0,0,16,0,0],[16,16,0,0,0,0,0,0,0,16,16],[16,16,0,0,0,0,0,0,0,16,16],[0,0,16,0,0,0,0,0,16,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,4,0,0,0,0,0,8,0,0],[0,16,16,32,0,16,0,32,16,16,0]],"height":10,"id":3,"seed":1462548363,"static":[[2,10,13,5,5,1,5,5,7,10,8],[8,6,9,5,1,4,1,5,3,12,2],[4,5,6,9,6,31,12,3,12,5,4],[1,7,9,6,13,1,7,12,3,13,1],[8,5,0,1,5,4,5,1,0,5,2],[8,5,0,4,5,1,5,4,0,5,2],[4,7,12,3,13,4,7,9,6,13,4],[1,5,3,12,3,31,9,6,9,5,1],[8,3,12,5,4,1,4,5,6,9,2],[2,10,13,5,5,4,5,5,7,10,8]],"width":11},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":3}}],"responses":[{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""}]})*";
+	//presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,32,0,16,0,32,16,16,0],[0,0,1,0,0,0,0,0,2,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,16,0,0,0,0,0,16,0,0],[16,16,0,0,0,0,0,0,0,16,16],[16,16,0,0,0,0,0,0,0,16,16],[0,0,16,0,0,0,0,0,16,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,4,0,0,0,0,0,8,0,0],[0,16,16,32,0,16,0,32,16,16,0]],"height":10,"id":3,"seed":1462548363,"static":[[2,10,13,5,5,1,5,5,7,10,8],[8,6,9,5,1,4,1,5,3,12,2],[4,5,6,9,6,31,12,3,12,5,4],[1,7,9,6,13,1,7,12,3,13,1],[8,5,0,1,5,4,5,1,0,5,2],[8,5,0,4,5,1,5,4,0,5,2],[4,7,12,3,13,4,7,9,6,13,4],[1,5,3,12,3,31,9,6,9,5,1],[8,3,12,5,4,1,4,5,6,9,2],[2,10,13,5,5,4,5,5,7,10,8]],"width":11},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":3}}],"responses":[{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""}]})*";
 #endif
 
     Json::Value debugData;
@@ -1432,7 +1432,7 @@ namespace AI
         return solutions;
     }
 
-    //weaZen： 现在他只会把可能逃不出死路的值得一吃的玩家和附近可能会走进死路的玩家加入攻击范围
+    //weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器
     Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
     {
         char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
@@ -1464,11 +1464,11 @@ namespace AI
                 continue;
             if (Helpers::DeltaATK(gameField, myID, _) > 0)
             {
-                bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
+				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
                     && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
                 bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
                     && Helpers::Distance(gameField, myID, _) <= 2
-                    && Helpers::DeltaATK(gameField, myID, _) > 2;
+                    && Helpers::DeltaATK(gameField, myID, _) > 1;
 				//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -1571,6 +1571,7 @@ namespace AI
 				forbiddenDirs |= 1 << (i + 1);
 			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
 			{
+				//forbiddenDirs |= 1 << (i + 1);
 				int fleeLength = gameField.pathInfo[nextGrid.row][nextGrid.col].fleeLength;
 				bool enemyFlag = false;
 				//死路出口附近没有其他人时不用搜索了
@@ -1585,9 +1586,7 @@ namespace AI
 				//注意只有一个gamefield 模拟其他AI时注意action的还原
 				Pacman::Direction tmpDir[MAX_PLAYER_COUNT];
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-				{
 					tmpDir[_] = gameField.actions[_];
-				}
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 				{
 					if (_ == myID)
@@ -1598,13 +1597,11 @@ namespace AI
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
-				if (SimpleSearch(gameField, myID, 3, NaiveAttackAI, Pacman::Direction::stay, false, true) <= DEATH_EVAL)
+				if (SimpleSearch(gameField, myID, 4, NaiveAttackAI, Pacman::Direction::stay, true, true) <= DEATH_EVAL)
 					forbiddenDirs |= 1 << (i + 1);
 				gameField.RollBack(1);
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
-				{
 					gameField.actions[_] = tmpDir[_];
-				}
 			}
 		}
 
@@ -1624,7 +1621,7 @@ namespace AI
 					&& (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& Helpers::Distance(gameField, myID, _) <= 2
-					&& Helpers::DeltaATK(gameField, myID, _) > 2;
+					&& Helpers::DeltaATK(gameField, myID, _) > 1;
 				//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -1746,6 +1743,7 @@ namespace AI
         int max = DEATH_EVAL;
         int tmp;
         int strength = gameField.players[myID].strength;
+		int powerUpLeft = gameField.players[myID].powerUpLeft;
         //cout << depth << ' ';
 
         if (Debug::TimeOut() || depth == 0 || gameField.players[myID].dead || !gameField.hasNext)
@@ -1799,21 +1797,8 @@ namespace AI
                 if (top && !rivalFlag) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 #endif // DEBUG
             }
+
             gameField.actions[myID] = dir;
-
-            //#ifdef DEBUG
-            //			gameField.DebugPrint();
-            //			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
-            //			{
-            //				if (gameField.players[i].dead)
-            //					continue;
-            //				cout << '*' << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
-            //			}
-            //
-            //			system("pause");
-            //			//system("cls");
-            //#endif // DEBUG
-
             gameField.NextTurn();
 
             //多个玩家重叠在果子上允许返回
@@ -1825,7 +1810,16 @@ namespace AI
                     tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir);
             }
             else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI);
-            if (tmp > 0) 
+
+			//不在死路上吃到了敌人 因为有风险先还原再说
+			if (gameField.players[myID].strength - strength > 1
+				&& gameField.players[myID].powerUpLeft - powerUpLeft != 9
+				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse
+				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isExit)
+				tmp = tmp - (gameField.players[myID].strength - strength) * depth + 1;
+
+
+			if (tmp > 0) 
                 tmp += GreedyEval(gameField, myID);
             if (top
 				&& tmp > 0
@@ -1836,8 +1830,7 @@ namespace AI
             if (top && !rivalFlag) 
                 tmpEvals[dir + 1] = tmp;
             max = std::max(max, tmp);
-
-            gameField.RollBack(1);
+			gameField.RollBack(1);
 
             // 超时处理
             if (Debug::TimeOut())
