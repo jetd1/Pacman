@@ -600,13 +600,13 @@ namespace Pacman
             if (fieldContent[row][col] & smallFruit)
                 v += 1;
             if (fieldContent[row][col] & largeFruit)
-                v += isSmallMap() ? 7 : 3;
+                v += isSmallMap() ? 10 : 3;
             return v;
         }
 
         inline bool isSmallMap()const
         {
-            return height + width <= 16;
+            return height + width <= 15;
         }
 
         //weaZen: µØÍ¼·ÖÎö
