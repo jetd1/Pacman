@@ -29,7 +29,7 @@
 #define TIME_LIMIT 0.975
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define DEFAULT_DEPTH 6
+#define DEFAULT_DEPTH 5
 #define MAX_DEPTH 25
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
@@ -776,6 +776,7 @@ namespace Pacman
                     for (int j = 0; j < width; j++)
                         for (int k = 0; k < height; k++)
                             for (int l = 0; l < width; l++)
+                                //distance[i][j][k][l] = tmp[i++];
                                 distance[i][j][k][l] = tmp[i++] - 1;
 #endif
 
@@ -1980,7 +1981,7 @@ int main()
 
     // 中央决定一定要叫嚣
     auto&& choice = AI(mainGameField, myID); Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
-    auto&& taunt = TAUNT();
+    auto&& taunt = choice == Pacman::stay ? "吓得本宝宝不敢动 TAT" : TAUNT();
     mainGameField.WriteOutput(choice, taunt, data, globalData, Debug::debugData);
 
 #ifndef _BOTZONE_ONLINE
