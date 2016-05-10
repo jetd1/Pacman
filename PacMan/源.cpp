@@ -30,7 +30,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 5
-#define MAX_DEPTH 25
+#define MAX_DEPTH 20
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
@@ -1473,7 +1473,6 @@ namespace AI
     //weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器
     Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
     {
-        char fruitDirInfo, playerDirInfo, tryPlayerDirInfo;
         char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
         char playerTarget = 0;
         char tryPlayerTarget = 0;
@@ -1542,17 +1541,17 @@ namespace AI
         }
         auto&& fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
         auto&& playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget, forbiddenDirs);
-        auto&& tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
-        //一定概率放弃当前果子
+		auto&& tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
+		//一定概率放弃当前果子
         if (fruitInfo == '\0' && Helpers::RandBetween(0, 2) == 0)
             fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
         //		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
-        fruitDirInfo = fruitInfo & 7;
-        playerDirInfo = playerInfo & 7;
-        tryPlayerDirInfo = tryPlayerInfo & 7;
-
+        auto&& fruitDirInfo = fruitInfo & 7;
+        auto&& playerDirInfo = playerInfo & 7;
+        auto&& tryPlayerDirInfo = tryPlayerInfo & 7;
+		
         int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
 
         if (info >= 4)
@@ -1561,7 +1560,7 @@ namespace AI
             if (info >= 2)
                 dir = Pacman::Direction(tryPlayerDirInfo - 1);
             else
-                if (info >= 1)
+                if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
                     dir = Pacman::Direction(fruitDirInfo - 1);
                 else
                     dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
@@ -1714,7 +1713,7 @@ namespace AI
             if (info >= 2)
                 dir = Pacman::Direction(tryPlayerDirInfo - 1);
             else
-                if (info >= 1)
+                if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
                     dir = Pacman::Direction(fruitDirInfo - 1);
                 else
                     dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
@@ -1754,7 +1753,7 @@ namespace AI
                 minGeneratorDis = tmp;
         }
         if (minGeneratorDis > gameField.generatorTurnLeft)
-            e -= minGeneratorDis - gameField.generatorTurnLeft;
+            e -= 2 * (minGeneratorDis + 1 - gameField.generatorTurnLeft);
 
         int fruitEvalSum = 0;
         for (int i = 0; i < gameField.height; i++)
@@ -1979,11 +1978,11 @@ int main()
     Debug::printInfo = true;
 #endif
 
-    // 中央决定一定要叫嚣
+    // 中央决定一定要卖萌
     auto&& choice = AI(mainGameField, myID); Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
-    auto&& taunt = choice == Pacman::stay ? "吓得本宝宝不敢动 TAT" : TAUNT();
-    mainGameField.WriteOutput(choice, taunt, data, globalData, Debug::debugData);
-
+	auto&& taunt = choice == Pacman::stay ? "吓得本宝宝不敢动 TAT" : TAUNT();
+	mainGameField.WriteOutput(choice, taunt, data, globalData, Debug::debugData);
+	
 #ifndef _BOTZONE_ONLINE
     system("pause");
 #endif
