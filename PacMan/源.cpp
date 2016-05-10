@@ -30,13 +30,13 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 5
-#define MAX_DEPTH 20
+#define MAX_DEPTH 30
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
 #ifndef _BOTZONE_ONLINE
 //#define DEBUG
-//#define PROFILING
+#define PROFILING
 #endif
 
 #define SAVEDATA
@@ -1118,7 +1118,8 @@ namespace Helpers
 
     // weaZen: 双向
     // Jet: 用cc的改的
-    int Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
+    char step[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+    char Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
 #ifdef PROFILING
         auto startTime = clock();
@@ -1135,13 +1136,8 @@ namespace Helpers
 
 
         //初始化广搜数组
-        int** step = new int*[gameField.height];
-        for (int i = 0; i < gameField.height; i++)
-        {
-            step[i] = new int[gameField.width];
-            for (int j = 0; j < gameField.width; j++)
-                step[i][j] = 0;
-        }
+        memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(int));
+
         step[startPos.row][startPos.col] = 1;
         step[endPos.row][endPos.col] = -1;
 
@@ -1149,18 +1145,18 @@ namespace Helpers
         Pacman::FieldProp queue[QUEUE_MAX];
         queue[0] = startPos;
         queue[1] = endPos;
-        int nowFlag = 0, endFlag = 1;
-        bool hasFound = false;
-        int ret = 0;
+        auto nowFlag = 0, endFlag = 1;
+        auto hasFound = false;
+        auto ret = 0;
 
         while (nowFlag <= endFlag && !hasFound)
         {
-            const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-            for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
+            const auto &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+            for (auto dir = Pacman::up; dir < 4; ++dir)
             {
                 if (!(curGrid & Pacman::direction2OpposingWall[dir]))
                 {
-                    Pacman::FieldProp newPos = queue[nowFlag];
+                    auto newPos = queue[nowFlag];
                     newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
                     newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
                     if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
@@ -1196,9 +1192,6 @@ namespace Helpers
             ++nowFlag;
         }
 
-        for (int i = 0; i < gameField.height; i++)
-            delete[]step[i];
-        delete[]step;
 #ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["Distance()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -1214,6 +1207,7 @@ namespace Helpers
 
     // weaZen: 返回distance<<3 + dir + 1以便决策
     // Jet: 改写了个模版
+    Pacman::Direction dirInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
     template <typename __Pred>
     char GetTo(Pacman::GameField &gameField, int myID, __Pred pr, char forbiddenDirs = '\0')
     {
@@ -1221,25 +1215,16 @@ namespace Helpers
         auto&& startTime = clock();
 #endif
 
-        Pacman::FieldProp startPos = gameField.players[myID];
+        auto startPos = gameField.players[myID];
         if (pr(gameField, startPos) && !(forbiddenDirs & 1))
             return 0;
 
         //初始化广搜数组
-        Pacman::Direction** dirInfo = new Pacman::Direction*[gameField.height];
         for (int i = 0; i < gameField.height; i++)
-        {
-            dirInfo[i] = new Pacman::Direction[gameField.width];
             for (int j = 0; j < gameField.width; j++)
                 dirInfo[i][j] = Pacman::Direction::stay;
-        }
-        char** step = new char*[gameField.height];
-        for (int i = 0; i < gameField.height; i++)
-        {
-            step[i] = new char[gameField.width];
-            for (int j = 0; j < gameField.width; j++)
-                step[i][j] = 31;
-        }
+
+        memset(step, 1, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(int));
         step[startPos.row][startPos.col] = 0;
 
         //初始化广搜队列
@@ -1256,14 +1241,12 @@ namespace Helpers
 
         //禁止的方向设为已经访问
         for (int i = 0; i < 4; ++i)
-        {
             if (forbiddenDirs & (1 << (i + 1)) && !(gameField.fieldStatic[startPos.row][startPos.col] & Pacman::direction2OpposingWall[i]))
-                dirInfo[(startPos.row + Pacman::dy[i] + gameField.height) % gameField.height][(startPos.col + Pacman::dx[i] + gameField.width) % gameField.width] = Pacman::Direction::up;
-        }
+                dirInfo[(startPos.row + Pacman::dy[i] + gameField.height) % gameField.height][(startPos.col + Pacman::dx[i] + gameField.width) % gameField.width] = Pacman::up;
 
         while (nowFlag <= endFlag && !hasEaten)
         {
-            const Pacman::GridStaticType &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+            const auto &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
             for (int i = 0; i < 4; ++i)
                 swap(randomDir[RandBetween(0, 4)], randomDir[RandBetween(0, 4)]);
             Pacman::Direction dir;
@@ -1272,7 +1255,7 @@ namespace Helpers
                 dir = randomDir[i];
                 if (!(curGrid & Pacman::direction2OpposingWall[dir]))
                 {
-                    Pacman::FieldProp newPos = queue[nowFlag];
+                    auto newPos = queue[nowFlag];
                     newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
                     newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
                     if (dirInfo[newPos.row][newPos.col] == -1 && newPos != startPos)
@@ -1293,22 +1276,18 @@ namespace Helpers
             ++nowFlag;
         }
         if (!hasEaten)
-            return Pacman::Direction::ur + 1;
-
-        //cout << '*' << queue[endFlag].row << ' ' << queue[endFlag].col << endl;
+            return Pacman::ur + 1;
 
         //回溯
-        Pacman::Direction dir = Pacman::stay;
-        Pacman::FieldProp curPos = queue[endFlag];
+        auto dir = Pacman::stay;
+        auto curPos = queue[endFlag];
         while (curPos != startPos)
         {
             dir = dirInfo[curPos.row][curPos.col];
             curPos.row = (curPos.row - Pacman::dy[dir] + gameField.height) % gameField.height;
             curPos.col = (curPos.col - Pacman::dx[dir] + gameField.width) % gameField.width;
         }
-        for (int i = 0; i < gameField.height; i++)
-            delete[]dirInfo[i];
-        delete[]dirInfo;
+
 #ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["GetTo()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -1573,7 +1552,6 @@ namespace AI
         else
             return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
     }
-
 
     //weaZen： 会回避死亡的高级AI
     Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
