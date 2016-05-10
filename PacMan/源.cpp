@@ -1762,10 +1762,10 @@ namespace AI
                     fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
 
         //e -= fruitEvalSum / 100;
-        if (gameField.players[myID].powerUpLeft <= 0)
-            e += gameField.players[myID].strength;
-        else
-            e += gameField.players[myID].strength - 10;// + gameField.players[myID].powerUpLeft;
+		if (gameField.players[myID].powerUpLeft <= 0)
+			e += gameField.players[myID].strength;
+		else
+			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
 #ifdef PROFILING
         auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
         d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -1980,7 +1980,7 @@ int main()
 
     // 中央决定一定要卖萌
     auto&& choice = AI(mainGameField, myID); Debug::debugData["profiling"]["TimeUsed"] = Debug::TimeThrough();
-	auto&& taunt = choice == Pacman::stay ? "吓得本宝宝不敢动 TAT" : TAUNT();
+	auto&& taunt = TAUNT();// = choice == Pacman::stay ? "吓得本宝宝不敢动 TAT" : TAUNT();
 	mainGameField.WriteOutput(choice, taunt, data, globalData, Debug::debugData);
 	
 #ifndef _BOTZONE_ONLINE
