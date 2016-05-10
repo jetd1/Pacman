@@ -1,6 +1,6 @@
 ﻿/*
 * Edited By Jet, Moriarty, weaZen
-* 2016/05/05 00:31
+* 2016/05/10 22:39
 * AI XXXXX
 *
 * Pacman 样例程序
@@ -36,7 +36,7 @@
 
 #ifndef _BOTZONE_ONLINE
 //#define DEBUG
-#define PROFILING
+//#define PROFILING
 #endif
 
 #define SAVEDATA
@@ -1136,7 +1136,7 @@ namespace Helpers
 
 
         //初始化广搜数组
-        memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(int));
+        memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
 
         step[startPos.row][startPos.col] = 1;
         step[endPos.row][endPos.col] = -1;
@@ -1224,7 +1224,7 @@ namespace Helpers
             for (int j = 0; j < gameField.width; j++)
                 dirInfo[i][j] = Pacman::Direction::stay;
 
-        memset(step, 1, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(int));
+        memset(step, 31, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
         step[startPos.row][startPos.col] = 0;
 
         //初始化广搜队列
