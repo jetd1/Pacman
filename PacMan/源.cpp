@@ -735,7 +735,65 @@ namespace Pacman
             if (pr(*this, startPos) && !(forbiddenDirs & 1))
                 return 0;
 
-            //初始化广搜数组
+			std::vector<std::pair<FieldProp, int> > targetList;
+
+			int initMinDis = INT_MAX;
+			int minDis = INT_MAX;
+			int tryDis[4] = { INT_MAX, INT_MAX,INT_MAX,INT_MAX };
+
+			for (int i = 0; i < height; i++)
+				for (int j = 0; j < width; j++)
+				{
+					if (i == startPos.row && j == startPos.col)
+						continue;
+					if (pr(*this, FieldProp(i, j)))
+					{
+						targetList.push_back(std::make_pair(FieldProp(i, j), Distance(startPos, FieldProp(i, j))));
+						initMinDis = std::min(initMinDis, int(Distance(startPos, FieldProp(i, j))));
+					}
+				}
+
+			if (targetList.empty())
+				return ur + 1;
+
+			for (auto i = targetList.begin(); i != targetList.end();)
+			{
+				if ((*i).second >= initMinDis + 2)
+					i = targetList.erase(i);
+				else
+					++i;
+			}
+			
+			for (auto d = up; d <= left; ++d)
+			{
+				if (fieldStatic[startPos.row][startPos.col] & direction2OpposingWall[d])
+					continue;
+				FieldProp checkPos((startPos.row + dy[d] + height) % height, (startPos.col + dx[d] + width) % width);
+				for (auto i = targetList.begin(); i != targetList.end(); ++i)
+				{
+					tryDis[d] = std::min(tryDis[d], int(Distance(checkPos, (*i).first)));
+				}
+				minDis = std::min(minDis, tryDis[d]);
+			}
+			
+			int tmp = 0;
+			auto tmpDir = stay;
+			for (auto d = up; d <= left; ++d)
+			{
+				if (tryDis[d] == minDis && !(forbiddenDirs & (1 << (d + 1))))
+					tmpDir = tmpDir == stay ? d : (Helpers::RandBetween(0, ++tmp) ? d : tmpDir);
+			}
+			if (tmpDir != stay)
+			{
+#ifdef PROFILING
+				auto&& d = Debug::debugData["profiling"]["GetTo()"];
+				d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif
+				return (minDis << 3) + tmpDir + 1;
+			}
+				
+
+			//初始化广搜数组
             for (int i = 0; i < height; i++)
                 for (int j = 0; j < width; j++)
                     dirInfo[i][j] = Pacman::stay;
@@ -1634,7 +1692,7 @@ namespace AI
         auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
 		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
 		//一定概率放弃当前果子
-        if (fruitInfo == '\0' && Helpers::RandBetween(0, 2) == 0)
+        if (fruitInfo == '\0' && Helpers::RandBetween(0, 2))
             fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
         //		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
@@ -1866,18 +1924,21 @@ namespace AI
     Solution chooseDir(std::vector<std::vector<Solution> >& solutions)
     {
         int evalSum[5]{};
+		int tmp = 1;
         for (auto sol : solutions)
             for (int i = 0; i < 5; i++)
                 evalSum[i] += sol[i].second;
 
         int max = INVALID_EVAL;
         auto d = Pacman::Direction::stay;
-        for (int i = 0; i < 5; i++)
-            if (max < evalSum[i] || (max == evalSum[i] && (rand() % 2)))
-            {
-                max = evalSum[i];
-                d = Pacman::Direction(i - 1);
-            }
+		for (int i = 0; i < 5; i++)
+			if (max < evalSum[i])
+			{
+				max = evalSum[i];
+				d = Pacman::Direction(i - 1);
+			}
+			else if (max == evalSum[i] && Helpers::RandBetween(0, ++tmp))
+				d = Pacman::Direction(i - 1);
 
         return std::make_pair(d, max);
     }
