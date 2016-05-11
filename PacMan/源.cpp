@@ -1284,7 +1284,8 @@ namespace Helpers
     };
 
     int randomPlayCount = 0;
-    const std::vector<string> jiangXuan = {
+    const std::vector<string> jiangXuan = 
+    {
         u8"赶紧续一秒 +1s",
         u8"人吶就都不知道",
         u8"自己不可以预料",
@@ -1403,9 +1404,9 @@ namespace Helpers
 
     const std::vector<string> threeWatches =
     {
-        u8"要始终代表先进生产力的发展要求！！！",
-        u8"要始终代表先进文化的前进方向！！！",
-        u8"要始终代表最广大人民的根本利益！！！",
+        u8"始终代表先进生产力的发展要求！！！",
+        u8"始终代表先进文化的前进方向！！！",
+        u8"始终代表最广大人民的根本利益！！！",
     };
 
     inline int RandBetween(int a, int b)
@@ -1432,9 +1433,7 @@ namespace Helpers
 
     inline string ThreeWatches()
     {
-        static auto ind = 0;
-        ind = ++ind > 2 ? 0 : ind;
-        return threeWatches[ind];
+        return threeWatches[rand() % 3];
     }
 
     // Jet: 近似算直线距离
