@@ -19,10 +19,12 @@
 #include <stack>
 #include <stdexcept>
 #include <vector>
+#include <set>
 #include "jsoncpp/json.h"
 
 #define FIELD_MAX_HEIGHT 20
 #define FIELD_MAX_WIDTH 20
+#define MAX_HOTSPOT_COUNT 32
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
@@ -30,13 +32,13 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 5
-#define MAX_DEPTH 30
+#define MAX_DEPTH 35
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
 #ifndef _BOTZONE_ONLINE
 //#define DEBUG
-//#define PROFILING
+#define PROFILING
 #endif
 
 #define SAVEDATA
@@ -51,12 +53,11 @@ using std::getline;
 using std::to_string;
 using std::runtime_error;
 
-char distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
 
 // 用于调试
 namespace Debug
 {
-    auto printInfo = false;
+    auto printInfo = true;
     string presetString;
 #ifdef DEBUG
     //presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,32,0,16,0,32,16,16,0],[0,0,1,0,0,0,0,0,2,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,16,0,0,0,0,0,16,0,0],[16,16,0,0,0,0,0,0,0,16,16],[16,16,0,0,0,0,0,0,0,16,16],[0,0,16,0,0,0,0,0,16,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,4,0,0,0,0,0,8,0,0],[0,16,16,32,0,16,0,32,16,16,0]],"height":10,"id":3,"seed":1462548363,"static":[[2,10,13,5,5,1,5,5,7,10,8],[8,6,9,5,1,4,1,5,3,12,2],[4,5,6,9,6,31,12,3,12,5,4],[1,7,9,6,13,1,7,12,3,13,1],[8,5,0,1,5,4,5,1,0,5,2],[8,5,0,4,5,1,5,4,0,5,2],[4,7,12,3,13,4,7,9,6,13,4],[1,5,3,12,3,31,9,6,9,5,1],[8,3,12,5,4,1,4,5,6,9,2],[2,10,13,5,5,4,5,5,7,10,8]],"width":11},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":3}}],"responses":[{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""}]})*";
@@ -187,6 +188,8 @@ namespace Pacman
         FieldProp(int i = 0, int j = 0): row(i), col(j) {}
         bool operator==(const FieldProp &a)const { return (row == a.row && col == a.col); }
         bool operator!=(const FieldProp &a)const { return (row != a.row || col != a.col); }
+        bool operator>(const FieldProp &a)const { return (row == a.row ? col > a.col : row > a.row); }
+        bool operator<(const FieldProp &a)const { return (row == a.row ? col < a.col : row < a.row); }
     };
 
     struct PathInfoType: FieldProp
@@ -250,11 +253,12 @@ namespace Pacman
     public:
         // 场地的长和宽
         int height, width;
-        int generatorCount;
+        int generatorCount, hotSpotCount;
         int GENERATOR_INTERVAL, LARGE_FRUIT_DURATION, LARGE_FRUIT_ENHANCEMENT;
 
         //道路信息
         PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+        FieldProp hotSpot[MAX_HOTSPOT_COUNT];
 
         // 场地格子固定的内容
         GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
@@ -272,6 +276,8 @@ namespace Pacman
 
                       // 恢复到上次场地状态。可以一路恢复到最开始。
                       // 恢复失败（没有状态可恢复）返回false
+        char distance[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH][FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
+
         bool PopState()
         {
             hasNext = true;
@@ -609,18 +615,245 @@ namespace Pacman
             return height + width <= 15;
         }
 
-        //weaZen: 地图分析
-        void MapAnalyze()
+        // weaZen: 双向
+        // Jet: 用cc的改的
+        char step[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+        char Distance(const FieldProp& startPos, const FieldProp& endPos)
+        {
+#ifdef PROFILING
+            auto startTime = clock();
+#endif
+            if (startPos == endPos)
+                return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
+
+            if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
+                return distance[startPos.row][startPos.col][endPos.row][endPos.col];
+
+            if (distance[endPos.row][endPos.col][startPos.row][startPos.col])
+                return distance[startPos.row][startPos.col][endPos.row][endPos.col]
+                = distance[endPos.row][endPos.col][startPos.row][startPos.col];
+
+
+            //初始化广搜数组
+            memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
+
+            step[startPos.row][startPos.col] = 1;
+            step[endPos.row][endPos.col] = -1;
+
+            //初始化广搜队列
+            Pacman::FieldProp queue[QUEUE_MAX];
+            queue[0] = startPos;
+            queue[1] = endPos;
+            auto nowFlag = 0, endFlag = 1;
+            auto hasFound = false;
+            auto ret = 0;
+
+            while (nowFlag <= endFlag && !hasFound)
+            {
+                const auto &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+                for (auto dir = Pacman::up; dir < 4; ++dir)
+                {
+                    if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+                    {
+                        auto newPos = queue[nowFlag];
+                        newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
+                        newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
+                        if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
+                        {
+                            if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
+                            {
+                                step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
+                                distance[startPos.row][startPos.col][newPos.row][newPos.col] = step[newPos.row][newPos.col] - 1;
+                                queue[++endFlag] = newPos;
+                            }
+                            if (step[newPos.row][newPos.col] < 0)
+                            {
+                                hasFound = true;
+                                ret = step[queue[nowFlag].row][queue[nowFlag].col] - step[newPos.row][newPos.col] - 1;
+                            }
+                        }
+                        if (step[queue[nowFlag].row][queue[nowFlag].col] < 0)
+                        {
+                            if (step[newPos.row][newPos.col] < step[queue[nowFlag].row][queue[nowFlag].col] - 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
+                            {
+                                step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] - 1;
+                                distance[endPos.row][endPos.col][newPos.row][newPos.col] = -step[newPos.row][newPos.col] - 1;
+                                queue[++endFlag] = newPos;
+                            }
+                            if (step[newPos.row][newPos.col] > 0)
+                            {
+                                hasFound = true;
+                                ret = -step[queue[nowFlag].row][queue[nowFlag].col] + step[newPos.row][newPos.col] - 1;
+                            }
+                        }
+                    }
+                }
+                ++nowFlag;
+            }
+
+#ifdef PROFILING
+            auto&& d = Debug::debugData["profiling"]["Distance()"];
+            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif
+            return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
+        }
+
+        // Moriartycc: 牢记位运算优先级
+        int Distance(int alphaID, int betaID)
+        {
+            return Distance(players[alphaID], players[betaID]);
+        }
+
+        // weaZen: 返回distance<<3 + dir + 1以便决策
+        // Jet: 改写了个模版
+        Direction dirInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+        template <typename __Pred>
+        char GetTo(int myID, __Pred pr, char forbiddenDirs = '\0')
         {
 #ifdef PROFILING
             auto&& startTime = clock();
 #endif
 
+            auto startPos = players[myID];
+            if (pr(*this, startPos) && !(forbiddenDirs & 1))
+                return 0;
+
+            //初始化广搜数组
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                    dirInfo[i][j] = Pacman::stay;
+
+            memset(step, 31, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
+            step[startPos.row][startPos.col] = 0;
+
+            //初始化广搜队列
+            FieldProp queue[QUEUE_MAX];
+            queue[0] = startPos;
+            char nowFlag = 0, endFlag = 0;
+            char dis = 0;
+            bool hasEaten = false;
+
+            //初始化随机方向
+            Direction randomDir[4];
+            for (int i = 0; i < 4; ++i)
+                randomDir[i] = Direction(i);
+
+            //禁止的方向设为已经访问
+            for (int i = 0; i < 4; ++i)
+                if (forbiddenDirs & (1 << (i + 1)) && !(fieldStatic[startPos.row][startPos.col] & direction2OpposingWall[i]))
+                    dirInfo[(startPos.row + dy[i] + height) % height][(startPos.col + dx[i] + width) % width] = up;
+
+            while (nowFlag <= endFlag && !hasEaten)
+            {
+                const auto &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+                for (int i = 0; i < 4; ++i)
+                    swap(randomDir[rand() % 4], randomDir[rand() % 4]);
+                Direction dir;
+                for (int i = 0; i < 4; ++i)
+                {
+                    dir = randomDir[i];
+                    if (!(curGrid & direction2OpposingWall[dir]))
+                    {
+                        auto newPos = queue[nowFlag];
+                        newPos.row = (newPos.row + dy[dir] + height) % height;
+                        newPos.col = (newPos.col + dx[dir] + width) % width;
+                        if (dirInfo[newPos.row][newPos.col] == -1 && newPos != startPos)
+                        {
+                            if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1)
+                                step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
+                            dirInfo[newPos.row][newPos.col] = dir;
+                            queue[++endFlag] = newPos;
+                            if (pr(*this, newPos))
+                            {
+                                hasEaten = true;
+                                dis = step[queue[endFlag].row][queue[endFlag].col];
+                                break;
+                            }
+                        }
+                    }
+                }
+                ++nowFlag;
+            }
+            if (!hasEaten)
+                return ur + 1;
+
+            //回溯
+            auto dir = stay;
+            auto curPos = queue[endFlag];
+            while (curPos != startPos)
+            {
+                dir = dirInfo[curPos.row][curPos.col];
+                curPos.row = (curPos.row - dy[dir] + height) % height;
+                curPos.col = (curPos.col - dx[dir] + width) % width;
+            }
+
+#ifdef PROFILING
+            auto&& d = Debug::debugData["profiling"]["GetTo()"];
+            d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
+#endif
+
+            return (dis << 3) + dir + 1;
+        }
+
+        //weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
+        char GetToTarget(int myID, int target, char forbiddenDirs = '\0')
+        {
+            if (target == 0)
+                return ur + 1;
+            return GetTo(myID,
+                ([target](const GameField& gameField, const FieldProp& pos)
+            {
+                return gameField.fieldContent[pos.row][pos.col] & target;
+            })
+                         , forbiddenDirs);
+        }
+
+        //weaZen: 把判断是不是在生成器旁边的函数单独拿出来 搜索有用
+        // Jet: 没豆子吃的时候去生成器旁边等着
+        bool atHotSpot(const FieldProp& pos)
+        {
+            for (int i = 0; i < hotSpotCount; i++)
+                if (pos == hotSpot[i])
+                    return true;
+            return false;
+        }
+
+        char GetToHotSpot(int myID, char forbiddenDirs = '\0')
+        {
+            return GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
+            {
+                for (int i = 0; i < gameField.hotSpotCount; i++)
+                    if (pos == gameField.hotSpot[i])
+                        return true;
+                return false;
+            }, forbiddenDirs);
+        }
+
+        bool isGenerator(const FieldProp& pos)
+        {
+            for (int i = 0; i < generatorCount; i++)
+                if (pos == generators[generatorCount])
+                    return true;
+            return false;
+        }
+
+        bool isBeside(const FieldProp& pos1, const FieldProp& pos2)
+        {
+            return Distance(pos1, pos2) == 1;
+        }
+
+        //weaZen: 地图分析
+        //Jet: 分析HOTSPOT
+        void MapAnalyze()
+        {
+#ifdef PROFILING
+            auto&& startTime = clock();
+#endif
+            //分析PathInfo
             FieldProp deadSpot[40];
             int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
-            int dCount = 0;
-            PathInfoType * ptmpExit;
-            ptmpExit = nullptr;
+            auto dCount = 0;
+            PathInfoType * ptmpExit = nullptr;
 
             for (int y = 0; y < height; ++y)
             {
@@ -628,7 +861,7 @@ namespace Pacman
                 {
                     pathInfo[y][x].row = y;
                     pathInfo[y][x].col = x;
-                    int degreeCount = 0;
+                    auto degreeCount = 0;
                     for (auto dir = up; dir < 4; ++dir)
                         if (!(fieldStatic[y][x] & direction2OpposingWall[dir]))
                             ++degreeCount;
@@ -643,19 +876,19 @@ namespace Pacman
             }
             for (int i = 0; i < dCount; ++i)
             {
-                FieldProp startPos = deadSpot[i];
+                auto startPos = deadSpot[i];
                 FieldProp queue[QUEUE_MAX];
                 queue[0] = startPos;
-                int nowFlag = 0, endFlag = 0;
+                auto nowFlag = 0, endFlag = 0;
                 while (nowFlag <= endFlag)
                 {
-                    const Pacman::GridStaticType &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-                    for (Pacman::Direction dir = Pacman::Direction::up; dir < 4; ++dir)
-                        if (!(curGrid & Pacman::direction2OpposingWall[dir]))
+                    const auto &curGrid = fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
+                    for (auto dir = up; dir < 4; ++dir)
+                        if (!(curGrid & direction2OpposingWall[dir]))
                         {
-                            Pacman::FieldProp newPos = queue[nowFlag];
-                            newPos.row = (newPos.row + Pacman::dy[dir] + height) % height;
-                            newPos.col = (newPos.col + Pacman::dx[dir] + width) % width;
+                            auto newPos = queue[nowFlag];
+                            newPos.row = (newPos.row + dy[dir] + height) % height;
+                            newPos.col = (newPos.col + dx[dir] + width) % width;
                             --degree[newPos.row][newPos.col];
                             if (degree[newPos.row][newPos.col] == 1 && !pathInfo[newPos.row][newPos.col].isImpasse)
                             {
@@ -672,15 +905,15 @@ namespace Pacman
                         }
                     ++nowFlag;
                 }
-                for (int j = 0; j <= endFlag; ++j)
+                for (auto j = 0; j <= endFlag; ++j)
                 {
                     pathInfo[queue[j].row][queue[j].col].fleeLength = endFlag - j + 1;
                     pathInfo[queue[j].row][queue[j].col].pExit = ptmpExit;
                 }
             }
-            for (int y = 0; y < height; ++y)
+            for (auto y = 0; y < height; ++y)
             {
-                for (int x = 0; x < width; ++x)
+                for (auto x = 0; x < width; ++x)
                 {
                     if (pathInfo[y][x].isImpasse)
                     {
@@ -694,6 +927,63 @@ namespace Pacman
                     }
                 }
             }
+
+
+            //分析HotSpot
+            std::set<FieldProp> fruits;
+            for (int i = 0; i < generatorCount; i++)
+                for (auto d = up; d < 8; ++d)
+                    fruits.insert(FieldProp((generators[i].row + dy[d] + height) % height, (generators[i].col + dx[d] + width) % width));
+
+            FieldProp tmp;
+            int heatMap[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
+            char tmpDis;
+            auto min = MAX_INT;
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                {
+                    tmp.row = i, tmp.col = j;
+                    if (isGenerator(tmp))
+                    {
+                        heatMap[i][j] = -255;
+                        continue;
+                    }
+                    for (auto fruit: fruits)
+                    {
+                        tmpDis = Distance(tmp, fruit);
+                        tmpDis = tmpDis >= 4 ? 10 : tmpDis;
+                        tmpDis = tmpDis == 0 ? -4 : tmpDis + 2;
+                        heatMap[i][j] += tmpDis;
+                    }
+                    if (heatMap[i][j] <= 0)
+                        continue;
+
+                    if (heatMap[i][j] < min)
+                    {
+                        min = heatMap[i][j];
+                        hotSpotCount = 0;
+                        hotSpot[hotSpotCount++] = tmp;
+                    }
+                    else if (heatMap[i][j] == min)
+                        hotSpot[hotSpotCount++] = tmp;
+                }
+
+            auto minmin = min;
+            min += 2;
+            for (int i = 0; i < height; i++)
+                for (int j = 0; j < width; j++)
+                {
+                    tmp.row = i, tmp.col = j;
+
+                    if (heatMap[i][j] <= min && heatMap[i][j] > minmin)
+                    {
+                        min = heatMap[i][j];
+                        hotSpot[hotSpotCount++] = tmp;
+                    }
+                }
+
+
+
 #ifdef PROFILING
             auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
             d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -1116,216 +1406,6 @@ namespace Helpers
         return "";
     }
 
-    // weaZen: 双向
-    // Jet: 用cc的改的
-    char step[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
-    char Distance(const Pacman::GameField &gameField, Pacman::FieldProp startPos, Pacman::FieldProp endPos)
-    {
-#ifdef PROFILING
-        auto startTime = clock();
-#endif
-        if (startPos == endPos)
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col] = 0;
-
-        if (distance[startPos.row][startPos.col][endPos.row][endPos.col])
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col];
-
-        if (distance[endPos.row][endPos.col][startPos.row][startPos.col])
-            return distance[startPos.row][startPos.col][endPos.row][endPos.col]
-                = distance[endPos.row][endPos.col][startPos.row][startPos.col];
-
-
-        //初始化广搜数组
-        memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
-
-        step[startPos.row][startPos.col] = 1;
-        step[endPos.row][endPos.col] = -1;
-
-        //初始化广搜队列
-        Pacman::FieldProp queue[QUEUE_MAX];
-        queue[0] = startPos;
-        queue[1] = endPos;
-        auto nowFlag = 0, endFlag = 1;
-        auto hasFound = false;
-        auto ret = 0;
-
-        while (nowFlag <= endFlag && !hasFound)
-        {
-            const auto &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-            for (auto dir = Pacman::up; dir < 4; ++dir)
-            {
-                if (!(curGrid & Pacman::direction2OpposingWall[dir]))
-                {
-                    auto newPos = queue[nowFlag];
-                    newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
-                    newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
-                    if (step[queue[nowFlag].row][queue[nowFlag].col] > 0)
-                    {
-                        if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
-                        {
-                            step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
-                            distance[startPos.row][startPos.col][newPos.row][newPos.col] = step[newPos.row][newPos.col] - 1;
-                            queue[++endFlag] = newPos;
-                        }
-                        if (step[newPos.row][newPos.col] < 0)
-                        {
-                            hasFound = true;
-                            ret = step[queue[nowFlag].row][queue[nowFlag].col] - step[newPos.row][newPos.col] - 1;
-                        }
-                    }
-                    if (step[queue[nowFlag].row][queue[nowFlag].col] < 0)
-                    {
-                        if (step[newPos.row][newPos.col] < step[queue[nowFlag].row][queue[nowFlag].col] - 1 || step[newPos.row][newPos.col] == 0) //新的点是好的
-                        {
-                            step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] - 1;
-                            distance[endPos.row][endPos.col][newPos.row][newPos.col] = -step[newPos.row][newPos.col] - 1;
-                            queue[++endFlag] = newPos;
-                        }
-                        if (step[newPos.row][newPos.col] > 0)
-                        {
-                            hasFound = true;
-                            ret = -step[queue[nowFlag].row][queue[nowFlag].col] + step[newPos.row][newPos.col] - 1;
-                        }
-                    }
-                }
-            }
-            ++nowFlag;
-        }
-
-#ifdef PROFILING
-        auto&& d = Debug::debugData["profiling"]["Distance()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-#endif
-        return distance[startPos.row][startPos.col][endPos.row][endPos.col] = ret;
-    }
-
-    // Moriartycc: 牢记位运算优先级
-    int Distance(const Pacman::GameField &gameField, int alphaID, int betaID)
-    {
-        return Distance(gameField, gameField.players[alphaID], gameField.players[betaID]);
-    }
-
-    // weaZen: 返回distance<<3 + dir + 1以便决策
-    // Jet: 改写了个模版
-    Pacman::Direction dirInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
-    template <typename __Pred>
-    char GetTo(Pacman::GameField &gameField, int myID, __Pred pr, char forbiddenDirs = '\0')
-    {
-#ifdef PROFILING
-        auto&& startTime = clock();
-#endif
-
-        auto startPos = gameField.players[myID];
-        if (pr(gameField, startPos) && !(forbiddenDirs & 1))
-            return 0;
-
-        //初始化广搜数组
-        for (int i = 0; i < gameField.height; i++)
-            for (int j = 0; j < gameField.width; j++)
-                dirInfo[i][j] = Pacman::Direction::stay;
-
-        memset(step, 31, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
-        step[startPos.row][startPos.col] = 0;
-
-        //初始化广搜队列
-        Pacman::FieldProp queue[QUEUE_MAX];
-        queue[0] = startPos;
-        char nowFlag = 0, endFlag = 0;
-        char dis = 0;
-        bool hasEaten = false;
-
-        //初始化随机方向
-        Pacman::Direction randomDir[4];
-        for (int i = 0; i < 4; ++i)
-            randomDir[i] = Pacman::Direction(i);
-
-        //禁止的方向设为已经访问
-        for (int i = 0; i < 4; ++i)
-            if (forbiddenDirs & (1 << (i + 1)) && !(gameField.fieldStatic[startPos.row][startPos.col] & Pacman::direction2OpposingWall[i]))
-                dirInfo[(startPos.row + Pacman::dy[i] + gameField.height) % gameField.height][(startPos.col + Pacman::dx[i] + gameField.width) % gameField.width] = Pacman::up;
-
-        while (nowFlag <= endFlag && !hasEaten)
-        {
-            const auto &curGrid = gameField.fieldStatic[queue[nowFlag].row][queue[nowFlag].col];
-            for (int i = 0; i < 4; ++i)
-                swap(randomDir[RandBetween(0, 4)], randomDir[RandBetween(0, 4)]);
-            Pacman::Direction dir;
-            for (int i = 0; i < 4; ++i)
-            {
-                dir = randomDir[i];
-                if (!(curGrid & Pacman::direction2OpposingWall[dir]))
-                {
-                    auto newPos = queue[nowFlag];
-                    newPos.row = (newPos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
-                    newPos.col = (newPos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
-                    if (dirInfo[newPos.row][newPos.col] == -1 && newPos != startPos)
-                    {
-                        if (step[newPos.row][newPos.col] > step[queue[nowFlag].row][queue[nowFlag].col] + 1)
-                            step[newPos.row][newPos.col] = step[queue[nowFlag].row][queue[nowFlag].col] + 1;
-                        dirInfo[newPos.row][newPos.col] = dir;
-                        queue[++endFlag] = newPos;
-                        if (pr(gameField, newPos))
-                        {
-                            hasEaten = true;
-                            dis = step[queue[endFlag].row][queue[endFlag].col];
-                            break;
-                        }
-                    }
-                }
-            }
-            ++nowFlag;
-        }
-        if (!hasEaten)
-            return Pacman::ur + 1;
-
-        //回溯
-        auto dir = Pacman::stay;
-        auto curPos = queue[endFlag];
-        while (curPos != startPos)
-        {
-            dir = dirInfo[curPos.row][curPos.col];
-            curPos.row = (curPos.row - Pacman::dy[dir] + gameField.height) % gameField.height;
-            curPos.col = (curPos.col - Pacman::dx[dir] + gameField.width) % gameField.width;
-        }
-
-#ifdef PROFILING
-        auto&& d = Debug::debugData["profiling"]["GetTo()"];
-        d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
-#endif
-
-        return (dis << 3) + dir + 1;
-    }
-
-    //weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
-    char GetToTarget(Pacman::GameField &gameField, int myID, int target, char forbiddenDirs = '\0')
-    {
-        if (target == 0)
-            return Pacman::Direction::ur + 1;
-        return GetTo(gameField, myID,
-                     [target](const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
-        { return gameField.fieldContent[pos.row][pos.col] & target; }, forbiddenDirs);
-    }
-
-    //weaZen: 把判断是不是在生成器旁边的函数单独拿出来 搜索有用
-    // Jet: 没豆子吃的时候去生成器旁边等着
-    bool isBesideGenerator(const Pacman::GameField& gameField, const Pacman::FieldProp& pos)
-    {
-        for (int i = 0; i < gameField.generatorCount; i++)
-            for (Pacman::Direction d = Pacman::Direction::up; d < 8; ++d)
-            {
-                int r = (gameField.generators[i].row + Pacman::dy[d] + gameField.height) % gameField.height,
-                    c = (gameField.generators[i].col + Pacman::dx[d] + gameField.width) % gameField.width;
-                if (pos.row == r && pos.col == c)
-                    return true;
-            }
-        return false;
-    }
-
-    char GetToNearbyGenerator(Pacman::GameField &gameField, int myID, char forbiddenDirs = '\0')
-    {
-        return GetTo(gameField, myID, isBesideGenerator, forbiddenDirs);
-    }
-
     // Jet: 近似算直线距离
     inline int ApprDirectDistance(Pacman::FieldProp startPos, Pacman::FieldProp endPos)
     {
@@ -1333,7 +1413,7 @@ namespace Helpers
     }
 
     // weaZen:简单的危险判断
-    bool DangerJudge(const Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
+    bool DangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
     {
         const Pacman::Player & me = gameField.players[myID];
         Pacman::FieldProp myPos;
@@ -1347,7 +1427,7 @@ namespace Helpers
         for (int _ = 0; _ < 4; ++_)
         {
             if (DeltaATK(gameField, myID, _) < 0)
-                if (Helpers::Distance(gameField, myPos, gameField.players[_]) <= 1)
+                if (gameField.Distance(myPos, gameField.players[_]) <= 1)
                     return true;
         }
         return false;
@@ -1480,9 +1560,9 @@ namespace AI
             if (Helpers::DeltaATK(gameField, myID, _) > 0)
             {
                 bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
-                    && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
+                    && gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
                 bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
-                    && Helpers::Distance(gameField, myID, _) <= 2
+                    && gameField.Distance(myID, _) <= 2
                     && Helpers::DeltaATK(gameField, myID, _) > 1;
                 //夹道里被追击的弱AI
                 if (!preyFlag && !tryPreyFlag)
@@ -1509,7 +1589,7 @@ namespace AI
                                 }
                             }
                     }
-                    if (dirCount == 1 && Helpers::Distance(gameField, myID, _) <= 2)
+                    if (dirCount == 1 && gameField.Distance(myID, _) <= 2)
                         tryPreyFlag = true;
                 }
                 if (preyFlag)
@@ -1518,12 +1598,12 @@ namespace AI
                     tryPlayerTarget |= Pacman::playerID2Mask[_];
             }
         }
-        auto&& fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
-        auto&& playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget, forbiddenDirs);
-		auto&& tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
+        auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
+        auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
+		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
 		//一定概率放弃当前果子
         if (fruitInfo == '\0' && Helpers::RandBetween(0, 2) == 0)
-            fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs | 1);
+            fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
         //		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
@@ -1542,7 +1622,7 @@ namespace AI
                 if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
                     dir = Pacman::Direction(fruitDirInfo - 1);
                 else
-                    dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
+                    dir = Pacman::Direction((gameField.GetToHotSpot(myID, forbiddenDirs) & 7) - 1);
 
         if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
             return dir;
@@ -1591,7 +1671,7 @@ namespace AI
                 for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
                 {
                     if (_ == myID) continue;
-                    if (Helpers::Distance(gameField, gameField.players[_], *gameField.pathInfo[nextGrid.row][nextGrid.col].pExit) <= fleeLength + 1)
+                    if (gameField.Distance(gameField.players[_], *gameField.pathInfo[nextGrid.row][nextGrid.col].pExit) <= fleeLength + 1)
                         enemyFlag = true;
                 }
                 if (!enemyFlag) continue;
@@ -1631,9 +1711,9 @@ namespace AI
             if (Helpers::DeltaATK(gameField, myID, _) > 0)
             {
                 bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
-                    && (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= Helpers::Distance(gameField, gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
+                    && (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
                 bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
-                    && Helpers::Distance(gameField, myID, _) <= 2
+                    && gameField.Distance(myID, _) <= 2
                     && Helpers::DeltaATK(gameField, myID, _) > 1;
                 //夹道里被追击的弱AI
                 if (!preyFlag && !tryPreyFlag)
@@ -1660,7 +1740,7 @@ namespace AI
                                 }
                             }
                     }
-                    if (dirCount == 1 && Helpers::Distance(gameField, myID, _) <= 2)
+                    if (dirCount == 1 && gameField.Distance(myID, _) <= 2)
                         tryPreyFlag = true;
                 }
                 if (preyFlag)
@@ -1670,12 +1750,12 @@ namespace AI
             }
         }
 
-        auto&& fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs);
-        auto&& playerInfo = Helpers::GetToTarget(gameField, myID, playerTarget, forbiddenDirs);
-        auto&& tryPlayerInfo = Helpers::GetToTarget(gameField, myID, tryPlayerTarget, forbiddenDirs);
+        auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
+        auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
+        auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
         //一定概率放弃当前果子
         if (fruitInfo == '\0' && Helpers::RandBetween(0, 2) == 0)
-            fruitInfo = Helpers::GetToTarget(gameField, myID, fruitTarget, forbiddenDirs | 1);
+            fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
         //cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
@@ -1694,7 +1774,7 @@ namespace AI
                 if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
                     dir = Pacman::Direction(fruitDirInfo - 1);
                 else
-                    dir = Pacman::Direction((Helpers::GetToNearbyGenerator(gameField, myID, forbiddenDirs) & 7) - 1);
+                    dir = Pacman::Direction((gameField.GetToHotSpot(myID, forbiddenDirs) & 7) - 1);
 
         if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
             return dir;
@@ -1733,13 +1813,13 @@ namespace AI
         if (minGeneratorDis > gameField.generatorTurnLeft)
             e -= 2 * (minGeneratorDis + 1 - gameField.generatorTurnLeft);
 
-        int fruitEvalSum = 0;
-        for (int i = 0; i < gameField.height; i++)
-            for (int j = 0; j < gameField.width; j++)
-                if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-                    fruitEvalSum += tmp * Helpers::Distance(gameField, Pacman::FieldProp(i, j), gameField.players[myID]);
-
+        //int fruitEvalSum = 0;
+        //for (int i = 0; i < gameField.height; i++)
+        //    for (int j = 0; j < gameField.width; j++)
+        //        if ((tmp = gameField.GetFruitValue(i, j)) != 0)
+        //            fruitEvalSum += tmp * gameField.Distance(Pacman::FieldProp(i, j), gameField.players[myID]);
         //e -= fruitEvalSum / 100;
+
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
@@ -1796,7 +1876,7 @@ namespace AI
                 && !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
                 continue;
             if (!top && dir == Pacman::Direction::stay
-                && (!Helpers::isBesideGenerator(gameField, gameField.players[myID]) || gameField.generatorTurnLeft > 3)
+                && (!gameField.atHotSpot(gameField.players[myID]) || gameField.generatorTurnLeft > 3)
                 && !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
                 continue;
 
