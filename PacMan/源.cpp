@@ -36,11 +36,8 @@
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
-#ifndef _BOTZONE_ONLINE
 //#define DEBUG
 #define PROFILING
-#endif
-
 #define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -951,8 +948,8 @@ namespace Pacman
                     for (auto fruit: fruits)
                     {
                         tmpDis = Distance(tmp, fruit);
-                        tmpDis = tmpDis >= 4 ? 10 : tmpDis;
-                        tmpDis = tmpDis == 0 ? -4 : tmpDis + 2;
+                        tmpDis = tmpDis >= 4 ? 8 : tmpDis;
+                        tmpDis = tmpDis == 0 ? -2 * generatorCount : tmpDis + generatorCount;
                         heatMap[i][j] += tmpDis;
                     }
                     if (heatMap[i][j] <= 0)
