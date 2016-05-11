@@ -630,6 +630,26 @@ namespace Pacman
                 return distance[startPos.row][startPos.col][endPos.row][endPos.col]
                 = distance[endPos.row][endPos.col][startPos.row][startPos.col];
 
+			//对死路的优化
+			if (pathInfo[startPos.row][startPos.col].isImpasse
+				&& !pathInfo[endPos.row][endPos.col].isImpasse)
+				return distance[startPos.row][startPos.col][endPos.row][endPos.col]
+				= Distance( *pathInfo[startPos.row][startPos.col].pExit, endPos)
+				+ pathInfo[startPos.row][startPos.col].fleeLength;
+
+			if (!pathInfo[startPos.row][startPos.col].isImpasse
+				&& pathInfo[endPos.row][endPos.col].isImpasse)
+				return distance[startPos.row][startPos.col][endPos.row][endPos.col]
+				= Distance( startPos, *pathInfo[endPos.row][endPos.col].pExit)
+				+ pathInfo[endPos.row][endPos.col].fleeLength;
+
+			if (pathInfo[startPos.row][startPos.col].isImpasse
+				&& pathInfo[startPos.row][startPos.col].isImpasse
+				&& pathInfo[startPos.row][startPos.col].pExit != pathInfo[startPos.row][startPos.col].pExit)
+				return distance[startPos.row][startPos.col][endPos.row][endPos.col]
+				= Distance( *pathInfo[startPos.row][startPos.col].pExit, *pathInfo[endPos.row][endPos.col].pExit)
+				+ pathInfo[endPos.row][endPos.col].fleeLength
+				+ pathInfo[startPos.row][startPos.col].fleeLength;
 
             //初始化广搜数组
             memset(step, 0, FIELD_MAX_HEIGHT * FIELD_MAX_WIDTH * sizeof(char));
