@@ -1951,7 +1951,7 @@ namespace AI
             if (tmp > max)
                 max = tmp;
             if (depth == maxDepth)
-                solutions[dir + 1].second = std::max(solutions[dir + 1].second, max);
+                solutions[dir + 1].second = std::max(solutions[dir + 1].second, tmp);
             gameField.RollBack(1);
 
             // 超时处理
@@ -1995,7 +1995,7 @@ namespace AI
             }
 
             solutions.push_back(tmpSol);
-            for (auto i = Pacman::stay; i < Pacman::left; ++i)
+            for (auto i = Pacman::stay; i <= Pacman::left; ++i)
                 Debug::debugData[Helpers::depth2String(depth)]["evals"][Pacman::dirStr[i + 1]] = tmpSol[i + 1].second;
             Debug::debugData[Helpers::depth2String(depth)]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 
