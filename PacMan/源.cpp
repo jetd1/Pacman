@@ -31,8 +31,8 @@
 #define TIME_LIMIT 0.95
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
-#define DEFAULT_DEPTH 5
-#define MAX_DEPTH 35
+#define DEFAULT_DEPTH 1
+#define MAX_DEPTH 20
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
