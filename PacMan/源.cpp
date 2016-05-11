@@ -32,12 +32,12 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 1
-#define MAX_DEPTH 20
+#define MAX_DEPTH 30
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
 //#define DEBUG
-#define PROFILING
+//#define PROFILING
 #define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -54,7 +54,7 @@ using std::runtime_error;
 // 用于调试
 namespace Debug
 {
-    auto printInfo = true;
+    auto printInfo = false;
     string presetString;
 #ifdef DEBUG
     //presetString = R"*({"requests":[{"GENERATOR_INTERVAL":20,"LARGE_FRUIT_DURATION":10,"LARGE_FRUIT_ENHANCEMENT":10,"content":[[0,16,16,32,0,16,0,32,16,16,0],[0,0,1,0,0,0,0,0,2,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,16,0,0,0,0,0,16,0,0],[16,16,0,0,0,0,0,0,0,16,16],[16,16,0,0,0,0,0,0,0,16,16],[0,0,16,0,0,0,0,0,16,0,0],[16,0,0,0,16,0,16,0,0,0,16],[0,0,4,0,0,0,0,0,8,0,0],[0,16,16,32,0,16,0,32,16,16,0]],"height":10,"id":3,"seed":1462548363,"static":[[2,10,13,5,5,1,5,5,7,10,8],[8,6,9,5,1,4,1,5,3,12,2],[4,5,6,9,6,31,12,3,12,5,4],[1,7,9,6,13,1,7,12,3,13,1],[8,5,0,1,5,4,5,1,0,5,2],[8,5,0,4,5,1,5,4,0,5,2],[4,7,12,3,13,4,7,9,6,13,4],[1,5,3,12,3,31,9,6,9,5,1],[8,3,12,5,4,1,4,5,6,9,2],[2,10,13,5,5,4,5,5,7,10,8]],"width":11},{"0":{"action":1},"1":{"action":2},"2":{"action":1},"3":{"action":0}},{"0":{"action":1},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":2},"1":{"action":3},"2":{"action":0},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":0},"1":{"action":1},"2":{"action":2},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":0},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":2},"1":{"action":1},"2":{"action":1},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":2},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":3},"3":{"action":3}},{"0":{"action":3},"1":{"action":1},"2":{"action":3},"3":{"action":1}},{"0":{"action":0},"1":{"action":3},"2":{"action":-1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":1},"1":{"action":3},"2":{"action":1},"3":{"action":3}},{"0":{"action":1},"1":{"action":1},"2":{"action":-1},"3":{"action":1}},{"0":{"action":3},"1":{"action":3},"2":{"action":1},"3":{"action":3}}],"responses":[{"action":0,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""},{"action":1,"tauntText":""},{"action":3,"tauntText":""}]})*";
@@ -1284,7 +1284,7 @@ namespace Helpers
     };
 
     int randomPlayCount = 0;
-    std::vector<string> jiangXuan = {
+    const std::vector<string> jiangXuan = {
         u8"赶紧续一秒 +1s",
         u8"人吶就都不知道",
         u8"自己不可以预料",
@@ -1401,6 +1401,13 @@ namespace Helpers
         "No Future For U"*/
     };
 
+    const std::vector<string> threeWatches =
+    {
+        u8"要始终代表先进生产力的发展要求！！！",
+        u8"要始终代表先进文化的前进方向！！！",
+        u8"要始终代表最广大人民的根本利益！！！",
+    };
+
     inline int RandBetween(int a, int b)
     {
         if (a > b)
@@ -1421,6 +1428,13 @@ namespace Helpers
     inline string KeepSilentMakeFortune()
     {
         return "";
+    }
+
+    inline string ThreeWatches()
+    {
+        static auto ind = 0;
+        ind = ++ind > 2 ? 0 : ind;
+        return threeWatches[ind];
     }
 
     // Jet: 近似算直线距离
@@ -2020,7 +2034,7 @@ namespace AI
 int main()
 {
     auto AI = AI::IterativeGreedySearch;
-    auto TAUNT = Helpers::KeepSilentMakeFortune;
+    auto TAUNT = Helpers::ThreeWatches;
 
     Pacman::GameField mainGameField;
     Json::Value data, globalData; // 这是回合之间可以传递的信息
