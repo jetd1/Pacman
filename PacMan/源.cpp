@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <vector>
 #include <set>
+#include <climits>
 #include "jsoncpp/json.h"
 
 #define FIELD_MAX_HEIGHT 20
@@ -770,19 +771,16 @@ namespace Pacman
 					continue;
 				FieldProp checkPos((startPos.row + dy[d] + height) % height, (startPos.col + dx[d] + width) % width);
 				for (auto i = targetList.begin(); i != targetList.end(); ++i)
-				{
 					tryDis[d] = std::min(tryDis[d], int(Distance(checkPos, (*i).first)));
-				}
 				minDis = std::min(minDis, tryDis[d]);
 			}
 			
-			int tmp = 0;
+			int tmp = 1;
 			auto tmpDir = stay;
 			for (auto d = up; d <= left; ++d)
-			{
 				if (tryDis[d] == minDis && !(forbiddenDirs & (1 << (d + 1))))
-					tmpDir = tmpDir == stay ? d : (Helpers::RandBetween(0, ++tmp) ? d : tmpDir);
-			}
+					tmpDir = tmpDir == stay ? d : (rand() % ++tmp) ? d : tmpDir;
+
 			if (tmpDir != stay)
 			{
 #ifdef PROFILING
