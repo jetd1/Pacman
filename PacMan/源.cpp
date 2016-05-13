@@ -1899,8 +1899,13 @@ namespace AI
 			strengthSum += gameField.players[i].strength;
 
 		if (!gameField.hasNext)
-			return 1000 * gameField.players[myID].strength / strengthSum - 250;
-
+		{
+			int weakCount = 0;
+			for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+				if (gameField.players[i].strength < gameField.players[myID].strength)
+					++weakCount;
+			return 100 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 10;
+		}
 		int e = 0;
 
 		char tmp;
