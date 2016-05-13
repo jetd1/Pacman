@@ -791,7 +791,7 @@ namespace Pacman
 			auto tmpDir = stay;
 			for (auto d = up; d <= left; ++d)
 				if (tryDis[d] == minDis && !(forbiddenDirs & (1 << (d + 1))))
-					tmpDir = tmpDir == stay ? d : ((rand() % ++tmp) ? d : tmpDir);
+					tmpDir = tmpDir == stay ? d : ((rand() % ++tmp) ? tmpDir : d);
 
 			if (tmpDir != stay)
 			{
@@ -1987,7 +1987,7 @@ namespace AI
 				max = evalWeighedAverage[i];
 				d = Pacman::Direction(i - 1);
 			}
-			else if (max == evalWeighedAverage[i] && Helpers::RandBetween(0, ++tmp))
+			else if (max == evalWeighedAverage[i] && Helpers::RandBetween(0, ++tmp) == 0)
 				d = Pacman::Direction(i - 1);
 
 		return std::make_pair(d, max);
