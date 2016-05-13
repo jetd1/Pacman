@@ -194,8 +194,9 @@ namespace Pacman
 		bool isImpasse;
 		bool isExit;
 		int fleeLength;//到死路出口的距离
+		int impasseDepth;//死路最大深度
 		PathInfoType * pExit;
-		PathInfoType(int y = 0, int x = 0) : FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), pExit(nullptr) {}
+		PathInfoType(int y = 0, int x = 0) : FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), impasseDepth(0), pExit(nullptr) {}
 	};
 
 	// 场地上的玩家
@@ -985,6 +986,7 @@ namespace Pacman
 					pathInfo[queue[j].row][queue[j].col].fleeLength = endFlag - j + 1;
 					pathInfo[queue[j].row][queue[j].col].pExit = ptmpExit;
 				}
+				(*ptmpExit).impasseDepth = endFlag + 1;
 			}
 			for (auto y = 0; y < height; ++y)
 			{
@@ -995,6 +997,8 @@ namespace Pacman
 						ptmpExit = pathInfo[y][x].pExit;
 						while (ptmpExit != ptmpExit->pExit)
 						{
+							ptmpExit->pExit->impasseDepth = std::max(ptmpExit->pExit->impasseDepth, ptmpExit->impasseDepth + ptmpExit->fleeLength);
+							ptmpExit->impasseDepth = 0;
 							pathInfo[y][x].pExit = ptmpExit->pExit;
 							pathInfo[y][x].fleeLength += ptmpExit->fleeLength;
 							ptmpExit = pathInfo[y][x].pExit;
@@ -1790,7 +1794,7 @@ namespace AI
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
-				if (SimpleSearch(gameField, myID, 5, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
+				if (SimpleSearch(gameField, myID, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
 					forbiddenDirs |= 1 << (i + 1);
 				gameField.RollBack(1);
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
