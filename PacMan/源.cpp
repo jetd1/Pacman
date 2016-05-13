@@ -1965,7 +1965,7 @@ namespace AI
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
 		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir, std::vector<Solution>& solutions)
 	{
-		int max = DEATH_EVAL - 1;
+		int max = DEATH_EVAL;
 		int tmp;
 		int strength = gameField.players[myID].strength;
 		int powerUpLeft = gameField.players[myID].powerUpLeft;
@@ -1976,10 +1976,17 @@ namespace AI
 			return GreedyEval(gameField, myID);
 		for (auto dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
-			if (!gameField.ActionValid(myID, dir) || Helpers::DangerJudge(gameField, myID, dir))
+			if (depth == maxDepth && solutions[dir + 1].second <= DEATH_EVAL)
+				continue;
+			if (!gameField.ActionValid(myID, dir))
 			{
 				if (depth == maxDepth)
 					solutions[dir + 1].second = INVALID_EVAL;
+				continue;
+			}
+			if (Helpers::DangerJudge(gameField, myID, dir)) {
+				if (depth == maxDepth)
+					solutions[dir + 1].second = DEATH_EVAL;
 				continue;
 			}
 			Pacman::FieldProp nextGrid;
@@ -2039,40 +2046,31 @@ namespace AI
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
 				&& gameField.players[myID].strength - strength == 0)
 				tmp = int(tmp * (1 - float(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
-			//if (top && !rivalFlag)
-			//    tmpEvals[dir + 1] = tmp;
 			if (tmp > max)
 				max = tmp;
-			if (depth == maxDepth)
-				solutions[dir + 1].second = std::max(solutions[dir + 1].second, tmp);
+			if (depth == maxDepth) {
+				if (tmp <= DEATH_EVAL) solutions[dir + 1].second = tmp;
+				else
+					solutions[dir + 1].second = std::max(solutions[dir + 1].second, tmp);
+			}
 			gameField.RollBack(1);
 
 			// 超时处理
 			if (Debug::TimeOut())
 				return max;
 		}
-		//if (top && !rivalFlag)
-		//{
-		//    for (int d = 0; d < 5; d++)
-		//    {
-		//        Debug::debugData[Helpers::depth2String(depth)][Pacman::dirStr[d]] = to_string(tmpEvals[d]);
-		//        if (!Debug::TimeOut())
-		//        {
-		//            if (depth == DEFAULT_DEPTH || tmpEvals[d] <= DEATH_EVAL)
-		//                averagedEvals[d] = tmpEvals[d];
-		//            else
-		//                averagedEvals[d] = (tmpEvals[d] + averagedEvals[d]) / 2;
-		//        }
-		//    }
-		//}
+		
 		return max;
 	}
 
 	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
 	{
 		std::vector<Solution> tmpSol(5);
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			tmpSol[i].first = Pacman::Direction(i - 1);
+			tmpSol[i].second = 0;
+		}
+
 		std::vector<std::vector<Solution> > solutions{};
 
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
