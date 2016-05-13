@@ -266,6 +266,7 @@ namespace Pacman
 		PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 		FieldProp hotSpot[MAX_HOTSPOT_COUNT];
 		GenInfoType genInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
+		int maxCluster;
 
 		// 场地格子固定的内容
 		GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
@@ -903,12 +904,31 @@ namespace Pacman
 			return false;
 		}
 
+		
+		char GetToNearbyGenerator(int myID, char forbiddenDirs = '\0')
+		{
+			return GetTo( myID, [](const GameField& gameField, const FieldProp& pos)
+			{
+				return gameField.genInfo[pos.row][pos.col].isBesideGen;
+			}, forbiddenDirs);
+		}
+
 		char GetToHotSpot(int myID, char forbiddenDirs = '\0')
 		{
 			return GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
 			{
 				for (int i = 0; i < gameField.hotSpotCount; i++)
 					if (pos == gameField.hotSpot[i])
+						return true;
+				return false;
+			}, forbiddenDirs);
+		}
+
+		char GetToMaxCluster(int myID, char forbiddenDirs = '\0')
+		{
+			return  GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
+			{
+				if (gameField.genInfo[pos.row][pos.col].fruitClusterCount == gameField.maxCluster)
 						return true;
 				return false;
 			}, forbiddenDirs);
@@ -1017,7 +1037,7 @@ namespace Pacman
 			}
 			
 			//weaZen正在尝试精确分析hotspot
-
+			maxCluster = 0;
 			int fruitSpotsCount = 0;
 			FieldProp fruitSpots[4 * 8];
 			for (int i = 0; i < generatorCount; i++)
@@ -1055,6 +1075,7 @@ namespace Pacman
 				}
 				for (int j = 0; j < clusterCount; ++j)
 					genInfo[cluster[j].row][cluster[j].col].fruitClusterCount = clusterCount;
+				maxCluster = std::max(maxCluster, clusterCount);
 			}
 #ifdef DEBUG
 			for (int i = 0; i < height; i++)
@@ -1786,7 +1807,7 @@ namespace AI
 				if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
 					dir = Pacman::Direction(fruitDirInfo - 1);
 				else
-					dir = Pacman::Direction((gameField.GetToHotSpot(myID, forbiddenDirs) & 7) - 1);
+					dir = Pacman::Direction((gameField.GetToNearbyGenerator(myID, forbiddenDirs) & 7) - 1);
 
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
@@ -1942,7 +1963,7 @@ namespace AI
 				if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
 					dir = Pacman::Direction(fruitDirInfo - 1);
 				else
-					dir = Pacman::Direction((gameField.GetToHotSpot(myID, forbiddenDirs) & 7) - 1);
+					dir = Pacman::Direction((gameField.GetToNearbyGenerator(myID, forbiddenDirs) & 7) - 1);
 
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
@@ -1952,13 +1973,12 @@ namespace AI
 			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
-	int GreedyEval(const Pacman::GameField &gameField, int myID)
+	int GreedyEval(Pacman::GameField &gameField, int myID)
 	{
 #ifdef PROFILING
 		auto&& startTime = clock();
 #endif
-		int minGeneratorDis = 100;
-		int generatorDisSum = 0;
+		int minMaxClusterDis = 100;
 		int strengthSum = 0;
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
@@ -1975,17 +1995,22 @@ namespace AI
 		}
 		int e = 0;
 
+		int strongCount = 0;
+		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+			if (gameField.players[i].strength > gameField.players[myID].strength)
+				++strongCount;
+
+		e -= strongCount * 10;
+
 		char tmp;
-		for (int i = 0; i < gameField.generatorCount; i++)
-		{
-			tmp = Helpers::ApprDirectDistance(gameField.generators[i], gameField.players[myID]);
-			generatorDisSum += tmp;
-			if (minGeneratorDis > tmp)
-				minGeneratorDis = tmp;
-		}
-		if (gameField.generatorCount == 0) minGeneratorDis = 0;
-		if (minGeneratorDis > gameField.generatorTurnLeft)
-			e -= 2 * (minGeneratorDis + 1 - gameField.generatorTurnLeft);
+		if (gameField.generatorCount == 0)
+			minMaxClusterDis = 0;
+		else
+			minMaxClusterDis = int(gameField.GetToMaxCluster(myID)) >> 3;
+
+		if (minMaxClusterDis >= gameField.generatorTurnLeft)
+			e -= (minMaxClusterDis + 1 - gameField.generatorTurnLeft) * 3;
+		
 
 		//int fruitEvalSum = 0;
 		//for (int i = 0; i < gameField.height; i++)
@@ -2085,12 +2110,21 @@ namespace AI
 				if (gameField.players[i].dead)
 					continue;
 				gameField.actions[i] = rivalAI(gameField, i);
-#ifdef DEBUG
-				if (depth == maxDepth) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
-#endif // DEBUG
 			}
 
 			gameField.actions[myID] = dir;
+
+#ifdef DEBUG
+			if (gameField.players[0].strength >= 30) {
+				gameField.DebugPrint();
+				for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+				{
+					cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
+				}
+				system("pause");
+			}
+#endif // DEBUG
+
 			gameField.NextTurn();
 
 			//多个玩家重叠在果子上允许返回
@@ -2124,7 +2158,7 @@ namespace AI
 			if (depth == maxDepth) {
 				if (tmp <= DEATH_EVAL) solutions[dir + 1].second = tmp;
 				else
-					solutions[dir + 1].second = std::max(solutions[dir + 1].second, tmp);
+					solutions[dir + 1].second = tmp;// std::max(solutions[dir + 1].second, tmp);
 			}
 			gameField.RollBack(1);
 
