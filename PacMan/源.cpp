@@ -781,7 +781,7 @@ namespace Pacman
 			for (auto d = up; d <= left; ++d)
 				if (tryDis[d] == minDis && !(forbiddenDirs & (1 << (d + 1))))
 					tmpDir = tmpDir == stay ? d : ((rand() % ++tmp) ? d : tmpDir);
-			}
+
 			if (tmpDir != stay)
 			{
 #ifdef PROFILING
@@ -1906,7 +1906,7 @@ namespace AI
 			for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				if (gameField.players[i].strength < gameField.players[myID].strength)
 					++weakCount;
-			return 100 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 10;
+			return int(100 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 10);
 		}
 		int e = 0;
 
