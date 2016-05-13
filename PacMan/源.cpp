@@ -1017,15 +1017,55 @@ namespace Pacman
 			}
 			
 			//weaZen正在尝试精确分析hotspot
+
+			int fruitSpotsCount = 0;
+			FieldProp fruitSpots[4 * 8];
 			for (int i = 0; i < generatorCount; i++)
 				for (auto d = up; d < 8; ++d)
 				{
 					int tmpy = (generators[i].row + dy[d] + height) % height;
 					int tmpx = (generators[i].col + dx[d] + width) % width;
-					if (fieldStatic[tmpy][tmpx] & generator)
+					if ((fieldStatic[tmpy][tmpx] & generator) || genInfo[tmpy][tmpx].isBesideGen)
 						continue;
 					genInfo[tmpy][tmpx].isBesideGen = true;
+					fruitSpots[fruitSpotsCount].row = tmpy;
+					fruitSpots[fruitSpotsCount++].col = tmpx;
 				}
+			for (int i = 0; i < fruitSpotsCount; ++i )
+			{
+				if (genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount > 0)
+					continue;
+				FieldProp cluster[32];
+				int clusterCount = 1;
+				cluster[0] = fruitSpots[i];
+				genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount = 1;
+				int nowFlag = 0, endFlag = 0;
+				while (nowFlag <= endFlag)
+				{
+					for (int checkSpot = i + 1; checkSpot < fruitSpotsCount; ++checkSpot)
+					{
+						if (genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount == 0 && Distance(cluster[nowFlag], fruitSpots[checkSpot]) <= 3)
+						{
+							genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount = 1;
+							cluster[++endFlag] = fruitSpots[checkSpot];
+							++clusterCount;
+						}
+					}
+					++nowFlag;
+				}
+				for (int j = 0; j < clusterCount; ++j)
+					genInfo[cluster[j].row][cluster[j].col].fruitClusterCount = clusterCount;
+			}
+#ifdef DEBUG
+			for (int i = 0; i < height; i++)
+			{
+				for (int j = 0; j < width; j++)
+				{
+					cout << genInfo[i][j].fruitClusterCount << '\t';
+				}
+				cout << endl;
+			}
+#endif // DEBUG
 
 			//分析HotSpot
 			std::set<FieldProp> fruits;
@@ -1943,6 +1983,7 @@ namespace AI
 			if (minGeneratorDis > tmp)
 				minGeneratorDis = tmp;
 		}
+		if (gameField.generatorCount == 0) minGeneratorDis = 0;
 		if (minGeneratorDis > gameField.generatorTurnLeft)
 			e -= 2 * (minGeneratorDis + 1 - gameField.generatorTurnLeft);
 
