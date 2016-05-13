@@ -200,6 +200,13 @@ namespace Pacman
 		PathInfoType(int y = 0, int x = 0) : FieldProp(y, x), isImpasse(false), isExit(false), fleeLength(0), impasseDepth(0), pExit(nullptr) {}
 	};
 
+	struct GenInfoType : FieldProp
+	{
+		bool isBesideGen;
+		int fruitClusterCount;
+		GenInfoType(int y = 0, int x = 0) : FieldProp(y, x), isBesideGen(false), fruitClusterCount(0) {}
+	};
+
 	// 场地上的玩家
 	struct Player : FieldProp
 	{
@@ -258,6 +265,7 @@ namespace Pacman
 		//道路信息
 		PathInfoType pathInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 		FieldProp hotSpot[MAX_HOTSPOT_COUNT];
+		GenInfoType genInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 
 		// 场地格子固定的内容
 		GridStaticType fieldStatic[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
@@ -750,8 +758,11 @@ namespace Pacman
 						continue;
 					if (pr(*this, FieldProp(i, j)))
 					{
-						targetList.push_back(std::make_pair(FieldProp(i, j), Distance(startPos, FieldProp(i, j))));
-						initMinDis = std::min(initMinDis, int(Distance(startPos, FieldProp(i, j))));
+						int tmp = int(Distance(startPos, FieldProp(i, j)));
+						if (tmp >= initMinDis + 2)
+							continue;
+						targetList.push_back(std::make_pair(FieldProp(i, j), tmp));
+						initMinDis = std::min(initMinDis, tmp);
 					}
 				}
 
@@ -1004,7 +1015,17 @@ namespace Pacman
 					}
 				}
 			}
-
+			
+			//weaZen正在尝试精确分析hotspot
+			for (int i = 0; i < generatorCount; i++)
+				for (auto d = up; d < 8; ++d)
+				{
+					int tmpy = (generators[i].row + dy[d] + height) % height;
+					int tmpx = (generators[i].col + dx[d] + width) % width;
+					if (fieldStatic[tmpy][tmpx] & generator)
+						continue;
+					genInfo[tmpy][tmpx].isBesideGen = true;
+				}
 
 			//分析HotSpot
 			std::set<FieldProp> fruits;
@@ -1792,6 +1813,10 @@ namespace AI
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
+				for (int i = 0; i < 5; i++) {
+					laji[i].first = Pacman::Direction(i - 1);
+					laji[i].second = 0;
+				}
 				if (SimpleSearch(gameField, myID, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
 					forbiddenDirs |= 1 << (i + 1);
 				gameField.RollBack(1);
@@ -1906,7 +1931,7 @@ namespace AI
 			for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				if (gameField.players[i].strength < gameField.players[myID].strength)
 					++weakCount;
-			return int(100 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 10);
+			return int(1000 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 100);
 		}
 		int e = 0;
 
@@ -1941,21 +1966,28 @@ namespace AI
 
 	Solution chooseDir(std::vector<std::vector<Solution> >& solutions)
 	{
-		int evalSum[5]{};
+		int evalWeighedAverage[5]{};
 		int tmp = 1;
 		for (auto sol : solutions)
 			for (int i = 0; i < 5; i++)
-				evalSum[i] += sol[i].second;
+			{
+				if (sol[i].second <= DEATH_EVAL)
+				{
+					evalWeighedAverage[i] = sol[i].second;
+				}
+				evalWeighedAverage[i] += sol[i].second;
+				evalWeighedAverage[i] /= 2;
+			}
 
 		int max = INVALID_EVAL;
 		auto d = Pacman::Direction::stay;
 		for (int i = 0; i < 5; i++)
-			if (max < evalSum[i])
+			if (max < evalWeighedAverage[i])
 			{
-				max = evalSum[i];
+				max = evalWeighedAverage[i];
 				d = Pacman::Direction(i - 1);
 			}
-			else if (max == evalSum[i] && Helpers::RandBetween(0, ++tmp))
+			else if (max == evalWeighedAverage[i] && Helpers::RandBetween(0, ++tmp))
 				d = Pacman::Direction(i - 1);
 
 		return std::make_pair(d, max);
@@ -2013,7 +2045,7 @@ namespace AI
 					continue;
 				gameField.actions[i] = rivalAI(gameField, i);
 #ifdef DEBUG
-				//if (top && !rivalFlag) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
+				if (depth == maxDepth) cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 #endif // DEBUG
 			}
 
