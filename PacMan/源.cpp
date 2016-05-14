@@ -33,7 +33,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 1
-#define MAX_DEPTH 30
+#define MAX_DEPTH 16
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
@@ -904,6 +904,11 @@ namespace Pacman
 			return false;
 		}
 
+		bool atMaxCluster(const FieldProp& pos)
+		{
+			return genInfo[pos.row][pos.col].fruitClusterCount == maxCluster;
+		}
+
 		
 		char GetToNearbyGenerator(int myID, char forbiddenDirs = '\0')
 		{
@@ -1766,6 +1771,7 @@ namespace AI
 						if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerMask)
 							for (int checkID = 0; checkID < 4; ++checkID)
 							{
+								if (checkID == myID) continue;
 								if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerID2Mask[checkID]
 									&& gameField.players[checkID].strength > rival.strength)
 								{
@@ -1921,6 +1927,7 @@ namespace AI
 						if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerMask)
 							for (int checkID = 0; checkID < 4; ++checkID)
 							{
+								if (checkID == myID) continue;
 								if (gameField.fieldContent[checkPos.row][checkPos.col] & Pacman::playerID2Mask[checkID]
 									&& gameField.players[checkID].strength > rival.strength)
 								{
@@ -2000,16 +2007,15 @@ namespace AI
 			if (gameField.players[i].strength > gameField.players[myID].strength)
 				++strongCount;
 
-		e -= strongCount * 10;
+		//e -= strongCount * 10;
 
-		char tmp;
 		if (gameField.generatorCount == 0)
 			minMaxClusterDis = 0;
 		else
 			minMaxClusterDis = int(gameField.GetToMaxCluster(myID)) >> 3;
 
 		if (minMaxClusterDis >= gameField.generatorTurnLeft)
-			e -= (minMaxClusterDis + 1 - gameField.generatorTurnLeft) * 3;
+			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 3;
 		
 
 		//int fruitEvalSum = 0;
@@ -2099,7 +2105,7 @@ namespace AI
 				&& !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
 				continue;
 			if (!(depth == maxDepth) && dir == Pacman::Direction::stay
-				&& (!gameField.atHotSpot(gameField.players[myID]) || gameField.generatorTurnLeft > 3)
+				&& (!gameField.atMaxCluster(gameField.players[myID]) || gameField.generatorTurnLeft > 3)
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
 				continue;
 
@@ -2115,7 +2121,7 @@ namespace AI
 			gameField.actions[myID] = dir;
 
 #ifdef DEBUG
-			if (gameField.players[0].strength >= 30) {
+			if (myID == 0 && gameField.players[myID].strength >= 23) {
 				gameField.DebugPrint();
 				for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				{
@@ -2144,6 +2150,7 @@ namespace AI
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isExit)
 				tmp = tmp - (gameField.players[myID].strength - strength) * depth + 1;
 
+			gameField.RollBack(1);
 
 			if (tmp > 0)
 				tmp += GreedyEval(gameField, myID);
@@ -2160,8 +2167,7 @@ namespace AI
 				else
 					solutions[dir + 1].second = tmp;// std::max(solutions[dir + 1].second, tmp);
 			}
-			gameField.RollBack(1);
-
+			
 			// 超时处理
 			if (Debug::TimeOut())
 				return max;
