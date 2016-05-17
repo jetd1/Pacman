@@ -33,7 +33,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 1
-#define MAX_DEPTH 16
+#define MAX_DEPTH 20
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
@@ -1430,6 +1430,7 @@ namespace Helpers
 		bool operator < (const Solution& o)const { return second < o.second; }
 	};
 
+	
 	int randomPlayCount = 0;
 	const std::vector<string> jiangXuan =
 	{
@@ -1602,7 +1603,7 @@ namespace Helpers
 	}
 
 	// weaZen:简单的危险判断
-	bool DangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
+	bool SimpleDangerJudge(Pacman::GameField &gameField, int myID, Pacman::Direction myDir = Pacman::stay)
 	{
 		const Pacman::Player & me = gameField.players[myID];
 		Pacman::FieldProp myPos;
@@ -1696,10 +1697,15 @@ namespace AI
 	using namespace EnumExt;
 	using Helpers::Solution;
 	static int maxDepth;
-	std::vector<Solution> laji(5);
+	
+	//DangerInfoType: 表示若干回合后会死亡，不合法行为记为0回合(当场死亡)。
+	typedef std::pair<Pacman::Direction, int> DangerInfoType;
 
+	std::vector<Solution> tmpSol(5);
+	std::vector<DangerInfoType> tmpDangers(5);
+	
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
-		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::stay, std::vector<Solution>& solutions = laji);
+		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::stay, std::vector<Solution>& solutions = tmpSol);
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
@@ -1719,7 +1725,7 @@ namespace AI
 		return solutions;
 	}
 
-	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器
+	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器 判断危险用的对手AI
 	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
 	{
 		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
@@ -1735,7 +1741,7 @@ namespace AI
 				forbiddenDirs |= 1 << (i + 1);
 				continue;
 			}
-			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
+			if (Helpers::SimpleDangerJudge(gameField, myID, Pacman::Direction(i)))
 				forbiddenDirs |= 1 << (i + 1);
 		}
 		if (forbiddenDirs == 31)//（基本）必死无疑
@@ -1824,25 +1830,24 @@ namespace AI
 			return Helpers::SimpleRandom(gameField, myID, forbiddenDirs);
 	}
 
-	//weaZen： 会回避死亡的高级AI
-	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
+	//weaZen: 复杂的危险判断
+	int DangerJudge(Pacman::GameField &gameField, int myID, std::vector<DangerInfoType> & dangers, int maxDepth = 10)
 	{
-		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
-		char playerTarget = 0;
-		char tryPlayerTarget = 0;
-		char forbiddenDirs = '\0';
-		Pacman::Direction dir;
-
-		for (int i = -1; i < 4; ++i)
+		dangers.clear();
+		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
-			dir = Pacman::Direction(i);
-			Pacman::FieldProp nextGrid;
-			if (!gameField.ActionValid(myID, Pacman::Direction(i)))
+			if (!gameField.ActionValid(myID, dir))
 			{
-				forbiddenDirs |= 1 << (i + 1);
+				dangers.push_back(std::make_pair(dir, 0));
 				continue;
 			}
-			if (i != -1)
+			if (Helpers::SimpleDangerJudge(gameField, myID, dir))
+			{
+				dangers.push_back(std::make_pair(dir, 1));
+				continue;
+			}
+			Pacman::FieldProp nextGrid;
+			if (dir != Pacman::Direction::stay)
 			{
 				nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
 				nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
@@ -1850,15 +1855,12 @@ namespace AI
 			else
 				nextGrid = gameField.players[myID];
 
-			if (Helpers::DangerJudge(gameField, myID, Pacman::Direction(i)))
-				forbiddenDirs |= 1 << (i + 1);
-			else if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
+			if (gameField.pathInfo[nextGrid.row][nextGrid.col].isImpasse)
 			{
-				//forbiddenDirs |= 1 << (i + 1);
 				int fleeLength = gameField.pathInfo[nextGrid.row][nextGrid.col].fleeLength;
 				bool enemyFlag = false;
+
 				//死路出口附近没有其他人时不用搜索了
-				//其实只需要从死路出口搜索fleeLength + 1步（别人还没走）, 待优化
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 				{
 					if (_ == myID) continue;
@@ -1866,6 +1868,7 @@ namespace AI
 						enemyFlag = true;
 				}
 				if (!enemyFlag) continue;
+				
 				//注意只有一个gamefield 模拟其他AI时注意action的还原
 				Pacman::Direction tmpDir[MAX_PLAYER_COUNT];
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -1881,23 +1884,97 @@ namespace AI
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
 				for (int i = 0; i < 5; i++) {
-					laji[i].first = Pacman::Direction(i - 1);
-					laji[i].second = 0;
+					tmpSol[i].first = Pacman::Direction(i - 1);
+					tmpSol[i].second = 0;
 				}
-				if (SimpleSearch(gameField, myID, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
-					forbiddenDirs |= 1 << (i + 1);
+
+				int searchDepth = std::min(maxDepth, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth + fleeLength);
+
+				for (int tmpDepth = 1; tmpDepth <= searchDepth; ++tmpDepth)
+				{
+					if (SimpleSearch(gameField, myID, searchDepth, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
+					{
+						dangers.push_back(std::make_pair(dir, tmpDepth + 1));
+						break;
+					}
+				}
 				gameField.RollBack(1);
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 					gameField.actions[_] = tmpDir[_];
 			}
 		}
+		return 0;
+	}
+
+	//weaZen： 会回避死亡的高级AI
+	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
+	{
+		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
+		char playerTarget = 0;
+		char tryPlayerTarget = 0;
+		char forbiddenDirs = '\0';
+		Pacman::Direction dir;
+
+		DangerJudge(gameField, myID, tmpDangers, 5);
 
 
-		if (forbiddenDirs == 31)//（基本）必死无疑
-			return Helpers::SimpleRandom(gameField, myID);
+		if (tmpDangers.size() == 5)//（基本）必死无疑
+		{
+			//随机选最晚死的方向
+			int tmpMax = 0;
+			int maxCount = 1;
+			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+			{
+				if ((*i).second > tmpMax)
+				{
+					tmpMax = (*i).second;
+					dir = (*i).first;
+					maxCount = 1;
+				}
+				else if ((*i).second == tmpMax)
+				{
+					dir = rand() % ++maxCount ? dir : (*i).first;
+				}
+			}
 
+			//如果在死路上且敌人在死路外尝试逃离
+			if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse)
+			{
+				//到出口的方向是fleeLength减1的位置
+				Pacman::Direction fleeDir;
+				for (fleeDir = Pacman::up; fleeDir <= Pacman::left; ++fleeDir)
+				{
+					int tmpx, tmpy;
+					tmpy = (gameField.players[myID].row + Pacman::dy[fleeDir] + gameField.height) % gameField.height;
+					tmpx = (gameField.players[myID].col + Pacman::dx[fleeDir] + gameField.width) % gameField.width;
+					if (!(gameField.fieldStatic[gameField.players[myID].row][gameField.players[myID].col] & Pacman::direction2OpposingWall[fleeDir]))
+						if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].fleeLength == gameField.pathInfo[tmpy][tmpx].fleeLength + 1)
+							break;
+				}
+				for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+					if ((*i).first == fleeDir && (*i).second == tmpMax)
+					{
+						dir = fleeDir;
+						break;
+					}
+			}
+			
+			return dir;
+		}
 
+		if (tmpDangers.size() == 4)//没得选
+		{
+			int k = 5; // -1 + 0 + 1 + 2 + 3 
+			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+				k -= (*i).first;
+			return Pacman::Direction(k);
+		}
 
+		//记录forbiddenDirs
+		for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+			forbiddenDirs |= (1 << ((*i).first + 1));
+
+		//标记目标AI
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 		{
 			Pacman::Player & rival = gameField.players[_];
@@ -2015,7 +2092,7 @@ namespace AI
 			minMaxClusterDis = int(gameField.GetToMaxCluster(myID)) >> 3;
 
 		if (minMaxClusterDis >= gameField.generatorTurnLeft)
-			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 3;
+			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
 		
 
 		//int fruitEvalSum = 0;
@@ -2043,25 +2120,26 @@ namespace AI
 		for (auto sol : solutions)
 			for (int i = 0; i < 5; i++)
 			{
-				if (sol[i].second <= DEATH_EVAL)
-				{
-					evalWeighedAverage[i] = sol[i].second;
-				}
+				//if (sol[i].second <= DEATH_EVAL)
+				//{
+				//	evalWeighedAverage[i] = sol[i].second;
+				//}
 				evalWeighedAverage[i] += sol[i].second;
 				evalWeighedAverage[i] /= 2;
 			}
 
 		int max = INVALID_EVAL;
 		auto d = Pacman::Direction::stay;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			if (max < evalWeighedAverage[i])
 			{
 				max = evalWeighedAverage[i];
 				d = Pacman::Direction(i - 1);
+				tmp = 1;
 			}
 			else if (max == evalWeighedAverage[i] && Helpers::RandBetween(0, ++tmp) == 0)
 				d = Pacman::Direction(i - 1);
-
+		}
 		return std::make_pair(d, max);
 	}
 
@@ -2088,7 +2166,7 @@ namespace AI
 					solutions[dir + 1].second = INVALID_EVAL;
 				continue;
 			}
-			if (Helpers::DangerJudge(gameField, myID, dir)) {
+			if (Helpers::SimpleDangerJudge(gameField, myID, dir)) {
 				if (depth == maxDepth)
 					solutions[dir + 1].second = DEATH_EVAL;
 				continue;
@@ -2121,13 +2199,13 @@ namespace AI
 			gameField.actions[myID] = dir;
 
 #ifdef DEBUG
-			if (myID == 0 && gameField.players[myID].strength >= 23) {
-				gameField.DebugPrint();
+			if (depth == maxDepth && myID == 0) {
+				//gameField.DebugPrint();
 				for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				{
 					cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 				}
-				system("pause");
+				//system("pause");
 			}
 #endif // DEBUG
 
@@ -2185,6 +2263,70 @@ namespace AI
 		}
 
 		std::vector<std::vector<Solution> > solutions{};
+
+		DangerJudge(gameField, myID, tmpDangers);
+		if (tmpDangers.size() == 5)//（基本）必死无疑
+		{
+			Pacman::Direction dir;
+			//随机选最晚死的方向
+			int tmpMax = 0;
+			int maxCount = 1;
+			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+			{
+				cout << Pacman::dirStr[(*i).first + 1] << ' ' << (*i).second << endl;
+				if ((*i).second > tmpMax)
+				{
+					tmpMax = (*i).second;
+					dir = (*i).first;
+					maxCount = 1;
+				}
+				else if ((*i).second == tmpMax)
+				{
+					dir = rand() % ++maxCount ? dir : (*i).first;
+				}
+			}
+
+			//如果在死路上且敌人在死路外尝试逃离
+			if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse)
+			{
+				//到出口的方向是fleeLength减1的位置
+				Pacman::Direction fleeDir;
+				for (fleeDir = Pacman::up; fleeDir <= Pacman::left; ++fleeDir)
+				{
+					int tmpx, tmpy;
+					tmpy = (gameField.players[myID].row + Pacman::dy[fleeDir] + gameField.height) % gameField.height;
+					tmpx = (gameField.players[myID].col + Pacman::dx[fleeDir] + gameField.width) % gameField.width;
+					if (!(gameField.fieldStatic[gameField.players[myID].row][gameField.players[myID].col] & Pacman::direction2OpposingWall[fleeDir]))
+						if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].fleeLength == gameField.pathInfo[tmpy][tmpx].fleeLength + 1)
+							break;
+				}
+				for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+					if ((*i).first == fleeDir && (*i).second == tmpMax)
+					{
+						dir = fleeDir;
+						break;
+					}
+			}
+
+			return dir;
+		}
+
+		if (tmpDangers.size() == 4)//没得选
+		{
+			int k = 5; // -1 + 0 + 1 + 2 + 3 
+			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+				k -= (*i).first;
+			return Pacman::Direction(k);
+		}
+
+		for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
+		{
+			if ((*i).second == 0)
+				tmpSol[(*i).first + 1].second = INVALID_EVAL;
+			else
+				tmpSol[(*i).first + 1].second = DEATH_EVAL;
+		}
+
 
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
 		{
