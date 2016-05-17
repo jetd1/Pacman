@@ -736,7 +736,7 @@ namespace Pacman
 		// Jet: 改写了个模版
 		Direction dirInfo[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH];
 		template <typename __Pred>
-		char GetTo(int myID, __Pred pr, char forbiddenDirs = '\0')
+		unsigned char GetTo(int myID, __Pred pr, char forbiddenDirs = '\0')
 		{
 #ifdef PROFILING
 			auto&& startTime = clock();
@@ -882,7 +882,7 @@ namespace Pacman
 		}
 
 		//weaZen:照着cc的广搜写了个寻找方向 target是GridContentType里的组合 可以试一下吃人了//ω\\)
-		char GetToTarget(int myID, int target, char forbiddenDirs = '\0')
+		unsigned char GetToTarget(int myID, int target, char forbiddenDirs = '\0')
 		{
 			if (target == 0)
 				return ur + 1;
@@ -910,7 +910,7 @@ namespace Pacman
 		}
 
 		
-		char GetToNearbyGenerator(int myID, char forbiddenDirs = '\0')
+		unsigned char GetToNearbyGenerator(int myID, char forbiddenDirs = '\0')
 		{
 			return GetTo( myID, [](const GameField& gameField, const FieldProp& pos)
 			{
@@ -918,7 +918,7 @@ namespace Pacman
 			}, forbiddenDirs);
 		}
 
-		char GetToHotSpot(int myID, char forbiddenDirs = '\0')
+		unsigned char GetToHotSpot(int myID, char forbiddenDirs = '\0')
 		{
 			return GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
 			{
@@ -929,7 +929,7 @@ namespace Pacman
 			}, forbiddenDirs);
 		}
 
-		char GetToMaxCluster(int myID, char forbiddenDirs = '\0')
+		unsigned char GetToMaxCluster(int myID, char forbiddenDirs = '\0')
 		{
 			return  GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
 			{
@@ -2077,7 +2077,7 @@ namespace AI
 					++weakCount;
 			return int(1000 * float(gameField.players[myID].strength) / strengthSum + (weakCount + 1) * 100);
 		}
-		int e = 0;
+		int e = 10;
 
 		int strongCount = 0;
 		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
@@ -2089,7 +2089,7 @@ namespace AI
 		if (gameField.generatorCount == 0)
 			minMaxClusterDis = 0;
 		else
-			minMaxClusterDis = int(gameField.GetToMaxCluster(myID)) >> 3;
+			minMaxClusterDis = int((gameField.GetToMaxCluster(myID)) >> 3);
 
 		if (minMaxClusterDis >= gameField.generatorTurnLeft)
 			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
