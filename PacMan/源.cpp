@@ -2273,7 +2273,6 @@ namespace AI
 			int maxCount = 1;
 			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
 			{
-				cout << Pacman::dirStr[(*i).first + 1] << ' ' << (*i).second << endl;
 				if ((*i).second > tmpMax)
 				{
 					tmpMax = (*i).second;
