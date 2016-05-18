@@ -2091,7 +2091,7 @@ namespace AI
 		else
 			minMaxClusterDis = int((gameField.GetToMaxCluster(myID)) >> 3);
 
-		if (minMaxClusterDis >= gameField.generatorTurnLeft)
+		if (minMaxClusterDis + 2 >= gameField.generatorTurnLeft)
 			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
 		
 
@@ -2105,7 +2105,7 @@ namespace AI
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
-			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT + 1;// +gameField.players[myID].powerUpLeft;
+			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
 #ifdef PROFILING
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
 		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
