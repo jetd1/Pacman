@@ -1758,8 +1758,8 @@ namespace AI
 				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
 					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
-					&& gameField.Distance(myID, _) <= 2
-					&& Helpers::DeltaATK(gameField, myID, _) > 1;
+					&& gameField.Distance(myID, _) <= 2;
+					//&& Helpers::DeltaATK(gameField, myID, _) > 1;
 				//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -1985,8 +1985,8 @@ namespace AI
 				bool preyFlag = gameField.pathInfo[rival.row][rival.col].isImpasse
 					&& (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
-					&& gameField.Distance(myID, _) <= 2
-					&& Helpers::DeltaATK(gameField, myID, _) > 1;
+					&& gameField.Distance(myID, _) <= 2;
+					//&& Helpers::DeltaATK(gameField, myID, _) > 1;
 				//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -2274,7 +2274,7 @@ namespace AI
 
 		std::vector<std::vector<Solution> > solutions{};
 
-		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
+		for (int depth = DEFAULT_DEPTH; depth <= std::min(MAX_DEPTH, 100 - gameField.turnID); depth++)
 		{
 			auto startTime = clock();
 			maxDepth = depth;
