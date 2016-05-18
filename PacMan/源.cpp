@@ -2105,7 +2105,7 @@ namespace AI
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
-			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
+			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT + 1;// +gameField.players[myID].powerUpLeft;
 #ifdef PROFILING
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
 		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -2116,21 +2116,31 @@ namespace AI
 	Solution chooseDir(std::vector<std::vector<Solution> >& solutions)
 	{
 		int evalWeighedAverage[5]{};
-		int tmp = 1;
+		bool deathFlag[5]{};
+		int tmp = 0;
 		for (auto sol : solutions)
+		{
+			++tmp;
 			for (int i = 0; i < 5; i++)
 			{
-				//if (sol[i].second <= DEATH_EVAL)
-				//{
-				//	evalWeighedAverage[i] = sol[i].second;
-				//}
+				//这是为了分出最晚死的方向
+				if (sol[i].second <= DEATH_EVAL)
+				{
+					if (!deathFlag[i])
+					{
+						deathFlag[i] = true;
+						evalWeighedAverage[i] = DEATH_EVAL + tmp;
+					}
+					continue;
+				}
 				evalWeighedAverage[i] += sol[i].second;
 				evalWeighedAverage[i] /= 2;
 			}
+		}
 
 		int max = INVALID_EVAL;
 		auto d = Pacman::Direction::stay;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++)
 			if (max < evalWeighedAverage[i])
 			{
 				max = evalWeighedAverage[i];
@@ -2139,7 +2149,7 @@ namespace AI
 			}
 			else if (max == evalWeighedAverage[i] && Helpers::RandBetween(0, ++tmp) == 0)
 				d = Pacman::Direction(i - 1);
-		}
+
 		return std::make_pair(d, max);
 	}
 
@@ -2263,69 +2273,6 @@ namespace AI
 		}
 
 		std::vector<std::vector<Solution> > solutions{};
-
-		DangerJudge(gameField, myID, tmpDangers);
-		if (tmpDangers.size() == 5)//（基本）必死无疑
-		{
-			Pacman::Direction dir;
-			//随机选最晚死的方向
-			int tmpMax = 0;
-			int maxCount = 1;
-			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
-			{
-				if ((*i).second > tmpMax)
-				{
-					tmpMax = (*i).second;
-					dir = (*i).first;
-					maxCount = 1;
-				}
-				else if ((*i).second == tmpMax)
-				{
-					dir = rand() % ++maxCount ? dir : (*i).first;
-				}
-			}
-
-			//如果在死路上且敌人在死路外尝试逃离
-			if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse)
-			{
-				//到出口的方向是fleeLength减1的位置
-				Pacman::Direction fleeDir;
-				for (fleeDir = Pacman::up; fleeDir <= Pacman::left; ++fleeDir)
-				{
-					int tmpx, tmpy;
-					tmpy = (gameField.players[myID].row + Pacman::dy[fleeDir] + gameField.height) % gameField.height;
-					tmpx = (gameField.players[myID].col + Pacman::dx[fleeDir] + gameField.width) % gameField.width;
-					if (!(gameField.fieldStatic[gameField.players[myID].row][gameField.players[myID].col] & Pacman::direction2OpposingWall[fleeDir]))
-						if (gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].fleeLength == gameField.pathInfo[tmpy][tmpx].fleeLength + 1)
-							break;
-				}
-				for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
-					if ((*i).first == fleeDir && (*i).second == tmpMax)
-					{
-						dir = fleeDir;
-						break;
-					}
-			}
-
-			return dir;
-		}
-
-		if (tmpDangers.size() == 4)//没得选
-		{
-			int k = 5; // -1 + 0 + 1 + 2 + 3 
-			for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
-				k -= (*i).first;
-			return Pacman::Direction(k);
-		}
-
-		for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
-		{
-			if ((*i).second == 0)
-				tmpSol[(*i).first + 1].second = INVALID_EVAL;
-			else
-				tmpSol[(*i).first + 1].second = DEATH_EVAL;
-		}
-
 
 		for (int depth = DEFAULT_DEPTH; depth <= MAX_DEPTH; depth++)
 		{
