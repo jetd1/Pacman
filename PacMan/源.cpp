@@ -909,10 +909,10 @@ namespace Pacman
 			return genInfo[pos.row][pos.col].fruitClusterCount == maxCluster;
 		}
 
-		
+
 		unsigned char GetToNearbyGenerator(int myID, char forbiddenDirs = '\0')
 		{
-			return GetTo( myID, [](const GameField& gameField, const FieldProp& pos)
+			return GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
 			{
 				return gameField.genInfo[pos.row][pos.col].isBesideGen;
 			}, forbiddenDirs);
@@ -934,7 +934,7 @@ namespace Pacman
 			return  GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
 			{
 				if (gameField.genInfo[pos.row][pos.col].fruitClusterCount == gameField.maxCluster)
-						return true;
+					return true;
 				return false;
 			}, forbiddenDirs);
 		}
@@ -1040,7 +1040,7 @@ namespace Pacman
 					}
 				}
 			}
-			
+
 			//weaZen正在尝试精确分析hotspot
 			maxCluster = 0;
 			int fruitSpotsCount = 0;
@@ -1056,7 +1056,7 @@ namespace Pacman
 					fruitSpots[fruitSpotsCount].row = tmpy;
 					fruitSpots[fruitSpotsCount++].col = tmpx;
 				}
-			for (int i = 0; i < fruitSpotsCount; ++i )
+			for (int i = 0; i < fruitSpotsCount; ++i)
 			{
 				if (genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount > 0)
 					continue;
@@ -1430,7 +1430,7 @@ namespace Helpers
 		bool operator < (const Solution& o)const { return second < o.second; }
 	};
 
-	
+
 	int randomPlayCount = 0;
 	const std::vector<string> jiangXuan =
 	{
@@ -1697,13 +1697,13 @@ namespace AI
 	using namespace EnumExt;
 	using Helpers::Solution;
 	static int maxDepth;
-	
+
 	//DangerInfoType: 表示若干回合后会死亡，不合法行为记为0回合(当场死亡)。
 	typedef std::pair<Pacman::Direction, int> DangerInfoType;
 
 	std::vector<Solution> tmpSol(5);
 	std::vector<DangerInfoType> tmpDangers(5);
-	
+
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
 		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::stay, std::vector<Solution>& solutions = tmpSol);
 
@@ -1759,8 +1759,8 @@ namespace AI
 					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& gameField.Distance(myID, _) <= 2;
-					//&& Helpers::DeltaATK(gameField, myID, _) > 1;
-				//夹道里被追击的弱AI
+				//&& Helpers::DeltaATK(gameField, myID, _) > 1;
+			//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
 					int dirCount = 4;
@@ -1868,7 +1868,7 @@ namespace AI
 						enemyFlag = true;
 				}
 				if (!enemyFlag) continue;
-				
+
 				//注意只有一个gamefield 模拟其他AI时注意action的还原
 				Pacman::Direction tmpDir[MAX_PLAYER_COUNT];
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
@@ -1958,7 +1958,7 @@ namespace AI
 						break;
 					}
 			}
-			
+
 			return dir;
 		}
 
@@ -1986,8 +1986,8 @@ namespace AI
 					&& (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& gameField.Distance(myID, _) <= 2;
-					//&& Helpers::DeltaATK(gameField, myID, _) > 1;
-				//夹道里被追击的弱AI
+				//&& Helpers::DeltaATK(gameField, myID, _) > 1;
+			//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
 					int dirCount = 4;
@@ -2093,7 +2093,7 @@ namespace AI
 
 		if (minMaxClusterDis + 2 >= gameField.generatorTurnLeft)
 			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
-		
+
 
 		//int fruitEvalSum = 0;
 		//for (int i = 0; i < gameField.height; i++)
@@ -2123,8 +2123,13 @@ namespace AI
 			++tmp;
 			for (int i = 0; i < 5; i++)
 			{
+				if (sol[i].second == INVALID_EVAL)
+				{
+					evalWeighedAverage[i] = INVALID_EVAL;
+					continue;
+				}
 				//这是为了分出最晚死的方向
-				if (sol[i].second <= DEATH_EVAL)
+				if (sol[i].second == DEATH_EVAL)
 				{
 					if (!deathFlag[i])
 					{
@@ -2255,12 +2260,12 @@ namespace AI
 				else
 					solutions[dir + 1].second = tmp;// std::max(solutions[dir + 1].second, tmp);
 			}
-			
+
 			// 超时处理
 			if (Debug::TimeOut())
 				return max;
 		}
-		
+
 		return max;
 	}
 
