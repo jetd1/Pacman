@@ -826,7 +826,7 @@ namespace Pacman
 
 			//禁止的方向设为已经访问
 			for (int i = 0; i < 4; ++i)
-				if (forbiddenDirs & (1 << (i + 1)) && !(fieldStatic[startPos.row][startPos.col] & direction2OpposingWall[i]))
+				if ((forbiddenDirs & (1 << (i + 1))) && !(fieldStatic[startPos.row][startPos.col] & direction2OpposingWall[i]))
 					dirInfo[(startPos.row + dy[i] + height) % height][(startPos.col + dx[i] + width) % width] = up;
 
 			while (nowFlag <= endFlag && !hasEaten)
@@ -1145,7 +1145,7 @@ namespace Pacman
 						hotSpot[hotSpotCount++] = tmp;
 					}
 				}
-
+			
 
 
 #ifdef PROFILING
@@ -1638,6 +1638,29 @@ namespace Helpers
 		return dir;
 	}
 
+	//weaZen:递归统计死路上某一位置之后 一条路径上的最大可能水果数量 给Naive快速判断是否尝试吃人用
+	int fruitCount(Pacman::GameField &gameField, Pacman::FieldProp pos)
+	{
+		if (!gameField.pathInfo[pos.row][pos.col].isImpasse && !gameField.pathInfo[pos.row][pos.col].isExit)
+			return 0;
+		int max = 0;
+		Pacman::FieldProp nextPos;
+		for (Pacman::Direction dir = Pacman::up; dir <= Pacman::left; ++dir)
+		{
+			if (gameField.fieldStatic[pos.row][pos.col] & Pacman::direction2OpposingWall[dir])
+				continue;
+			nextPos.row = (pos.row + Pacman::dy[dir] + gameField.height) % gameField.height;
+			nextPos.col = (pos.col + Pacman::dx[dir] + gameField.width) % gameField.width;
+			if (gameField.pathInfo[nextPos.row][nextPos.col].fleeLength == gameField.pathInfo[pos.row][pos.col].fleeLength + 1)
+				max = std::max(max, fruitCount(gameField, nextPos));
+		}
+		if (gameField.fieldContent[pos.row][pos.col] & Pacman::smallFruit)
+			++max;
+		if (gameField.fieldContent[pos.row][pos.col] & Pacman::largeFruit)
+			max += 10;
+		return max;
+	}
+
 	Solution RandomPlay(Pacman::GameField &gameField, int myID, bool noStay)
 	{
 		randomPlayCount++;
@@ -1986,7 +2009,14 @@ namespace AI
 					&& (gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit));
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& gameField.Distance(myID, _) <= 2;
-				//&& Helpers::DeltaATK(gameField, myID, _) > 1;
+
+				if (preyFlag || tryPreyFlag)
+				{
+					int tmpFruitCount = Helpers::fruitCount(gameField, gameField.players[_]);
+					//没有水果的死路一般不会走进去吧
+					if (tmpFruitCount >= Helpers::DeltaATK(gameField, myID, _) || tmpFruitCount == 0)
+						preyFlag = tryPreyFlag = false;
+				}
 			//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -2095,17 +2125,10 @@ namespace AI
 			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
 
 
-		//int fruitEvalSum = 0;
-		//for (int i = 0; i < gameField.height; i++)
-		//    for (int j = 0; j < gameField.width; j++)
-		//        if ((tmp = gameField.GetFruitValue(i, j)) != 0)
-		//            fruitEvalSum += tmp * gameField.Distance(Pacman::FieldProp(i, j), gameField.players[myID]);
-		//e -= fruitEvalSum / 100;
-
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
-			e += gameField.players[myID].strength - gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
+			e += gameField.players[myID].strength -gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
 #ifdef PROFILING
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
 		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -2113,23 +2136,26 @@ namespace AI
 		return e;
 	}
 
-	Solution chooseDir(std::vector<std::vector<Solution> >& solutions)
+	Solution chooseDir(std::vector<std::vector<Solution> >& solutions, std::vector<DangerInfoType> dangers)
 	{
 		int evalWeighedAverage[5]{};
 		bool deathFlag[5]{};
 		int tmp = 0;
+		for (auto danger : dangers)
+		{
+			deathFlag[danger.first + 1] = true;
+			evalWeighedAverage[danger.first + 1] = danger.second == 0 ? INVALID_EVAL : DEATH_EVAL + danger.second;
+		}
 		for (auto sol : solutions)
 		{
 			++tmp;
 			for (int i = 0; i < 5; i++)
 			{
 				if (sol[i].second == INVALID_EVAL)
-				{
-					evalWeighedAverage[i] = INVALID_EVAL;
 					continue;
-				}
+
 				//这是为了分出最晚死的方向
-				if (sol[i].second == DEATH_EVAL)
+				if (sol[i].second == DEATH_EVAL || deathFlag[i])
 				{
 					if (!deathFlag[i])
 					{
@@ -2245,7 +2271,7 @@ namespace AI
 
 			gameField.RollBack(1);
 
-			if (tmp > 0)
+			if (tmp > 0 && depth + gameField.turnID != 100)
 				tmp += GreedyEval(gameField, myID);
 			if (depth == maxDepth
 				&& tmp > 0
@@ -2271,29 +2297,37 @@ namespace AI
 
 	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
 	{
-		std::vector<Solution> tmpSol(5);
+		std::vector<Solution> sol(5);
+		std::vector<DangerInfoType> dangers;
 		for (int i = 0; i < 5; i++) {
-			tmpSol[i].first = Pacman::Direction(i - 1);
-			tmpSol[i].second = 0;
+			sol[i].first = Pacman::Direction(i - 1);
+			sol[i].second = 0;
 		}
 
 		std::vector<std::vector<Solution> > solutions{};
+
+		DangerJudge(gameField, myID, dangers);
+
+		for (auto danger : dangers)
+		{
+			sol[danger.first + 1].second = danger.second == 0 ? INVALID_EVAL : DEATH_EVAL;
+		}
 
 		for (int depth = DEFAULT_DEPTH; depth <= std::min(MAX_DEPTH, 100 - gameField.turnID); depth++)
 		{
 			auto startTime = clock();
 			maxDepth = depth;
 
-			SimpleSearch(gameField, myID, depth, NaiveThinkAI, Pacman::stay, tmpSol);
+			SimpleSearch(gameField, myID, depth, NaiveThinkAI, Pacman::stay, sol);
 			if (Debug::TimeOut())
 			{
 				Debug::debugData[Helpers::depth2String(depth)]["*solution"]["notFinished"] = true;
 				break;
 			}
 
-			solutions.push_back(tmpSol);
+			solutions.push_back(sol);
 			for (auto i = Pacman::stay; i <= Pacman::left; ++i)
-				Debug::debugData[Helpers::depth2String(depth)]["evals"][Pacman::dirStr[i + 1]] = tmpSol[i + 1].second;
+				Debug::debugData[Helpers::depth2String(depth)]["evals"][Pacman::dirStr[i + 1]] = sol[i + 1].second;
 			Debug::debugData[Helpers::depth2String(depth)]["timeCosumed"] = double(clock() - startTime) / CLOCKS_PER_SEC;
 
 		}
@@ -2305,7 +2339,7 @@ namespace AI
 			return NaiveAttackAI(gameField, myID);
 		}
 
-		auto&& finalSol = chooseDir(solutions);
+		auto&& finalSol = chooseDir(solutions, dangers);
 
 		Debug::debugData["*choice"]["direction"] = Pacman::dirStr[finalSol.first + 1];
 		Debug::debugData["*choice"]["finalEval"] = finalSol.second;
