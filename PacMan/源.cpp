@@ -1728,7 +1728,7 @@ namespace AI
 	std::vector<DangerInfoType> tmpDangers(5);
 
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
-		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir = Pacman::stay, std::vector<Solution>& solutions = tmpSol);
+		Pacman::Direction(*rivalAI)(Pacman::GameField &, int, int), Pacman::Direction lastDir = Pacman::stay, std::vector<Solution>& solutions = tmpSol);
 
 	std::vector<Solution> MCTS_AI(Pacman::GameField &gameField, int myID, bool noStay = false, double timeOut = 0)
 	{
@@ -1749,7 +1749,7 @@ namespace AI
 	}
 
 	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器 判断危险用的对手AI
-	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID)
+	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID, int targetID)
 	{
 		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
 		char playerTarget = 0;
@@ -1782,7 +1782,6 @@ namespace AI
 					&& gameField.pathInfo[rival.row][rival.col].fleeLength + 2 >= gameField.Distance(gameField.players[myID], *gameField.pathInfo[rival.row][rival.col].pExit);
 				bool tryPreyFlag = gameField.pathInfo[rival.row][rival.col].isExit
 					&& gameField.Distance(myID, _) <= 2;
-				//&& Helpers::DeltaATK(gameField, myID, _) > 1;
 			//夹道里被追击的弱AI
 				if (!preyFlag && !tryPreyFlag)
 				{
@@ -1818,6 +1817,15 @@ namespace AI
 					tryPlayerTarget |= Pacman::playerID2Mask[_];
 			}
 		}
+
+		if (targetID != -1)
+		{
+			if (playerTarget & Pacman::playerID2Mask[targetID])
+				playerTarget = Pacman::playerID2Mask[targetID];
+			if (tryPlayerTarget & Pacman::playerID2Mask[targetID])
+				tryPlayerTarget = Pacman::playerID2Mask[targetID];
+		}
+
 		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
 		auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
 		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
@@ -1825,7 +1833,7 @@ namespace AI
 		if (fruitInfo == '\0' && Helpers::RandBetween(0, 2))
 			fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
-		//		cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
+				cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
 		auto&& fruitDirInfo = fruitInfo & 7;
 		auto&& playerDirInfo = playerInfo & 7;
@@ -1902,7 +1910,7 @@ namespace AI
 						continue;
 					if (gameField.players[_].dead)
 						continue;
-					gameField.actions[_] = NaiveAttackAI(gameField, _);
+					gameField.actions[_] = NaiveAttackAI(gameField, _, myID);
 				}
 				gameField.actions[myID] = dir;
 				gameField.NextTurn();
@@ -1910,13 +1918,12 @@ namespace AI
 					tmpSol[i].first = Pacman::Direction(i - 1);
 					tmpSol[i].second = 0;
 				}
-
-				int searchDepth = std::min(maxDepth, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth + fleeLength);
-
+				
+				int searchDepth = std::min(maxDepth, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth + fleeLength + 1);
+				
 				for (int tmpDepth = 1; tmpDepth <= searchDepth; ++tmpDepth)
 				{
-					int tmpEval = SimpleSearch(gameField, myID, tmpDepth, NaiveAttackAI);
-					if (tmpEval <= DEATH_EVAL)
+					if (SimpleSearch(gameField, myID, tmpDepth, NaiveAttackAI) <= DEATH_EVAL)
 					{
 						dangers.push_back(std::make_pair(dir, tmpDepth + 1));
 						break;
@@ -1931,7 +1938,7 @@ namespace AI
 	}
 
 	//weaZen： 会回避死亡的高级AI
-	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID)
+	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID, int targetID)
 	{
 		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
 		char playerTarget = 0;
@@ -1939,10 +1946,9 @@ namespace AI
 		char forbiddenDirs = '\0';
 		Pacman::Direction dir;
 
-		DangerJudge(gameField, myID, tmpDangers, 5);
+		DangerJudge(gameField, myID, tmpDangers, 8);
 
 		
-
 		if (tmpDangers.size() == 5)//（基本）必死无疑
 		{
 			//随机选最晚死的方向
@@ -2188,9 +2194,9 @@ namespace AI
 
 	// weaZen:简单的搜索，调用返回最高估值 若上一步造成力量变化则不给出lastDir
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
-		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir, std::vector<Solution>& solutions)
+		Pacman::Direction(*rivalAI)(Pacman::GameField &, int, int), Pacman::Direction lastDir, std::vector<Solution>& solutions)
 	{
-		int max = INVALID_EVAL;
+		int max = DEATH_EVAL;
 		int tmp = 0;
 		int strength = gameField.players[myID].strength;
 		int powerUpLeft = gameField.players[myID].powerUpLeft;
@@ -2239,7 +2245,7 @@ namespace AI
 					continue;
 				if (gameField.players[i].dead)
 					continue;
-				gameField.actions[i] = rivalAI(gameField, i);
+				gameField.actions[i] = rivalAI(gameField, i, myID);
 			}
 
 			gameField.actions[myID] = dir;
@@ -2311,7 +2317,7 @@ namespace AI
 
 		std::vector<std::vector<Solution> > solutions{};
 
-		DangerJudge(gameField, myID, dangers, 2);
+		DangerJudge(gameField, myID, dangers);
 
 		for (auto danger : dangers)
 		{
@@ -2341,7 +2347,7 @@ namespace AI
 		if (solutions.size() == 0)
 		{
 			Debug::debugData["*choice"]["NAIVE"] = true;
-			return NaiveAttackAI(gameField, myID);
+			return NaiveAttackAI(gameField, myID, -1);
 		}
 
 		auto&& finalSol = chooseDir(solutions, dangers);
