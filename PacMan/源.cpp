@@ -1946,7 +1946,7 @@ namespace AI
 		char forbiddenDirs = '\0';
 		Pacman::Direction dir;
 
-		DangerJudge(gameField, myID, tmpDangers, 8);
+		DangerJudge(gameField, myID, tmpDangers, 5);
 
 		
 		if (tmpDangers.size() == 5)//（基本）必死无疑
