@@ -2171,10 +2171,6 @@ namespace AI
 			}
 		}
 
-		for (int i = 0; i < 5; ++i)
-			cout << evalWeighedAverage[i] << ' ';
-		cout << endl;
-
 		int max = INVALID_EVAL;
 		auto d = Pacman::Direction::stay;
 		for (int i = 0; i < 5; i++)
