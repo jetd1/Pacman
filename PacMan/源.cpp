@@ -1915,7 +1915,8 @@ namespace AI
 
 				for (int tmpDepth = 1; tmpDepth <= searchDepth; ++tmpDepth)
 				{
-					if (SimpleSearch(gameField, myID, searchDepth, NaiveAttackAI, Pacman::stay) <= DEATH_EVAL)
+					int tmpEval = SimpleSearch(gameField, myID, tmpDepth, NaiveAttackAI);
+					if (tmpEval <= DEATH_EVAL)
 					{
 						dangers.push_back(std::make_pair(dir, tmpDepth + 1));
 						break;
@@ -1940,6 +1941,7 @@ namespace AI
 
 		DangerJudge(gameField, myID, tmpDangers, 5);
 
+		
 
 		if (tmpDangers.size() == 5)//（基本）必死无疑
 		{
@@ -2169,6 +2171,10 @@ namespace AI
 			}
 		}
 
+		for (int i = 0; i < 5; ++i)
+			cout << evalWeighedAverage[i] << ' ';
+		cout << endl;
+
 		int max = INVALID_EVAL;
 		auto d = Pacman::Direction::stay;
 		for (int i = 0; i < 5; i++)
@@ -2188,15 +2194,17 @@ namespace AI
 	int SimpleSearch(Pacman::GameField &gameField, int myID, int depth,
 		Pacman::Direction(*rivalAI)(Pacman::GameField &, int), Pacman::Direction lastDir, std::vector<Solution>& solutions)
 	{
-		int max = DEATH_EVAL;
-		int tmp;
+		int max = INVALID_EVAL;
+		int tmp = 0;
 		int strength = gameField.players[myID].strength;
 		int powerUpLeft = gameField.players[myID].powerUpLeft;
 		//cout << depth << ' ';
-		if (gameField.players[myID].dead)
-			return DEATH_EVAL;
+
 		if (Debug::TimeOut() || depth == 0 || !gameField.hasNext)
 			return GreedyEval(gameField, myID);
+		if (gameField.players[myID].dead)
+			return DEATH_EVAL;
+
 		for (auto dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
 			if (depth == maxDepth && solutions[dir + 1].second <= DEATH_EVAL)
@@ -2212,22 +2220,23 @@ namespace AI
 					solutions[dir + 1].second = DEATH_EVAL;
 				continue;
 			}
-			Pacman::FieldProp nextGrid;
-			nextGrid.row = (gameField.players[myID].row + Pacman::dy[dir] + gameField.height) % gameField.height;
-			nextGrid.col = (gameField.players[myID].col + Pacman::dx[dir] + gameField.width) % gameField.width;
+
+			Pacman::FieldProp frontGrid;
+			frontGrid.row = (gameField.players[myID].row + Pacman::dy[lastDir] + gameField.height) % gameField.height;
+			frontGrid.col = (gameField.players[myID].col + Pacman::dx[lastDir] + gameField.width) % gameField.width;
 			//基于以下两点猜测减少搜索量
 			//1.没有力量增加或驱逐对手却往反方向跑是无意义的
 			//2.不在生成器周围或当前位置没有果子却不动是无意义的
 			if (lastDir != Pacman::Direction::stay
 				&& Pacman::dy[dir] + Pacman::dy[lastDir] == 0
 				&& Pacman::dx[dir] + Pacman::dx[lastDir] == 0
-				&& !(gameField.fieldContent[nextGrid.row][nextGrid.col] & Pacman::playerMask))
+				&& !(gameField.fieldContent[frontGrid.row][frontGrid.col] & Pacman::playerMask))
 				continue;
 			if (!(depth == maxDepth) && dir == Pacman::Direction::stay
-				&& (!gameField.atMaxCluster(gameField.players[myID]) || gameField.generatorTurnLeft > 3)
+				&& (!gameField.genInfo[gameField.players[myID].row][gameField.players[myID].col].isBesideGen || gameField.generatorTurnLeft > 3)
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
 				continue;
-
+				
 			for (int i = 0; i < MAX_PLAYER_COUNT; i++)
 			{
 				if (i == myID)
@@ -2251,7 +2260,7 @@ namespace AI
 #endif // DEBUG
 
 			gameField.NextTurn();
-
+			
 			//多个玩家重叠在果子上允许返回
 			if (gameField.players[myID].strength - strength == 0 && !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit)))
 			{
@@ -2261,7 +2270,7 @@ namespace AI
 					tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, dir, solutions);
 			}
 			else tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, Pacman::stay, solutions);
-
+			
 			//不在死路上吃到了敌人 因为有风险先还原再说
 			if (gameField.players[myID].strength - strength > 1
 				&& gameField.players[myID].powerUpLeft - powerUpLeft != 9
@@ -2284,7 +2293,7 @@ namespace AI
 			if (depth == maxDepth) {
 				if (tmp <= DEATH_EVAL) solutions[dir + 1].second = tmp;
 				else
-					solutions[dir + 1].second = tmp;// std::max(solutions[dir + 1].second, tmp);
+					solutions[dir + 1].second = tmp;
 			}
 
 			// 超时处理
@@ -2298,7 +2307,7 @@ namespace AI
 	Pacman::Direction IterativeGreedySearch(Pacman::GameField &gameField, int myID)
 	{
 		std::vector<Solution> sol(5);
-		std::vector<DangerInfoType> dangers;
+		std::vector<DangerInfoType> dangers(5);
 		for (int i = 0; i < 5; i++) {
 			sol[i].first = Pacman::Direction(i - 1);
 			sol[i].second = 0;
@@ -2306,7 +2315,7 @@ namespace AI
 
 		std::vector<std::vector<Solution> > solutions{};
 
-		DangerJudge(gameField, myID, dangers);
+		DangerJudge(gameField, myID, dangers, 2);
 
 		for (auto danger : dangers)
 		{
