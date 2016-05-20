@@ -1748,10 +1748,11 @@ namespace AI
 		return solutions;
 	}
 
-	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 果子 > 生成器 判断危险用的对手AI
+	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 大果子 > 小果子 > 生成器 判断危险用的对手AI
 	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID, int targetID)
 	{
-		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
+		char largeFruitTarget = Pacman::GridContentType::largeFruit;
+		char smallFruitTarget = Pacman::GridContentType::smallFruit;
 		char playerTarget = 0;
 		char tryPlayerTarget = 0;
 		char forbiddenDirs = '\0';
@@ -1826,31 +1827,39 @@ namespace AI
 				tryPlayerTarget = Pacman::playerID2Mask[targetID];
 		}
 
-		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
+		auto&& smallFruitInfo = gameField.GetToTarget(myID, smallFruitTarget, forbiddenDirs);
+		auto&& largeFruitInfo = gameField.GetToTarget(myID, largeFruitTarget, forbiddenDirs);
 		auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
 		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
 		//一定概率放弃当前果子
-		if (fruitInfo == '\0' && Helpers::RandBetween(0, 2))
-			fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs | 1);
+		if (smallFruitInfo == '\0' && Helpers::RandBetween(0, 2))
+			smallFruitInfo = gameField.GetToTarget(myID, smallFruitTarget, forbiddenDirs | 1);
+		if (largeFruitInfo == '\0' && Helpers::RandBetween(0, 2))
+			largeFruitInfo = gameField.GetToTarget(myID, largeFruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
 				cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
-		auto&& fruitDirInfo = fruitInfo & 7;
+		auto&& smallFruitDirInfo = smallFruitInfo & 7;
+		auto&& largeFruitDirInfo = largeFruitInfo & 7;
 		auto&& playerDirInfo = playerInfo & 7;
 		auto&& tryPlayerDirInfo = tryPlayerInfo & 7;
 
-		int info = (fruitDirInfo < 5) + ((tryPlayerDirInfo < 5) << 1) + ((playerDirInfo < 5) << 2);
+		int info = (smallFruitDirInfo < 5) + ((largeFruitDirInfo < 5) << 1) + ((tryPlayerDirInfo < 5) << 2) + ((playerDirInfo < 5) << 3);
 
-		if (info >= 4)
+		if (info >= 8)
 			dir = Pacman::Direction(playerDirInfo - 1);
 		else
-			if (info >= 2)
+			if (info >= 4)
 				dir = Pacman::Direction(tryPlayerDirInfo - 1);
 			else
-				if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
-					dir = Pacman::Direction(fruitDirInfo - 1);
+				if (info >= 2)
+					//他们对大果子有狂热的爱
+					dir = Pacman::Direction(largeFruitDirInfo - 1);
 				else
-					dir = Pacman::Direction((gameField.GetToNearbyGenerator(myID, forbiddenDirs) & 7) - 1);
+					if ((info >= 1 && (smallFruitInfo >> 3) <= gameField.generatorTurnLeft))
+						dir = Pacman::Direction(smallFruitDirInfo - 1);
+					else
+						dir = Pacman::Direction((gameField.GetToNearbyGenerator(myID, forbiddenDirs) & 7) - 1);
 
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
@@ -2279,6 +2288,11 @@ namespace AI
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isExit)
 				tmp = tmp - (gameField.players[myID].strength - strength) * depth + 1;
+
+			//吃到大果子稍微加一分
+			if (gameField.players[myID].strength - strength > 1
+				&& gameField.players[myID].powerUpLeft - powerUpLeft == 9)
+				++tmp;
 
 			gameField.RollBack(1);
 
