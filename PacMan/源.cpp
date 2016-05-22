@@ -1148,6 +1148,7 @@ namespace Pacman
 			auto minmin = min;
 			min += 2;
 			for (int i = 0; i < height; i++)
+			{
 				for (int j = 0; j < width; j++)
 				{
 					tmp.row = i, tmp.col = j;
@@ -1157,8 +1158,18 @@ namespace Pacman
 						min = heatMap[i][j];
 						hotSpot[hotSpotCount++] = tmp;
 					}
+#ifdef DEBUG
+					for (int k = 0; k < hotSpotCount; ++k)
+						if (hotSpot[k].row == i && hotSpot[k].col == j)
+							cout << '*';
+					cout << heatMap[i][j] << '\t';
+#endif // DEBUG
+
 				}
-			
+#ifdef DEBUG
+				cout << endl;
+#endif // DEBUG
+			}
 
 
 #ifdef PROFILING
@@ -2221,10 +2232,10 @@ namespace AI
 		if (gameField.generatorCount == 0)
 			minMaxClusterDis = 0;
 		else
-			minMaxClusterDis = int((gameField.GetToMaxCluster(myID)) >> 3);
+			minMaxClusterDis = int((gameField.GetToHotSpot(myID)) >> 3);
 
 		if (minMaxClusterDis + 2 >= gameField.generatorTurnLeft)
-			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft) * 2;
+			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft);
 
 
 		if (gameField.players[myID].powerUpLeft <= 0)
@@ -2297,9 +2308,10 @@ namespace AI
 		int max = DEATH_EVAL;
 		int tmp = 0;
 
-		//如果同深度模拟出了比浅搜索时更好的结果舍弃		
-		if (isShallowSol && step != 0 && depth == 1 && (GreedyEval(gameField, myID) > solutions[stepInfo[0].first + 1].second))
-			return solutions[stepInfo[0].first + 1].second;
+		//如果同深度模拟出了比浅搜索时更好的结果舍弃
+		//谁来想个好点的办法QAQ
+		//if (isShallowSol && step != 0 && depth == 1 && (GreedyEval(gameField, myID) > solutions[stepInfo[0].first + 1].second))
+		//	return solutions[stepInfo[0].first + 1].second;
 
 		
 		//记录现在的力量和增益回合
@@ -2334,7 +2346,7 @@ namespace AI
 				continue;
 			}
 
-			//方向的限制
+			//方向的限制 如果没有意义地乱走成了闭合回路剪掉
 			int dy = 0, dx = 0;
 			bool returnFlag = false;
 			if (dir != Pacman::Direction::stay)
@@ -2363,6 +2375,7 @@ namespace AI
 			//1.没有力量增加或驱逐对手却往反方向跑是无意义的
 			//2.不在生成器周围或当前位置没有果子却不动是无意义的
 			bool deterFlag = false;
+			bool fleeFlag = false;
 			bool waitFlag = false;
 			bool eatFlag = false;
 
@@ -2372,7 +2385,12 @@ namespace AI
 				if (playerID == myID)
 					continue;
 				if (gameField.Distance(myID, playerID) <= 2)
-					deterFlag = true;
+				{
+					if (gameField.genInfo[gameField.players[myID].row][gameField.players[myID].col].isBesideGen && Helpers::DeltaATK(gameField, myID, playerID) > 0)
+						deterFlag = true;
+					if (Helpers::DeltaATK(gameField, myID, playerID) < 0)
+						fleeFlag = true;
+				}
 			}
 			
 			//是否在等待生成或等待重叠果子
@@ -2417,22 +2435,22 @@ namespace AI
 			eatFlag |= gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
 
 			stepInfo[step].first = dir;
-			//达到三个目标之一就不限制下一步方向
-			stepInfo[step].second = !(deterFlag | waitFlag | eatFlag);
+			//达到四个目标之一就不限制下一步方向
+			stepInfo[step].second = !(deterFlag | fleeFlag | waitFlag | eatFlag);
 			
 			
 
-			/*if (dir == Pacman::stay && stepInfo[step].second && step != 0)
+			if (dir == Pacman::stay && stepInfo[step].second && step != 0)
 			{
 				gameField.RollBack(1);
 				continue;
-			}*/
+			}
 
 			tmpSol.clear();
 
 			tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, step + 1, solutions);
 			
-			//不在死路上吃到了敌人 因为有风险先还原再说
+			//不在死路上吃到了敌人 因为有风险先还原再说 但是可以加一分
 			if (gameField.players[myID].strength - strength > 1
 				&& gameField.players[myID].powerUpLeft - powerUpLeft != gameField.LARGE_FRUIT_DURATION - 1
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse
@@ -2465,7 +2483,7 @@ namespace AI
 			if (Debug::TimeOut())
 				return max;
 		}
-
+		tmpSol.clear();
 		return max;
 	}
 
