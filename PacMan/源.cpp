@@ -39,8 +39,8 @@
 #define INVALID_EVAL -9999999
 
 //#define DEBUG
-//#define PROFILING
-//#define SAVEDATA
+#define PROFILING
+#define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
 using std::cin;
@@ -1785,6 +1785,8 @@ namespace AI
 						int otherDis = 2 * int(gameField.Distance(gameField.players[playerID], fruit));
 						if (playerID == targetID)
 							--otherDis;
+						//if (gameField.players[playerID].strength > gameField.players[myID].strength)
+
 						othersMinDis = std::min(othersMinDis, otherDis);
 					}
 					if (othersMinDis <= myDis - 2)
@@ -1812,7 +1814,7 @@ namespace AI
 	}
 
 	//weaZen： 目标优先级：在死路上可能逃不出来的弱AI > 附近在死路出口的弱AI、附近在夹道中被追击的弱AI > 大果子 > 小果子 > 生成器 判断危险用的对手AI
-	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID, int targetID)
+	Pacman::Direction NaiveAttackAI(Pacman::GameField &gameField, int myID, int targetID = -1)
 	{
 		char largeFruitTarget = Pacman::GridContentType::largeFruit;
 		char smallFruitTarget = Pacman::GridContentType::smallFruit;
@@ -1884,10 +1886,12 @@ namespace AI
 
 		if (targetID != -1)
 		{
-			if (playerTarget & Pacman::playerID2Mask[targetID])
-				playerTarget = Pacman::playerID2Mask[targetID];
-			if (tryPlayerTarget & Pacman::playerID2Mask[targetID])
-				tryPlayerTarget = Pacman::playerID2Mask[targetID];
+			if (playerTarget & Pacman::playerID2Mask[targetID] || tryPlayerTarget & Pacman::playerID2Mask[targetID])
+			{
+				playerTarget = 0;
+				tryPlayerTarget = 0;
+				playerTarget |= Pacman::playerID2Mask[targetID];
+			}
 		}
 
 		auto&& smallFruitInfo = gameField.GetToTarget(myID, smallFruitTarget, forbiddenDirs);
@@ -1904,7 +1908,7 @@ namespace AI
 		if (largeFruitInfo == '\0' && Helpers::RandBetween(0, 2))
 			largeFruitInfo = gameField.GetToTarget(myID, largeFruitTarget, forbiddenDirs | 1);
 #ifdef DEBUG
-				cout << '#' << myID << ' ' << (fruitInfo >> 3) << ' ' << Pacman::dirStr[fruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
+				cout << '#' << myID << ' ' << (smallFruitInfo >> 3) << ' ' << Pacman::dirStr[smallFruitInfo & 7] << ' ' << (playerInfo >> 3) << ' ' << Pacman::dirStr[playerInfo & 7] << endl;
 #endif // DEBUG
 		auto&& smallFruitDirInfo = smallFruitInfo & 7;
 		auto&& largeFruitDirInfo = largeFruitInfo & 7;
@@ -1983,6 +1987,8 @@ namespace AI
 					tmpDir[_] = gameField.actions[_];
 				for (int i = 0; i < 50; ++i)
 					tmpStepInfo[i] = stepInfo[i];
+				
+				gameField.actions[myID] = dir;
 				for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 				{
 					if (_ == myID)
@@ -1991,12 +1997,14 @@ namespace AI
 						continue;
 					gameField.actions[_] = NaiveAttackAI(gameField, _, myID);
 				}
-				gameField.actions[myID] = dir;
+
+				
 				gameField.NextTurn();
 				
 				
 				int searchDepth = std::min(maxDepth, gameField.pathInfo[nextGrid.row][nextGrid.col].pExit->impasseDepth + fleeLength + 1);
-				
+				searchDepth = std::min(searchDepth, 100 - gameField.turnID);
+
 				for (int tmpDepth = 1; tmpDepth <= searchDepth; ++tmpDepth)
 				{
 					tmpSol.clear();
@@ -2019,7 +2027,7 @@ namespace AI
 	}
 
 	//weaZen： 会回避死亡的高级AI
-	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID, int targetID)
+	Pacman::Direction NaiveThinkAI(Pacman::GameField &gameField, int myID, int targetID = -1)
 	{
 		char fruitTarget = (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
 		char playerTarget = 0;
@@ -2170,7 +2178,7 @@ namespace AI
 				if (info >= 1 && (fruitInfo >> 3) <= gameField.generatorTurnLeft)
 					dir = Pacman::Direction(fruitDirInfo - 1);
 				else
-					dir = Pacman::Direction((gameField.GetToNearbyGenerator(myID, forbiddenDirs) & 7) - 1);
+					dir = Pacman::Direction((gameField.GetToHotSpot(myID, forbiddenDirs) & 7) - 1);
 
 		if (dir != Pacman::Direction::stay && dir != Pacman::Direction::ur)
 			return dir;
@@ -2189,6 +2197,7 @@ namespace AI
 		int strengthSum = 0;
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
+
 		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 			strengthSum += gameField.players[i].strength;
 
@@ -2289,7 +2298,7 @@ namespace AI
 		int tmp = 0;
 
 		//如果同深度模拟出了比浅搜索时更好的结果舍弃		
-		if (isShallowSol && depth == 1 && (GreedyEval(gameField, myID) > solutions[stepInfo[0].first + 1].second))
+		if (isShallowSol && step != 0 && depth == 1 && (GreedyEval(gameField, myID) > solutions[stepInfo[0].first + 1].second))
 			return solutions[stepInfo[0].first + 1].second;
 
 		
@@ -2388,14 +2397,14 @@ namespace AI
 
 			
 #ifdef DEBUG
-			if (depth == maxDepth && myID == 3) {
-				//gameField.DebugPrint();
+			//if (depth == maxDepth && myID == 3) {
+				gameField.DebugPrint();
 				for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				{
 					cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 				}
-				//system("pause");
-			}
+				system("pause");
+			//}
 #endif // DEBUG
 
 			gameField.NextTurn();
@@ -2473,6 +2482,7 @@ namespace AI
 
 		DangerJudge(gameField, myID, dangers);
 
+
 		for (auto danger : dangers)
 		{
 			sol[danger.first + 1].second = danger.second == 0 ? INVALID_EVAL : DEATH_EVAL;
@@ -2516,6 +2526,7 @@ namespace AI
 int main()
 {
 	auto AI = AI::IterativeGreedySearch;
+//	auto AI = AI::NaiveThinkAI;
 	auto TAUNT = Helpers::KeepSilentMakeFortune;
 
 	Pacman::GameField mainGameField;
