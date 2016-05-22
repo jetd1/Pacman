@@ -39,7 +39,7 @@
 #define INVALID_EVAL -9999999
 
 //#define DEBUG
-#define PROFILING
+//#define PROFILING
 #define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -1055,9 +1055,11 @@ namespace Pacman
 			}
 
 			//weaZen正在尝试精确分析hotspot
-			maxCluster = 0;
+			int fruitInterval = 1;
 			int fruitSpotsCount = 0;
-			FieldProp fruitSpots[4 * 8];
+			FieldProp fruitSpots[4 * 8]{};
+			
+			//标记上所有的生成位置
 			for (int i = 0; i < generatorCount; i++)
 				for (auto d = up; d < 8; ++d)
 				{
@@ -1069,43 +1071,78 @@ namespace Pacman
 					fruitSpots[fruitSpotsCount].row = tmpy;
 					fruitSpots[fruitSpotsCount++].col = tmpx;
 				}
-			for (int i = 0; i < fruitSpotsCount; ++i)
-			{
-				if (genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount > 0)
-					continue;
-				FieldProp cluster[32];
-				int clusterCount = 1;
-				cluster[0] = fruitSpots[i];
-				genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount = 1;
-				int nowFlag = 0, endFlag = 0;
-				while (nowFlag <= endFlag)
-				{
-					for (int checkSpot = i + 1; checkSpot < fruitSpotsCount; ++checkSpot)
-					{
-						if (genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount == 0 && Distance(cluster[nowFlag], fruitSpots[checkSpot]) <= 3)
-						{
-							genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount = 1;
-							cluster[++endFlag] = fruitSpots[checkSpot];
-							++clusterCount;
-						}
-					}
-					++nowFlag;
-				}
-				for (int j = 0; j < clusterCount; ++j)
-					genInfo[cluster[j].row][cluster[j].col].fruitClusterCount = clusterCount;
-				maxCluster = std::max(maxCluster, clusterCount);
-			}
-#ifdef DEBUG
-			for (int i = 0; i < height; i++)
-			{
-				for (int j = 0; j < width; j++)
-				{
-					cout << genInfo[i][j].fruitClusterCount << '\t';
-				}
-				cout << endl;
-			}
-#endif // DEBUG
 
+			//找一种合适的分划
+			for (fruitInterval = 1; fruitInterval <= 7; ++fruitInterval)
+			{
+				int clusterNumber = 0;
+				int heatMap[FIELD_MAX_HEIGHT][FIELD_MAX_WIDTH]{};
+				maxCluster = 0;
+				hotSpotCount = 0;
+
+				for (int i = 0; i < fruitSpotsCount; ++i)
+					genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount = 0;
+
+				for (int i = 0; i < fruitSpotsCount; ++i)
+				{
+					if (genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount > 0)
+						continue;
+					FieldProp cluster[32];
+					++clusterNumber;
+					int clusterCount = 1;
+					cluster[0] = fruitSpots[i];
+					genInfo[fruitSpots[i].row][fruitSpots[i].col].fruitClusterCount = 1;
+					int nowFlag = 0, endFlag = 0;
+					while (nowFlag <= endFlag)
+					{
+						for (int checkSpot = i + 1; checkSpot < fruitSpotsCount; ++checkSpot)
+						{
+							if (genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount == 0 && Distance(cluster[nowFlag], fruitSpots[checkSpot]) <= fruitInterval)
+							{
+								genInfo[fruitSpots[checkSpot].row][fruitSpots[checkSpot].col].fruitClusterCount = 1;
+								cluster[++endFlag] = fruitSpots[checkSpot];
+								++clusterCount;
+							}
+						}
+						++nowFlag;
+					}
+					int min = INT_MAX;
+					for (int j = 0; j < clusterCount; ++j)
+					{
+						genInfo[cluster[j].row][cluster[j].col].fruitClusterCount = clusterCount;
+						for (int k = 0; k < clusterCount; ++k)
+						{
+							heatMap[cluster[j].row][cluster[j].col] += Distance(cluster[j], cluster[k]);
+						}
+						min = std::min(min, heatMap[cluster[j].row][cluster[j].col]);
+					}
+					for (int j = 0; j < clusterCount; ++j)
+						if (heatMap[cluster[j].row][cluster[j].col] == min)
+							hotSpot[hotSpotCount++] = cluster[j];
+					maxCluster = std::max(maxCluster, clusterCount);
+				}
+#ifdef DEBUG
+				if (clusterNumber <= 5)
+				{
+					for (int i = 0; i < height; i++)
+					{
+						for (int j = 0; j < width; j++)
+						{
+							for (int k = 0; k < hotSpotCount; ++k)
+								if (hotSpot[k].row == i && hotSpot[k].col == j)
+									cout << '*';
+							cout << heatMap[i][j] << '\t';
+						}
+						cout << endl;
+					}
+				}
+#endif // DEBUG
+				if (clusterNumber <= 5)
+					break;
+			}
+
+
+			/*
 			//分析HotSpot
 			std::set<FieldProp> fruits;
 			for (int i = 0; i < generatorCount; i++)
@@ -1170,8 +1207,8 @@ namespace Pacman
 				cout << endl;
 #endif // DEBUG
 			}
-
-
+			*/
+			
 #ifdef PROFILING
 			auto&& d = Debug::debugData["profiling"]["MapAnalyze()"];
 			d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -2205,6 +2242,7 @@ namespace AI
 		auto&& startTime = clock();
 #endif
 		int minMaxClusterDis = 100;
+		int minHotSpotDis = 100;
 		int strengthSum = 0;
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
@@ -2232,10 +2270,14 @@ namespace AI
 		if (gameField.generatorCount == 0)
 			minMaxClusterDis = 0;
 		else
-			minMaxClusterDis = int((gameField.GetToHotSpot(myID)) >> 3);
-
+		{
+			minMaxClusterDis = int((gameField.GetToMaxCluster(myID)) >> 3);
+			minHotSpotDis = int((gameField.GetToHotSpot(myID)) >> 3);
+		}
 		if (minMaxClusterDis + 2 >= gameField.generatorTurnLeft)
 			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft);
+		if (gameField.generatorTurnLeft <= 3 && gameField.atMaxCluster(myID) && !gameField.atHotSpot(myID))
+			--e;
 
 
 		if (gameField.players[myID].powerUpLeft <= 0)
