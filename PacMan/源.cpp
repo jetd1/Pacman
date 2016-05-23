@@ -34,7 +34,7 @@
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 1
-#define MAX_DEPTH 20
+#define MAX_DEPTH 15
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
@@ -917,6 +917,16 @@ namespace Pacman
 			return false;
 		}
 
+		bool atMaxHotSpot(const FieldProp& pos)
+		{
+			if (genInfo[pos.row][pos.col].fruitClusterCount != maxCluster)
+				return false;
+			for (int i = 0; i < hotSpotCount; i++)
+				if (pos == hotSpot[i])
+					return true;
+			return false;
+		}
+
 		bool atMaxCluster(const FieldProp& pos)
 		{
 			return genInfo[pos.row][pos.col].fruitClusterCount == maxCluster;
@@ -937,6 +947,19 @@ namespace Pacman
 			{
 				for (int i = 0; i < gameField.hotSpotCount; i++)
 					if (pos == gameField.hotSpot[i])
+						return true;
+				return false;
+			}, forbiddenDirs);
+		}
+
+		unsigned char GetToMaxHotSpot(int myID, char forbiddenDirs = '\0')
+		{
+			return GetTo(myID, [](const GameField& gameField, const FieldProp& pos)
+			{
+				if (gameField.genInfo[pos.row][pos.col].fruitClusterCount != gameField.maxCluster)
+					return false;
+				for (int i = 0; i < gameField.hotSpotCount; i++)
+					if ( pos == gameField.hotSpot[i])
 						return true;
 				return false;
 			}, forbiddenDirs);
@@ -1122,14 +1145,17 @@ namespace Pacman
 					maxCluster = std::max(maxCluster, clusterCount);
 				}
 #ifdef DEBUG
-				if (clusterNumber <= 5)
+				if (clusterNumber <= 6)
 				{
+					cout << fruitInterval << ' ' << clusterNumber << endl;
 					for (int i = 0; i < height; i++)
 					{
 						for (int j = 0; j < width; j++)
 						{
-							for (int k = 0; k < hotSpotCount; ++k)
-								if (hotSpot[k].row == i && hotSpot[k].col == j)
+							if (atMaxHotSpot(FieldProp(i, j)))
+								cout << "**";
+							else
+								if (atHotSpot(FieldProp(i, j)))
 									cout << '*';
 							cout << heatMap[i][j] << '\t';
 						}
@@ -1137,7 +1163,7 @@ namespace Pacman
 					}
 				}
 #endif // DEBUG
-				if (clusterNumber <= 5)
+				if (clusterNumber <= 6)
 					break;
 			}
 
@@ -1934,7 +1960,7 @@ namespace AI
 
 		if (targetID != -1)
 		{
-			if (playerTarget & Pacman::playerID2Mask[targetID] || tryPlayerTarget & Pacman::playerID2Mask[targetID])
+			if ((playerTarget & Pacman::playerID2Mask[targetID]) || (tryPlayerTarget & Pacman::playerID2Mask[targetID]))
 			{
 				playerTarget = 0;
 				tryPlayerTarget = 0;
@@ -2242,14 +2268,20 @@ namespace AI
 		auto&& startTime = clock();
 #endif
 		int minMaxClusterDis = 100;
-		int minHotSpotDis = 100;
+		int minMaxHotSpotDis = 100;
+		int minGenDis = 100;
 		int strengthSum = 0;
+		int maxStrength = 0;
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
 
 		for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
+		{
 			strengthSum += gameField.players[i].strength;
-
+			if (i == myID)
+				continue;
+			maxStrength = std::max(maxStrength, gameField.players[i].strength - (gameField.players[i].powerUpLeft == 0 ? 0 : gameField.LARGE_FRUIT_ENHANCEMENT));
+		}
 		if (!gameField.hasNext)
 		{
 			int weakCount = 0;
@@ -2272,18 +2304,26 @@ namespace AI
 		else
 		{
 			minMaxClusterDis = int((gameField.GetToMaxCluster(myID)) >> 3);
-			minHotSpotDis = int((gameField.GetToHotSpot(myID)) >> 3);
+			minMaxHotSpotDis = int((gameField.GetToMaxHotSpot(myID)) >> 3);
+			minGenDis = int((gameField.GetToNearbyGenerator(myID)) >> 3);
 		}
-		if (minMaxClusterDis + 2 >= gameField.generatorTurnLeft)
-			e -= (minMaxClusterDis + 2 - gameField.generatorTurnLeft);
-		if (gameField.generatorTurnLeft <= 3 && gameField.atMaxCluster(myID) && !gameField.atHotSpot(myID))
-			--e;
 
+		if (gameField.turnID < MAX_TURN - gameField.GENERATOR_INTERVAL)
+		{
+			if (minMaxHotSpotDis + 2 >= gameField.generatorTurnLeft)
+				e -= (minMaxHotSpotDis + 2 - gameField.generatorTurnLeft);
+		}
+		else
+			if (minGenDis > gameField.generatorTurnLeft)
+				--e;
 
 		if (gameField.players[myID].powerUpLeft <= 0)
 			e += gameField.players[myID].strength;
 		else
 			e += gameField.players[myID].strength -gameField.LARGE_FRUIT_ENHANCEMENT;// +gameField.players[myID].powerUpLeft;
+
+		e = 2 * e - maxStrength;
+		e += 20;
 #ifdef PROFILING
 		auto&& d = Debug::debugData["profiling"]["GreedyEval()"];
 		d = d.asDouble() + double(clock() - startTime) / CLOCKS_PER_SEC;
@@ -2457,14 +2497,14 @@ namespace AI
 
 			
 #ifdef DEBUG
-			//if (depth == maxDepth && myID == 3) {
+			if (gameField.players[myID].strength > 55 && myID == 0) {
 				gameField.DebugPrint();
 				for (int i = 0; i < MAX_PLAYER_COUNT; ++i)
 				{
 					cout << "AI " << i << ' ' << Pacman::dirStr[gameField.actions[i] + 1] << endl;
 				}
 				system("pause");
-			//}
+			}
 #endif // DEBUG
 
 			gameField.NextTurn();
@@ -2494,10 +2534,10 @@ namespace AI
 			
 			//不在死路上吃到了敌人 因为有风险先还原再说 但是可以加一分
 			if (gameField.players[myID].strength - strength > 1
-				&& gameField.players[myID].powerUpLeft - powerUpLeft != gameField.LARGE_FRUIT_DURATION - 1
+				&& gameField.players[myID].powerUpLeft - powerUpLeft <= 0
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isImpasse
 				&& !gameField.pathInfo[gameField.players[myID].row][gameField.players[myID].col].isExit)
-				tmp = tmp - (gameField.players[myID].strength - strength) * depth + 1;
+				tmp -= (gameField.players[myID].strength - strength - 1);
 
 			//吃到大果子稍微加一分
 			if (gameField.players[myID].strength - strength > 1
@@ -2506,9 +2546,9 @@ namespace AI
 
 			gameField.RollBack(1);
 
-			if (tmp > 0 && depth + gameField.turnID != 100)
-				tmp += GreedyEval(gameField, myID);
-			if (depth == maxDepth
+//			if (tmp > 0 && depth + gameField.turnID != 100)
+//				tmp += GreedyEval(gameField, myID);
+			if (step == 0
 				&& tmp > 0
 				&& dir == Pacman::stay
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
@@ -2519,7 +2559,7 @@ namespace AI
 				max = tmp;
 			
 			if (step == 0 && isShallowSol)
-					solutions[dir + 1].second = tmp;
+				solutions[dir + 1].second = tmp;
 
 			// 超时处理
 			if (Debug::TimeOut())
@@ -2553,7 +2593,17 @@ namespace AI
 			auto startTime = clock();
 			maxDepth = depth;
 
-			SimpleSearch(gameField, myID, depth, NaiveThinkAI, 0, sol);
+			int tmpEvals[5]{INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX};
+			for (int j = 0; j < 3; ++j)
+			{
+				if (Debug::TimeOut())
+					break;
+				SimpleSearch(gameField, myID, depth, NaiveThinkAI, 0, sol);
+				for (int i = 0; i < 5; ++i)
+					tmpEvals[i] = std::min(sol[i].second, tmpEvals[i]);
+			}
+			for (int i = 0; i < 5; ++i)
+				sol[i].second = tmpEvals[i];
 			if (Debug::TimeOut())
 			{
 				Debug::debugData[Helpers::depth2String(depth)]["*solution"]["notFinished"] = true;
