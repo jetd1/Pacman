@@ -2185,7 +2185,7 @@ namespace AI
 				{
 					int tmpFruitCount = Helpers::fruitCount(gameField, gameField.players[_]);
 					//没有水果的死路一般不会走进去吧
-					if (tmpFruitCount >= Helpers::DeltaATK(gameField, myID, _) || tmpFruitCount == 0)
+					if (tmpFruitCount >= Helpers::DeltaATK(gameField, myID, _) || (tryPreyFlag && tmpFruitCount == 0))
 						preyFlag = tryPreyFlag = false;
 				}
 			//夹道里被追击的弱AI
