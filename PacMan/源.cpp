@@ -1100,6 +1100,7 @@ namespace Pacman
 				}
 
 			//找一种合适的分划
+			bool stopFlag = false;
 			for (fruitInterval = 1; fruitInterval <= 7; ++fruitInterval)
 			{
 				int clusterNumber = 0;
@@ -1147,9 +1148,11 @@ namespace Pacman
 						if (heatMap[cluster[j].row][cluster[j].col] == min)
 							hotSpot[hotSpotCount++] = cluster[j];
 					maxCluster = std::max(maxCluster, clusterCount);
+					if (clusterCount == 1)
+						--clusterNumber;
 				}
 #ifdef DEBUG
-				if (clusterNumber <= 6)
+				if (1)
 				{
 					cout << fruitInterval << ' ' << clusterNumber << endl;
 					for (int i = 0; i < height; i++)
@@ -1167,7 +1170,18 @@ namespace Pacman
 					}
 				}
 #endif // DEBUG
-				if (clusterNumber <= 6)
+				if (clusterNumber <= 3)
+				{
+					if (fruitInterval == 1)
+						break;
+					else
+					{
+						fruitInterval -= 2;
+						stopFlag = true;
+						continue;
+					}
+				}
+				if (stopFlag)
 					break;
 			}
 
