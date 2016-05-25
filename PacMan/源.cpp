@@ -2300,7 +2300,7 @@ namespace AI
 						preyFlag = tryPreyFlag = false;
 				}
 			//夹道里被追击的弱AI
-				if (!preyFlag && !tryPreyFlag)
+				/*if (!preyFlag && !tryPreyFlag)
 				{
 					int dirCount = 4;
 					for (int i = 0; i < 4; ++i)
@@ -2327,15 +2327,15 @@ namespace AI
 					}
 					if (dirCount == 1 && gameField.Distance(myID, _) <= 2)
 						tryPreyFlag = true;
-				}
+				}*/
 				if (preyFlag)
 					playerTarget |= Pacman::playerID2Mask[_];
 				if (tryPreyFlag)
 					tryPlayerTarget |= Pacman::playerID2Mask[_];
 			}
 		}
-//		auto&& fruitInfo = gameField.GetToTarget(myID, FruitSelect(gameField, myID, targetID), forbiddenDirs);
-		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
+		auto&& fruitInfo = gameField.GetToTarget(myID, FruitSelect(gameField, myID, targetID), forbiddenDirs);
+//		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
 		auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
 		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
 		//一定概率放弃当前果子
@@ -2514,11 +2514,11 @@ namespace AI
 		int powerUpLeft = gameField.players[myID].powerUpLeft;
 		
 		//cout << depth << ' ';
-
-		if (Debug::TimeOut() || depth == 0 || !gameField.hasNext)
-			return GreedyEval(gameField, myID);
 		if (gameField.players[myID].dead)
 			return DEATH_EVAL;
+		
+		if (Debug::TimeOut() || depth == 0 || !gameField.hasNext)
+			return 10000 * GreedyEval(gameField, myID) + (strength - (powerUpLeft == 0 ? 0 : gameField.LARGE_FRUIT_ENHANCEMENT));
 		
 		for (auto dir = Pacman::stay; dir <= Pacman::left; ++dir)
 		{
@@ -2603,9 +2603,9 @@ namespace AI
 			{
 				if (playerID == myID)
 					continue;
-				if (gameField.Distance(myID, playerID) <= 2)
+				if (gameField.Distance(myID, playerID) <= 3)
 				{
-					if (gameField.genInfo[gameField.players[myID].row][gameField.players[myID].col].isBesideGen && Helpers::DeltaATK(gameField, myID, playerID) > 0)
+					if (int(gameField.GetToNearbyGenerator(myID) >> 3) <= 2 && Helpers::DeltaATK(gameField, myID, playerID) > 0)
 						deterFlag = true;
 					if (Helpers::DeltaATK(gameField, myID, playerID) < 0)
 						fleeFlag = true;
@@ -2659,12 +2659,12 @@ namespace AI
 			
 			
 
-			if (dir == Pacman::stay && stepInfo[step].second && step != 0)
+			/*if (dir == Pacman::stay && stepInfo[step].second && step != 0)
 			{
 				gameField.RollBack(1);
 				continue;
 			}
-
+*/
 			tmpSol.clear();
 
 			tmp = SimpleSearch(gameField, myID, depth - 1, rivalAI, step + 1, solutions);
@@ -2679,24 +2679,31 @@ namespace AI
 			//吃到大果子稍微加一分
 			if (gameField.players[myID].strength - strength > 1
 				&& gameField.players[myID].powerUpLeft - powerUpLeft == gameField.LARGE_FRUIT_DURATION - 1)
-				++tmp;
+				tmp += 100;
 
 			gameField.RollBack(1);
 
 //			if (tmp > 0 && depth + gameField.turnID != 100)
 //				tmp += GreedyEval(gameField, myID);
-			if (step == 0
+
+//			cout << tmp / 100 << '\t' << GreedyEval(gameField, myID) << endl;
+
+			if (strength - (powerUpLeft == 0 ? 0 : gameField.LARGE_FRUIT_ENHANCEMENT) == tmp % 100)
+				tmp += 100;
+
+			/*if (step == 0
 				&& tmp > 0
 				&& dir == Pacman::stay
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
 				&& gameField.players[myID].strength - strength == 0)
 				tmp = int(tmp * (1 - float(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
-			
+			*/
+
 			if (tmp > max)
 				max = tmp;
 			
 			if (step == 0 && isShallowSol)
-				solutions[dir + 1].second = tmp;
+				solutions[dir + 1].second = tmp / 100;
 
 			// 超时处理
 			if (Debug::TimeOut())
