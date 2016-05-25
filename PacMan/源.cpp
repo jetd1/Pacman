@@ -1586,6 +1586,8 @@ namespace Helpers
 		return "";
 	}
 
+    inline string ChaoFeng() { return u8"yοù卟爽·ゞ赽ゞ莱幹涐錒、"; }
+
 	inline string ThreeWatches()
 	{
 		return threeWatches[rand() % 3];
