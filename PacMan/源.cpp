@@ -1860,8 +1860,8 @@ namespace AI
 		return solutions;
 	}
 
-	//weaZen: 寻找最容易丢失的果子
-	Pacman::FieldProp FruitSelect(Pacman::GameField &gameField, int myID, int targetID)
+	//weaZen: 寻找最容易丢失的果子 尽量妨碍targetID吃果子
+	Pacman::FieldProp FruitSelect(Pacman::GameField &gameField, int myID, int targetID, char forbiddenDirs = '\0')
 	{
 		std::vector <std::pair< Pacman::FieldProp, int> > myFruits;
 		for (int i = 0; i < gameField.height; ++i)
@@ -2281,6 +2281,7 @@ namespace AI
 		for (auto i = tmpDangers.begin(); i != tmpDangers.end(); ++i)
 			forbiddenDirs |= (1 << ((*i).first + 1));
 
+
 		//标记目标AI
 		for (int _ = 0; _ < MAX_PLAYER_COUNT; _++)
 		{
@@ -2336,8 +2337,8 @@ namespace AI
 					tryPlayerTarget |= Pacman::playerID2Mask[_];
 			}
 		}
-		auto&& fruitInfo = gameField.GetToTarget(myID, FruitSelect(gameField, myID, targetID), forbiddenDirs);
-//		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
+//		auto&& fruitInfo = gameField.GetToTarget(myID, FruitSelect(gameField, myID, targetID, forbiddenDirs), forbiddenDirs);
+		auto&& fruitInfo = gameField.GetToTarget(myID, fruitTarget, forbiddenDirs);
 		auto&& playerInfo = gameField.GetToTarget(myID, playerTarget, forbiddenDirs);
 		auto&& tryPlayerInfo = gameField.GetToTarget(myID, tryPlayerTarget, forbiddenDirs);
 		//一定概率放弃当前果子
@@ -2681,7 +2682,7 @@ namespace AI
 			//吃到大果子稍微加一分
 			if (gameField.players[myID].strength - strength > 1
 				&& gameField.players[myID].powerUpLeft - powerUpLeft == gameField.LARGE_FRUIT_DURATION - 1)
-				tmp += 100;
+				tmp += 10000;
 
 			gameField.RollBack(1);
 
@@ -2691,15 +2692,15 @@ namespace AI
 //			cout << tmp / 100 << '\t' << GreedyEval(gameField, myID) << endl;
 
 			if (strength - (powerUpLeft == 0 ? 0 : gameField.LARGE_FRUIT_ENHANCEMENT) == tmp % 100)
-				tmp += 100;
+				tmp += 10000;
 
-			/*if (step == 0
+			if (step == 0
 				&& tmp > 0
 				&& dir == Pacman::stay
 				&& !(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit))
 				&& gameField.players[myID].strength - strength == 0)
 				tmp = int(tmp * (1 - float(gameField.generatorTurnLeft - 1) / gameField.GENERATOR_INTERVAL));
-			*/
+			
 
 			if (tmp > max)
 				max = tmp;
