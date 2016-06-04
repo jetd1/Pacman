@@ -29,16 +29,16 @@
 #define MAX_GENERATOR_COUNT 4 // 每个象限1
 #define MAX_PLAYER_COUNT 4
 #define MAX_TURN 100
-#define TIME_LIMIT 0.95
+#define TIME_LIMIT 0.98
 #define QUEUE_MAX 121
 #define MAX_INT 0x3fffffff
 #define DEFAULT_DEPTH 1
-#define MAX_DEPTH 15
+#define MAX_DEPTH 20
 #define DEATH_EVAL -1000000
 #define INVALID_EVAL -9999999
 
 //#define DEBUG
-//#define PROFILING
+#define PROFILING
 #define SAVEDATA
 
 // 你也可以选用 using namespace std; 但是会污染命名空间
@@ -1000,7 +1000,6 @@ namespace Pacman
 #endif
 			//分析PathInfo
 			FieldProp deadSpot[40];
-			int degree[FIELD_MAX_HEIGHT][FIELD_MAX_HEIGHT];
 			auto dCount = 0;
 			PathInfoType * ptmpExit = nullptr;
 
@@ -2465,17 +2464,16 @@ namespace AI
 					continue;
 
 				//这是为了分出最晚死的方向
-				if (sol[i].second == DEATH_EVAL || deathFlag[i])
+                if (deathFlag[i])
+                    continue;
+                else if (sol[i].second == DEATH_EVAL)
 				{
-					if (!deathFlag[i])
-					{
-						deathFlag[i] = true;
-						evalWeighedAverage[i] = DEATH_EVAL + tmp;
-					}
-					continue;
+                    deathFlag[i] = true;
+                    evalWeighedAverage[i] = DEATH_EVAL + tmp;
+                    continue;
 				}
-				evalWeighedAverage[i] += 10 * sol[i].second;
-				evalWeighedAverage[i] /= 2;
+				evalWeighedAverage[i] += (sol[i].second << 4);
+				evalWeighedAverage[i] >>= 2;
 			}
 		}
 
@@ -2618,7 +2616,7 @@ namespace AI
 			if (dir == Pacman::Direction::stay && step != 0)
 			{
 				waitFlag = gameField.genInfo[gameField.players[myID].row][gameField.players[myID].col].isBesideGen && gameField.generatorTurnLeft <= 3;
-				waitFlag |= (gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit));
+				waitFlag = waitFlag || bool(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit));
 				if (!waitFlag)
 					continue;
 			}
@@ -2651,9 +2649,9 @@ namespace AI
 			//是否有吃到了什么
 			eatFlag = (gameField.players[myID].strength - strength > 0 || gameField.players[myID].powerUpLeft > powerUpLeft);
 			//吃到东西同时增益消失的情况
-			eatFlag |= (powerUpLeft == 1 && gameField.players[myID].strength > strength - gameField.LARGE_FRUIT_ENHANCEMENT);
+			eatFlag = eatFlag || bool(powerUpLeft == 1 && gameField.players[myID].strength > strength - gameField.LARGE_FRUIT_ENHANCEMENT);
 			//重叠的情况
-			eatFlag |= gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit);
+			eatFlag = eatFlag || bool(gameField.fieldContent[gameField.players[myID].row][gameField.players[myID].col] & (Pacman::GridContentType::smallFruit | Pacman::GridContentType::largeFruit));
 
 			stepInfo[step].first = dir;
 			//达到四个目标之一就不限制下一步方向
