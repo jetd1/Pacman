@@ -2098,7 +2098,7 @@ namespace AI
 	}
 
 	//weaZen: 复杂的危险判断
-	int DangerJudge(Pacman::GameField &gameField, int myID, std::vector<DangerInfoType> & dangers, int maxDepth = 10)
+	void DangerJudge(Pacman::GameField &gameField, int myID, std::vector<DangerInfoType> & dangers, int maxDepth = 10)
 	{
 		dangers.clear();
 		for (Pacman::Direction dir = Pacman::stay; dir <= Pacman::left; ++dir)
@@ -2179,7 +2179,6 @@ namespace AI
 
 			}
 		}
-		return 0;
 	}
 
 	//weaZen： 会回避死亡的高级AI
